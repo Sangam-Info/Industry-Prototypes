@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Geeta Industries — QR Catalog Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1C1A15; --ink2:#55503F; --ink3:#8A8471;
+  --bg:#E7E9E2; --card:#FFFFFF; --sunk:#F2F3EE;
+  --green:#14512F; --green2:#1E7A45; --green-ink:#0C3520;
+  --orange:#DE5A14; --orange2:#B84709;
+  --zinc1:#DCD9D0; --zinc2:#B5B0A2; --zinc3:#8E8877;
+  --line:#D3D5CC; --line2:#C0C3B8;
+  --disp:'Big Shoulders Display',Impact,sans-serif;
+  --body:'Instrument Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --guj:'Noto Sans Gujarati',sans-serif;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:var(--body); color:var(--ink);
+  background:#20241F;
+  background-image:radial-gradient(circle at 20% 0%,#2C332A 0%,#1A1D18 60%);
+  display:flex;flex-direction:column;align-items:center;
+  padding:26px 14px 40px; gap:16px;
+}
+body.lang-gu{font-family:var(--guj)}
+.lang-gu .disp{font-family:var(--guj)}
+:lang(gu){font-family:var(--guj)}
+
+/* ---------- desktop chrome ---------- */
+.stagehead{max-width:900px;text-align:center;color:#B8BFB2;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono)}
+.stagehead b{color:#F0EFE6;font-weight:500}
+.phone{
+  width:100%;max-width:412px;height:min(860px,calc(100vh - 150px));min-height:600px;
+  background:var(--bg);border-radius:34px;overflow:hidden;position:relative;
+  box-shadow:0 0 0 9px #14170F,0 0 0 10px #3A3F35,0 34px 70px -18px rgba(0,0,0,.75);
+  display:flex;flex-direction:column;
+}
+.jump{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:640px}
+.jump button{
+  font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:#C9CFC2;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
+  padding:6px 11px;border-radius:99px;cursor:pointer;transition:.15s;
+}
+.jump button:hover{background:rgba(255,255,255,.16);color:#fff}
+.jump button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+/* ---------- app shell ---------- */
+.top{
+  flex:0 0 auto;background:var(--green);color:#EDF1E9;
+  padding:10px 12px;display:flex;align-items:center;gap:10px;z-index:20;
+  box-shadow:0 1px 0 rgba(0,0,0,.2);
+}
+.mono-badge{
+  width:34px;height:34px;flex:0 0 34px;border-radius:7px;display:grid;place-items:center;
+  background:linear-gradient(160deg,#F0B93B,#D98A12);color:#3B2606;
+  font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:.02em;
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,.22),0 1px 3px rgba(0,0,0,.3);
+}
+.top h1{font-family:var(--disp);font-size:22px;font-weight:700;letter-spacing:.03em;line-height:.95}
+.lang-gu .top h1{font-family:var(--guj);font-size:16px;line-height:1.2}
+.top .sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#A9C4AE;margin-top:2px}
+.top .grow{flex:1;min-width:0}
+.iconbtn{
+  background:rgba(255,255,255,.1);border:0;color:#EDF1E9;width:34px;height:34px;border-radius:9px;
+  display:grid;place-items:center;cursor:pointer;flex:0 0 auto;
+}
+.iconbtn:active{background:rgba(255,255,255,.24)}
+.iconbtn:focus-visible{outline:2px solid #F0B93B;outline-offset:2px}
+.langtog{display:flex;background:rgba(0,0,0,.22);border-radius:8px;padding:2px;flex:0 0 auto}
+.langtog button{
+  border:0;background:transparent;color:#9FB8A4;font-size:11px;font-weight:600;
+  padding:5px 8px;border-radius:6px;cursor:pointer;font-family:var(--body);
+}
+.langtog button.on{background:#F0B93B;color:#3B2606}
+.langtog button:nth-child(1){font-family:var(--guj)}
+
+.view{flex:1;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:smooth}
+.view::-webkit-scrollbar{width:0}
+.pad{padding:16px 14px}
+.pad-b{padding-bottom:104px}
+
+/* ---------- type ---------- */
+.eyebrow{
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink3);display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line2)}
+.lang-gu .eyebrow{letter-spacing:.04em;font-family:var(--guj)}
+h2.sec{font-family:var(--disp);font-size:27px;font-weight:700;letter-spacing:.01em;line-height:1}
+.lang-gu h2.sec{font-family:var(--guj);font-size:19px;line-height:1.3}
+p.lede{font-size:14.5px;line-height:1.55;color:var(--ink2)}
+.code{font-family:var(--mono);font-size:11px;letter-spacing:.05em}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--green-ink);color:#E8EDE4;padding:18px 14px 20px;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:0;opacity:.16;
+  background-image:repeating-linear-gradient(135deg,transparent 0 9px,#8FD6A6 9px 10px);
+}
+.hero-in{position:relative}
+.hero h2{font-family:var(--disp);font-size:33px;line-height:.94;font-weight:800;letter-spacing:.01em;max-width:12ch}
+.lang-gu .hero h2{font-family:var(--guj);font-size:21px;line-height:1.35;max-width:none}
+.hero p{margin-top:9px;font-size:13.5px;line-height:1.5;color:#B7CDBC;max-width:34ch}
+.hero .est{
+  display:inline-flex;align-items:center;gap:7px;margin-top:14px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:#F0B93B;border:1px solid rgba(240,185,59,.4);border-radius:99px;padding:5px 11px;
+}
+.lang-gu .hero .est{font-family:var(--guj);letter-spacing:0}
+
+/* ---------- action tiles ---------- */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:14px}
+.tile{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:13px 12px;display:flex;flex-direction:column;gap:9px;cursor:pointer;
+  text-align:left;font-family:inherit;color:inherit;transition:.14s;text-decoration:none;
+}
+.tile:active{transform:translateY(1px);border-color:var(--zinc3)}
+.tile:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.tile .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:var(--sunk);color:var(--green)}
+.tile.hot .ic{background:#FCEBDF;color:var(--orange)}
+.tile b{font-size:14px;font-weight:600;display:block;line-height:1.2;color:var(--ink)}
+.tile span{font-size:11.5px;color:var(--ink3);display:block;margin-top:2px;line-height:1.3}
+
+/* ---------- machine cards ---------- */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mcard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  cursor:pointer;text-align:left;font-family:inherit;color:inherit;display:flex;flex-direction:column;
+}
+.mcard:active{border-color:var(--zinc3)}
+.mcard:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.shot{
+  aspect-ratio:1/.78;background:var(--sunk);border-bottom:1px solid var(--line);
+  display:grid;place-items:center;color:var(--green);position:relative;
+}
+.shot svg{width:88%;height:88%}
+.shot .cnt{
+  position:absolute;left:7px;bottom:7px;font-family:var(--mono);font-size:9px;letter-spacing:.05em;
+  background:rgba(255,255,255,.92);border:1px solid var(--line);padding:2px 6px;border-radius:5px;color:var(--ink2);
+}
+.mcard .mb{padding:10px 11px 12px}
+.mcard b{font-size:13.5px;font-weight:600;line-height:1.25;display:block}
+.mcard .mm{font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:.05em;margin-top:4px}
+.mcard .pr{font-size:12.5px;font-weight:600;color:var(--orange);margin-top:6px}
+
+/* ---------- filter chips ---------- */
+.chips{display:flex;gap:7px;overflow-x:auto;padding:0 14px 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;border:1px solid var(--line2);background:var(--card);border-radius:99px;
+  padding:7px 13px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--ink2);
+}
+.chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.chip:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+/* ---------- gallery ---------- */
+.gal{position:relative;background:var(--sunk);border-bottom:1px solid var(--line)}
+.galtrack{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.galtrack::-webkit-scrollbar{display:none}
+.galslide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:1/.72;display:grid;place-items:center;color:var(--green)}
+.galslide svg{width:76%;height:76%}
+.galslide.alt{background:#EDEFE8}
+.galdots{position:absolute;bottom:30px;left:0;right:0;display:flex;gap:5px;justify-content:center}
+.galdots i{width:5px;height:5px;border-radius:99px;background:var(--zinc2)}
+.galdots i.on{background:var(--green);width:16px}
+.galtag{
+  position:absolute;top:10px;left:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
+  text-transform:uppercase;background:var(--card);border:1px solid var(--line);padding:4px 8px;border-radius:6px;color:var(--ink2);
+}
+
+/* ---------- SIGNATURE: riveted spec plate ---------- */
+.plate{
+  margin:-22px 14px 0;position:relative;z-index:2;border-radius:9px;padding:14px 15px 13px;
+  background:linear-gradient(168deg,#E4E1D8 0%,#CBC7BB 42%,#DBD8CE 60%,#B9B4A6 100%);
+  box-shadow:0 4px 14px -4px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 0 rgba(0,0,0,.14);
+  border:1px solid #9E998A;
+}
+.plate::before,.plate::after{
+  content:"";position:absolute;top:8px;width:7px;height:7px;border-radius:99px;
+  background:radial-gradient(circle at 33% 30%,#F4F2EC,#8A8474 70%,#6B6558);
+  box-shadow:0 1px 1px rgba(0,0,0,.3);
+}
+.plate::before{left:8px} .plate::after{right:8px}
+.plate .pr2{position:absolute;bottom:8px;width:7px;height:7px;border-radius:99px;
+  background:radial-gradient(circle at 33% 30%,#F4F2EC,#8A8474 70%,#6B6558);box-shadow:0 1px 1px rgba(0,0,0,.3)}
+.plate .pr2.l{left:8px} .plate .pr2.r{right:8px}
+.plate .ptitle{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:#5E5849;text-align:center;padding-bottom:9px;margin-bottom:10px;border-bottom:1px solid rgba(0,0,0,.18);
+}
+.lang-gu .plate .ptitle{font-family:var(--guj);letter-spacing:.02em}
+.plate dl{display:grid;grid-template-columns:auto 1fr;gap:7px 12px;padding:0 4px}
+.plate dt{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:#6B6555;
+  align-self:center;white-space:nowrap;
+}
+.lang-gu .plate dt{font-family:var(--guj);letter-spacing:0;font-size:11px}
+.plate dd{
+  font-family:var(--disp);font-size:19px;font-weight:700;color:#221F17;text-align:right;
+  letter-spacing:.02em;line-height:1;text-shadow:0 1px 0 rgba(255,255,255,.55);
+}
+.lang-gu .plate dd{font-family:var(--guj);font-size:14px;font-weight:600}
+
+/* ---------- accessory rows ---------- */
+.arow{
+  display:flex;align-items:center;gap:11px;width:100%;text-align:left;font-family:inherit;color:inherit;
+  background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px;cursor:pointer;margin-bottom:8px;
+}
+.arow:active{border-color:var(--zinc3)}
+.arow:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.stencil{
+  width:44px;height:44px;flex:0 0 44px;border-radius:8px;background:var(--sunk);
+  border:1px dashed var(--zinc2);display:grid;place-items:center;color:var(--green);position:relative;
+}
+.stencil svg{width:22px;height:22px}
+.stencil.big{width:64px;height:64px;flex:0 0 64px;border-radius:11px}
+.stencil.big svg{width:30px;height:30px}
+.arow .ab{flex:1;min-width:0}
+.arow b{font-size:13.5px;font-weight:600;display:block;line-height:1.25}
+.arow .pcode{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--ink3);margin-top:3px;display:block;
+}
+.arow .apr{font-size:12.5px;font-weight:600;color:var(--orange);white-space:nowrap}
+
+/* ---------- generic blocks ---------- */
+.block{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:14px}
+.block h3{font-family:var(--disp);font-size:20px;font-weight:700;margin-bottom:8px;letter-spacing:.01em}
+.lang-gu .block h3{font-family:var(--guj);font-size:15px}
+.ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.ul li{font-size:13.5px;line-height:1.5;color:var(--ink2);padding-left:18px;position:relative}
+.ul li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:2px;background:var(--orange)}
+.kv{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.kv:last-child{border:0;padding-bottom:0}
+.kv .ic{width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:var(--sunk);display:grid;place-items:center;color:var(--green)}
+.kv .kt{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.lang-gu .kv .kt{font-family:var(--guj);letter-spacing:0;font-size:11px}
+.kv .kd{font-size:13.5px;line-height:1.45;margin-top:3px}
+
+/* ---------- map ---------- */
+.mapbox{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:#DFE3D9}
+.mapbox svg{display:block;width:100%;height:150px}
+
+/* ---------- sticky action bar ---------- */
+.bar{
+  position:absolute;left:0;right:0;bottom:0;z-index:30;padding:10px 12px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top,var(--bg) 62%,rgba(231,233,226,0));
+  display:flex;gap:9px;
+}
+.btn{
+  flex:1;border:0;border-radius:11px;padding:14px 10px;font-family:inherit;font-size:14.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;text-decoration:none;
+}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.btn svg{width:17px;height:17px}
+.btn-call{background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-ink)}
+.btn-wa{background:var(--orange);color:#fff;box-shadow:0 3px 0 var(--orange2)}
+.btn-ghost{background:var(--card);color:var(--ink);border:1px solid var(--line2);box-shadow:0 3px 0 var(--line2)}
+.btn:active{transform:translateY(2px);box-shadow:none}
+
+/* ---------- forms ---------- */
+label.f{display:block;margin-bottom:12px}
+label.f span{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:6px}
+.lang-gu label.f span{font-family:var(--guj);letter-spacing:0;font-size:11px}
+input.i,select.i,textarea.i{
+  width:100%;border:1px solid var(--line2);background:var(--sunk);border-radius:10px;padding:12px;
+  font-family:inherit;font-size:14px;color:var(--ink);
+}
+input.i:focus,select.i:focus,textarea.i:focus{outline:2px solid var(--green);outline-offset:0;background:#fff}
+textarea.i{min-height:78px;resize:vertical}
+
+/* ---------- owner panel ---------- */
+.tabs{display:flex;gap:5px;background:var(--sunk);padding:4px;border-radius:12px;margin-bottom:14px;border:1px solid var(--line)}
+.tabs button{flex:1;border:0;background:transparent;padding:9px 4px;border-radius:9px;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.tabs button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.lang-gu .tabs button{font-size:11.5px}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--orange);color:#fff;font-size:10.5px;font-weight:700;font-family:var(--body)}
+.pill{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:5px;border:1px solid;white-space:nowrap}
+.lang-gu .pill{font-family:var(--guj);letter-spacing:0;font-size:10px}
+.pill.new{background:#FCEBDF;border-color:#E9CBAC;color:#A5450A}
+.pill.called{background:#E7F0F9;border-color:#C2D7EB;color:#1F5480}
+.pill.done{background:#E4F1E9;border-color:#BEDCCA;color:#1B6138}
+.erow{display:block;width:100%;text-align:left;font-family:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;margin-bottom:9px}
+.erow.unread{border-left:3px solid var(--orange);background:#FFFDFB}
+.erow:active{border-color:var(--zinc3)}
+.erow:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.erow .eh{display:flex;align-items:center;gap:8px}
+.erow .eh b{flex:1;font-size:14px;font-weight:600;line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.erow .em{font-size:12.5px;color:var(--green);font-weight:500;margin-top:6px}
+.erow .eq{font-size:12.5px;color:var(--ink2);line-height:1.45;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.erow .ef{display:flex;align-items:center;gap:8px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.erow .ef .code{color:var(--ink3);flex:1}
+.erow .ef .tm{font-size:11px;color:var(--ink3)}
+.empty{text-align:center;padding:40px 20px;color:var(--ink3)}
+.empty svg{width:34px;height:34px;color:var(--zinc2);margin-bottom:12px}
+.empty b{display:block;font-size:15px;color:var(--ink);font-weight:600;margin-bottom:6px}
+.empty span{font-size:13px;line-height:1.5}
+.barrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.barrow .bn{flex:0 0 42%;font-size:12.5px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bartrack{flex:1;height:9px;background:var(--sunk);border-radius:9px;overflow:hidden;border:1px solid var(--line)}
+.bartrack i{display:block;height:100%;background:var(--green2)}
+.bartrack i.o{background:var(--orange)}
+.barrow .bv{font-family:var(--mono);font-size:10.5px;color:var(--ink3);flex:0 0 auto;min-width:26px;text-align:right}
+.spark{width:100%;height:96px;display:block}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px}
+.stat.hot{background:#FFF7F1;border-color:#EBCFB2}
+.stat.hot b{color:var(--orange)}
+.stat b{font-family:var(--disp);font-size:29px;font-weight:800;line-height:1;display:block;color:var(--green)}
+.stat span{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:5px;display:block}
+.lang-gu .stat span{font-family:var(--guj);letter-spacing:0;font-size:11px}
+.drop{
+  border:2px dashed var(--zinc2);border-radius:11px;padding:18px 12px;text-align:center;background:var(--sunk);
+  cursor:pointer;margin-bottom:10px;
+}
+.drop svg{width:26px;height:26px;color:var(--zinc3);margin-bottom:7px}
+.drop b{display:block;font-size:13.5px;font-weight:600}
+.drop span{display:block;font-size:11.5px;color:var(--ink3);margin-top:3px}
+.drop.done{border-style:solid;border-color:var(--green2);background:#EDF6F0}
+.drop.done svg{color:var(--green2)}
+.prog{height:4px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:9px}
+.prog i{display:block;height:100%;width:0;background:var(--green2);transition:width 1.6s linear}
+
+/* ---------- QR poster ---------- */
+.poster{
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 16px;text-align:center;
+  box-shadow:0 10px 30px -12px rgba(0,0,0,.3);
+}
+.poster .ph{font-family:var(--disp);font-size:26px;font-weight:800;letter-spacing:.01em;line-height:1;color:var(--green)}
+.lang-gu .poster .ph{font-family:var(--guj);font-size:18px;line-height:1.3}
+.poster .pt{font-size:12.5px;color:var(--ink2);margin-top:6px;line-height:1.45}
+.qrwrap{width:180px;margin:16px auto 12px;padding:11px;border:2px solid var(--green);border-radius:12px;background:#fff}
+.qrwrap svg{display:block;width:100%;height:auto}
+.poster .pn{font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.06em;margin-top:4px}
+.poster .pf{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:12px;padding-top:11px;border-top:1px dashed var(--line2)}
+.lang-gu .poster .pf{font-family:var(--guj);letter-spacing:0;font-size:11px}
+
+.note{
+  background:#FCF2E7;border:1px solid #EBCFB2;border-left:3px solid var(--orange);border-radius:9px;
+  padding:11px 12px;font-size:12.5px;line-height:1.5;color:#6B4318;margin:14px;
+}
+.toast{
+  position:absolute;left:14px;right:14px;bottom:88px;z-index:50;background:var(--ink);color:#fff;
+  border-radius:11px;padding:12px 14px;font-size:13px;opacity:0;transform:translateY(8px);
+  transition:.22s;pointer-events:none;
+}
+.toast.on{opacity:1;transform:none}
+.center{text-align:center}
+.mt{margin-top:12px}
+.hr{height:1px;background:var(--line);margin:16px 14px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+@media (max-width:460px){
+  body{padding:0;background:var(--bg)}
+  .stagehead,.jump{display:none}
+  .phone{max-width:none;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<div class="stagehead">Clickable prototype &nbsp;·&nbsp; <b>Geeta Industries</b> &nbsp;·&nbsp; Sangam InfoAnalytics</div>
+
+<div class="phone">
+  <header class="top">
+    <div class="mono-badge">GI</div>
+    <div class="grow">
+      <h1 id="brandName">GEETA INDUSTRIES</h1>
+      <div class="sub" id="brandSub">Farm machines &amp; spare parts</div>
+    </div>
+    <button class="iconbtn" id="backBtn" hidden aria-label="Back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="langtog">
+      <button id="lgGu" class="on">ગુ</button>
+      <button id="lgEn">EN</button>
+    </div>
+  </header>
+
+  <main class="view" id="view"></main>
+
+  <div class="bar" id="bar"></div>
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<nav class="jump">
+  <button data-go="home">Home</button>
+  <button data-go="catalog">Catalog</button>
+  <button data-go="machine:cc750">Machine detail</button>
+  <button data-go="parts:cc750">Accessories</button>
+  <button data-go="about">Shop &amp; map</button>
+  <button data-go="enquiry">Enquiry</button>
+  <button data-go="cats">Catalogue PDFs</button>
+  <button data-go="qr">QR poster</button>
+  <button data-go="owner">Owner: enquiries</button>
+  <button data-go="enq:e1">Enquiry detail</button>
+  <button data-go="owner-ins">Owner: insights</button>
+</nav>
+
+<script>
+/* ============================================================
+   GEETA INDUSTRIES — QR catalog prototype
+   Sangam InfoAnalytics · demo data only
+   ============================================================ */
+
+const SHOP = {
+  phone:"+91 98252 73274",
+  wa:"919825273274",
+  ig:"geeta_industries",
+  addr:{
+    en:"Plot 14, Nr. GIDC Gate 2, Talala Road,\nJunagadh, Gujarat 362001",
+    gu:"પ્લોટ ૧૪, જી.આઈ.ડી.સી. ગેટ ૨ પાસે, તાલાલા રોડ,\nજૂનાગઢ, ગુજરાત ૩૬૨૦૦૧"
+  },
+  hours:{en:"Mon – Sat · 9:00 am to 8:00 pm\nSunday closed", gu:"સોમ – શનિ · સવારે ૯ થી રાત્રે ૮\nરવિવાર બંધ"},
+  maps:"https://www.google.com/maps/search/?api=1&query=Junagadh+Gujarat"
+};
+
+/* ---------- line art ---------- */
+const S = 'fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
+const ART = {
+cc750:`<svg viewBox="0 0 200 140" ${S}><rect x="52" y="56" width="88" height="50" rx="5"/><circle cx="46" cy="80" r="25"/><circle cx="46" cy="80" r="4"/><path d="M140 62l44-15v14l-44 12z"/><rect x="92" y="28" width="44" height="26" rx="4"/><path d="M62 106l-9 26M130 106l9 26M40 132h30M124 132h30M60 70h70M60 84h70M60 96h48"/></svg>`,
+dec:`<svg viewBox="0 0 200 140" ${S}><path d="M58 24h84l-14 34H72z"/><rect x="66" y="58" width="78" height="42" rx="5"/><path d="M144 78l36 16v14l-36-16z"/><circle cx="54" cy="84" r="15"/><path d="M76 100l-8 30M136 100l8 30M56 130h28M128 130h28M78 70h54M78 84h40"/></svg>`,
+weed:`<svg viewBox="0 0 200 140" ${S}><rect x="70" y="40" width="54" height="40" rx="5"/><path d="M118 56c22-6 38-18 62-30M172 24l10 4-6 9"/><circle cx="58" cy="96" r="23"/><path d="M58 73v10M58 109v10M35 96h10M71 96h10M42 80l7 7M74 110l-7-7M42 112l7-7M74 82l-7 7"/><circle cx="122" cy="104" r="13"/><path d="M80 80l30 18M84 46h28"/></svg>`,
+htp:`<svg viewBox="0 0 200 140" ${S}><rect x="56" y="60" width="70" height="44" rx="5"/><circle cx="46" cy="82" r="21"/><rect x="130" y="34" width="30" height="56" rx="9"/><path d="M160 52c18 6 22 22 14 40M52 104h84M62 104v18M126 104v18M46 122h94M70 74h44M70 88h30"/></svg>`,
+batt:`<svg viewBox="0 0 200 140" ${S}><rect x="58" y="22" width="66" height="90" rx="12"/><path d="M70 22c-16 14-18 46-6 70M124 66l58 34M180 92l6 12-14 2M62 112h58M74 40h34"/><rect x="66" y="112" width="30" height="16" rx="4"/></svg>`,
+thr:`<svg viewBox="0 0 200 140" ${S}><rect x="42" y="46" width="112" height="54" rx="9"/><path d="M68 20h62l14 26H54z"/><circle cx="170" cy="70" r="19"/><circle cx="72" cy="112" r="13"/><circle cx="136" cy="112" r="13"/><path d="M72 100v-1M56 62h84M56 80h60"/></svg>`,
+rot:`<svg viewBox="0 0 200 140" ${S}><path d="M28 34l26 18M28 66l26-12"/><rect x="52" y="44" width="108" height="26" rx="5"/><rect x="94" y="16" width="30" height="28" rx="4"/><path d="M62 70v16M82 70v16M102 70v16M122 70v16M142 70v16M62 86h-10M82 86h-10M102 86h-10M122 86h-10M142 86h-10"/><rect x="56" y="98" width="100" height="14" rx="7"/></svg>`,
+mill:`<svg viewBox="0 0 200 140" ${S}><path d="M62 14h74l-18 32H80z"/><rect x="70" y="46" width="60" height="68" rx="7"/><rect x="130" y="68" width="34" height="28" rx="4"/><circle cx="80" cy="62" r="7"/><rect x="84" y="114" width="32" height="12" rx="3"/><path d="M74 128h56M84 78h32M84 94h32"/></svg>`
+};
+const ICO = {
+blade:`<svg viewBox="0 0 24 24" ${S} stroke-width="1.8"><path d="M4 18L18 4l2 2L6 20z"/><circle cx="5" cy="19" r="2"/></svg>`,
+belt:`<svg viewBox="0 0 24 24" ${S} stroke-width="1.8"><ellipse cx="12" cy="12" rx="9" ry="6"/><ellipse cx="12" cy="12" rx="5" ry="2.5"/></svg>`,
+nozzle:`<svg viewBox="0 0 24 24" ${S} stroke-width="1.8"><path d="M9 3h6v6l-3 4-3-4z"/><path d="M12 13v8M8 21h8"/></svg>`,
+bear:`<svg viewBox="0 0 24 24" ${S} stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="4.5" r="1.4"/><circle cx="19.5" cy="12" r="1.4"/><circle cx="12" cy="19.5" r="1.4"/><circle cx="4.5" cy="12" r="1.4"/></svg>`,
+hose:`<svg viewBox="0 0 24 24" ${S} stroke-width="1.8"><path d="M4 20c8 0 4-8 10-8s6 4 6 4"/><rect x="2" y="18" width="4" height="4" rx="1"/></svg>`,
+sieve:`<svg viewBox="0 0 24 24" ${S} stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M4 9h16M4 15h16M9 3.5v17M15 3.5v17"/></svg>`,
+wheel:`<svg viewBox="0 0 24 24" ${S} stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>`,
+filt:`<svg viewBox="0 0 24 24" ${S} stroke-width="1.8"><path d="M3 5h18l-7 8v7l-4-2v-5z"/></svg>`
+};
+const UI = {
+phone:`<svg viewBox="0 0 24 24" ${S} stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>`,
+wa:`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm5.4 14c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1a12 12 0 01-5.6-4.9c-.4-.7-.9-1.6-.9-2.4s.4-1.3.6-1.5c.2-.2.4-.3.6-.3h.5c.2 0 .4 0 .6.4l.8 1.9c0 .2 0 .3-.1.5l-.4.5c-.1.2-.3.3-.1.6a8.8 8.8 0 003.9 3.3c.3.2.5.1.6 0l.8-.9c.2-.2.3-.2.6-.1l1.8.9c.2.1.4.2.4.3v.6z"/></svg>`,
+pin:`<svg viewBox="0 0 24 24" ${S} stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+ig:`<svg viewBox="0 0 24 24" ${S} stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>`,
+clock:`<svg viewBox="0 0 24 24" ${S} stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>`,
+grid:`<svg viewBox="0 0 24 24" ${S} stroke-width="2"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>`,
+chev:`<svg viewBox="0 0 24 24" ${S} stroke-width="2.4" style="width:16px;height:16px;color:var(--ink3)"><path d="M9 5l7 7-7 7"/></svg>`,
+up:`<svg viewBox="0 0 24 24" ${S} stroke-width="1.8"><path d="M12 16V4M7 9l5-5 5 5M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>`,
+ok:`<svg viewBox="0 0 24 24" ${S} stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>`,
+msg:`<svg viewBox="0 0 24 24" ${S} stroke-width="2"><path d="M21 11.5a8 8 0 01-11.6 7.2L3 21l2.3-6.4A8 8 0 1121 11.5z"/></svg>`,
+pdf:`<svg viewBox="0 0 24 24" ${S} stroke-width="2"><path d="M14 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V7z"/><path d="M14 2v5h5"/><path d="M9 13h6M9 17h4"/></svg>`,
+dl:`<svg viewBox="0 0 24 24" ${S} stroke-width="2"><path d="M12 3v12M7 11l5 5 5-5M4 19v1a2 2 0 002 2h12a2 2 0 002-2v-1"/></svg>`,
+shield:`<svg viewBox="0 0 24 24" ${S} stroke-width="2"><path d="M12 2l8 3.5v6c0 5-3.4 9.3-8 10.5-4.6-1.2-8-5.5-8-10.5v-6z"/></svg>`
+};
+
+/* ---------- data ---------- */
+const ACC = [
+ {id:'a1',code:'GI-CC-BL3',ic:'blade',fits:['cc750'],pr:'₹ 1,450',n:{en:'Forged blade set — 3 pcs',gu:'ધારદાર બ્લેડ સેટ — ૩ નંગ'},d:{en:'Hardened EN-8 steel blades. Replace as a full set every 8–10 months of daily use for a clean cut.',gu:'હાર્ડન કરેલ EN-8 સ્ટીલ બ્લેડ. રોજ વપરાશમાં ૮–૧૦ મહિને આખો સેટ બદલવો, જેથી કટ ચોખ્ખો રહે.'}},
+ {id:'a2',code:'GI-CC-FW1',ic:'wheel',fits:['cc750'],pr:'₹ 3,900',n:{en:'Cast iron flywheel',gu:'કાસ્ટ આયર્ન ફ્લાયવ્હીલ'},d:{en:'Balanced 24 inch flywheel. Keeps feed speed steady when the crop is thick.',gu:'બેલેન્સ કરેલ ૨૪ ઈંચ ફ્લાયવ્હીલ. જાડો પાક હોય ત્યારે પણ સ્પીડ એકસરખી રહે.'}},
+ {id:'a3',code:'GI-BLT-A58',ic:'belt',fits:['cc750','dec','mill'],pr:'₹ 320',n:{en:'V-belt A-58',gu:'વી-બેલ્ટ A-58'},d:{en:'Standard A-section belt. Keep one spare on the shelf — this is the part that stops work most often.',gu:'સ્ટાન્ડર્ડ A-સેક્શન બેલ્ટ. એક ફાજલ રાખવો — કામ સૌથી વધુ આ ભાગને લીધે અટકે છે.'}},
+ {id:'a4',code:'GI-BRG-6205',ic:'bear',fits:['cc750','dec','thr'],pr:'₹ 240',n:{en:'Bearing 6205 — pair',gu:'બેરિંગ 6205 — જોડ'},d:{en:'Sealed ball bearings for the main shaft. Sold as a matched pair.',gu:'મેઈન શાફ્ટ માટે સીલ્ડ બોલ બેરિંગ. જોડમાં જ મળે છે.'}},
+ {id:'a5',code:'GI-CC-RLR',ic:'wheel',fits:['cc750'],pr:'₹ 2,150',n:{en:'Feed roller pair',gu:'ફીડ રોલર જોડ'},d:{en:'Grooved rollers that pull the crop in evenly. Replace both together.',gu:'ખાંચાવાળા રોલર જે પાકને એકસરખો અંદર ખેંચે. બંને સાથે જ બદલવા.'}},
+ {id:'a6',code:'GI-CC-GRD',ic:'shield',fits:['cc750','thr'],pr:'₹ 690',n:{en:'Safety guard cover',gu:'સેફ્ટી ગાર્ડ કવર'},d:{en:'Sheet metal cover over the blade housing. Fit it before starting the machine.',gu:'બ્લેડ પર લગાવવાનું શીટ મેટલ કવર. મશીન ચાલુ કરતાં પહેલાં લગાવવું.'}},
+ {id:'a7',code:'GI-DEC-SV3',ic:'sieve',fits:['dec'],pr:'₹ 1,100',n:{en:'Sieve set — 3 sizes',gu:'ચારણી (જાળી) સેટ — ૩ સાઈઝ'},d:{en:'Small, medium and bold pod sizes. Swap in under two minutes with the wing nuts.',gu:'નાની, મધ્યમ અને મોટી સાઈઝ. વિંગ નટથી બે મિનિટમાં બદલી શકાય.'}},
+ {id:'a8',code:'GI-DEC-BTR',ic:'blade',fits:['dec','thr'],pr:'₹ 2,400',n:{en:'Beater bar set',gu:'બીટર બાર સેટ'},d:{en:'Rubber-tipped bars that shell the pod without breaking the kernel.',gu:'રબર ટીપવાળા બાર — દાણો તૂટ્યા વગર ફોતરું છૂટું પડે.'}},
+ {id:'a9',code:'GI-DEC-BLW',ic:'wheel',fits:['dec','thr'],pr:'₹ 1,850',n:{en:'Blower fan assembly',gu:'બ્લોઅર ફેન એસેમ્બલી'},d:{en:'Separates husk from grain at the outlet. Balanced, low vibration.',gu:'આઉટલેટ પર ફોતરાં અને દાણા અલગ કરે. બેલેન્સ કરેલ, ઓછું વાઈબ્રેશન.'}},
+ {id:'a10',code:'GI-SPR-NZ4',ic:'nozzle',fits:['htp','batt'],pr:'₹ 480',n:{en:'Brass nozzle set — 4 pcs',gu:'પિત્તળ નોઝલ સેટ — ૪ નંગ'},d:{en:'Cone, flat fan, twin and hollow cone tips for different sprays.',gu:'કોન, ફ્લેટ ફેન, ટ્વીન અને હોલો કોન — અલગ અલગ છંટકાવ માટે.'}},
+ {id:'a11',code:'GI-SPR-HS10',ic:'hose',fits:['htp'],pr:'₹ 950',n:{en:'Delivery hose — 10 m',gu:'ડિલિવરી પાઈપ — ૧૦ મીટર'},d:{en:'Braided 8 mm hose rated to 40 kg pressure. Also available in 20 m.',gu:'બ્રેઈડેડ ૮ મી.મી. પાઈપ, ૪૦ કિલો પ્રેશર સુધી. ૨૦ મીટરમાં પણ મળે.'}},
+ {id:'a12',code:'GI-SPR-LNC',ic:'nozzle',fits:['htp','batt'],pr:'₹ 560',n:{en:'Spray lance — 3 ft',gu:'સ્પ્રે લાન્સ — ૩ ફૂટ'},d:{en:'Stainless lance with trigger. Reaches the middle rows without walking in.',gu:'ટ્રિગરવાળી સ્ટેનલેસ લાન્સ. વચ્ચેની હાર સુધી ચાલ્યા વગર પહોંચે.'}},
+ {id:'a13',code:'GI-SPR-DPH',ic:'filt',fits:['htp'],pr:'₹ 740',n:{en:'Diaphragm repair kit',gu:'ડાયાફ્રામ રિપેર કીટ'},d:{en:'Diaphragms, O-rings and valves. Fixes most pressure-drop complaints.',gu:'ડાયાફ્રામ, ઓ-રિંગ અને વાલ્વ. પ્રેશર ઘટવાની મોટાભાગની ફરિયાદ આનાથી ઉકલે.'}},
+ {id:'a14',code:'GI-BAT-12V',ic:'filt',fits:['batt'],pr:'₹ 1,290',n:{en:'12 V 12 Ah battery',gu:'૧૨ વોલ્ટ ૧૨ Ah બેટરી'},d:{en:'Replacement battery, roughly 5 hours of spraying on a full charge.',gu:'બદલવાની બેટરી, ફુલ ચાર્જમાં આશરે ૫ કલાક છંટકાવ.'}},
+ {id:'a15',code:'GI-PW-TIN',ic:'blade',fits:['weed','rot'],pr:'₹ 2,750',n:{en:'Rotary tine set',gu:'રોટરી ટાઈન (પાંખડી) સેટ'},d:{en:'Boron steel tines, L-shape. Standard fit for 5–7 HP weeders.',gu:'બોરોન સ્ટીલની L આકારની પાંખડી. ૫–૭ એચ.પી. વીડરમાં બંધબેસે.'}},
+ {id:'a16',code:'GI-PW-AF1',ic:'filt',fits:['weed'],pr:'₹ 310',n:{en:'Air filter element',gu:'એર ફિલ્ટર'},d:{en:'Clean every 25 hours in dusty fields, replace every season.',gu:'ધૂળવાળા ખેતરમાં દર ૨૫ કલાકે સાફ કરવું, દર સીઝને બદલવું.'}},
+ {id:'a17',code:'GI-PW-WHL',ic:'wheel',fits:['weed'],pr:'₹ 1,680',n:{en:'Rubber wheel set',gu:'રબર વ્હીલ સેટ'},d:{en:'Swap the tines for wheels when moving between plots.',gu:'એક ખેતરથી બીજે લઈ જવા માટે પાંખડીની જગ્યાએ વ્હીલ લગાવવા.'}},
+ {id:'a18',code:'GI-ROT-BLD',ic:'blade',fits:['rot'],pr:'₹ 4,600',n:{en:'Rotavator blade set — 36',gu:'રોટાવેટર બ્લેડ સેટ — ૩૬ નંગ'},d:{en:'C-type boron blades for a 5 ft rotavator, with bolts.',gu:'૫ ફૂટ રોટાવેટર માટે C-ટાઈપ બોરોન બ્લેડ, બોલ્ટ સાથે.'}},
+ {id:'a19',code:'GI-ROT-GBX',ic:'bear',fits:['rot'],pr:'₹ 8,900',n:{en:'Gearbox assembly',gu:'ગિયરબોક્સ એસેમ્બલી'},d:{en:'Complete side-drive gearbox with oil seals.',gu:'ઓઈલ સીલ સાથે સંપૂર્ણ સાઈડ-ડ્રાઈવ ગિયરબોક્સ.'}},
+ {id:'a20',code:'GI-MIL-STN',ic:'sieve',fits:['mill'],pr:'₹ 2,200',n:{en:'Grinding stone pair',gu:'ઘંટીના પથ્થર જોડ'},d:{en:'Emery stones, 10 inch. Dress them once a year for even flour.',gu:'૧૦ ઈંચ એમરી પથ્થર. વર્ષે એકવાર ઘસાવવાથી લોટ એકસરખો રહે.'}},
+ {id:'a21',code:'GI-THR-CNC',ic:'sieve',fits:['thr'],pr:'₹ 1,950',n:{en:'Concave sieve — wheat',gu:'કન્કેવ જાળી — ઘઉં'},d:{en:'Crop-specific concave. Also available for gram, castor and cumin.',gu:'ઘઉં માટેની જાળી. ચણા, દિવેલા અને જીરું માટે પણ મળે.'}}
+];
+
+let ENQ = [
+ {id:'e1',name:'Rameshbhai Patel',ph:'+91 98765 43210',mid:'cc750',st:'new',src:'qr',old:false,
+  w:{en:'12 minutes ago',gu:'૧૨ મિનિટ પહેલાં'},
+  m:{en:'What is the price for the 3 HP chaff cutter with delivery to Visavadar? I also want one spare blade set with it.',gu:'૩ એચ.પી. કડબ કટરનો ભાવ શું અને વિસાવદર સુધી ડિલિવરી થશે? સાથે એક ફાજલ બ્લેડ સેટ પણ જોઈએ છે.'}},
+ {id:'e2',name:'Jayeshbhai Vala',ph:'+91 94280 11223',mid:'thr',st:'new',src:'ig',old:false,
+  w:{en:'2 hours ago',gu:'૨ કલાક પહેલાં'},
+  m:{en:'Saw the thresher video on Instagram. Can it run on a 35 HP tractor and does it do cumin?',gu:'ઇન્સ્ટાગ્રામ પર થ્રેસરનો વિડિયો જોયો. ૩૫ એચ.પી. ટ્રેક્ટર પર ચાલશે? જીરું થ્રેસ થાય?'}},
+ {id:'e3',name:'Dineshbhai Solanki',ph:'+91 99099 45678',mid:'htp',st:'new',src:'st',old:false,
+  w:{en:'Yesterday, 6:40 pm',gu:'ગઈકાલે, સાંજે ૬:૪૦'},
+  m:{en:'Pressure is dropping in my old HTP pump. Do you have the diaphragm kit in stock?',gu:'મારા જૂના HTP પંપનું પ્રેશર ઘટે છે. ડાયાફ્રામ કીટ સ્ટોકમાં છે?'}},
+ {id:'e4',name:'Bhaveshbhai Kachhadiya',ph:'+91 97123 88990',mid:'weed',st:'called',src:'qr',old:false,
+  w:{en:'2 days ago',gu:'૨ દિવસ પહેલાં'},
+  m:{en:'Want to see the power weeder working in the field before buying. When can I come?',gu:'ખરીદતાં પહેલાં પાવર વીડર ખેતરમાં ચાલતું જોવું છે. ક્યારે આવું?'}},
+ {id:'e5',name:'Nileshbhai Dabhi',ph:'+91 90999 34567',mid:'dec',st:'called',src:'wa',old:true,
+  w:{en:'4 days ago',gu:'૪ દિવસ પહેલાં'},
+  m:{en:'Friend shared your link. Need the decorticator before the groundnut season. What is the waiting period?',gu:'મિત્રે તમારી લિંક મોકલી. મગફળીની સીઝન પહેલાં ફોલવાનું મશીન જોઈએ. કેટલી રાહ જોવી પડશે?'}},
+ {id:'e6',name:'Ashokbhai Chudasama',ph:'+91 98240 77665',mid:'batt',st:'done',src:'qr',old:false,
+  w:{en:'Last week',gu:'ગયા અઠવાડિયે'},
+  m:{en:'Bought two battery sprayers. Thank you, working well.',gu:'બે બેટરી પંપ લીધા. આભાર, બરાબર ચાલે છે.'}},
+ {id:'e7',name:'Manojbhai Bhut',ph:'+91 96019 22110',mid:'rot',st:'done',src:'ig',old:false,
+  w:{en:'Last week',gu:'ગયા અઠવાડિયે'},
+  m:{en:'Rotavator delivered and fitted. Send the blade set bill on WhatsApp.',gu:'રોટાવેટર આવી ગયું અને ફિટ થઈ ગયું. બ્લેડ સેટનું બિલ વોટ્સએપ પર મોકલજો.'}}
+];
+let PDFS = [
+ {id:'p1',size:'4.2 MB',pg:24,n:{en:'Full machine catalogue 2026',gu:'સંપૂર્ણ મશીન કેટલોગ ૨૦૨૬'},w:{en:'Updated 12 Aug',gu:'૧૨ ઓગસ્ટે અપડેટ'}},
+ {id:'p2',size:'1.1 MB',pg:6,n:{en:'Spare parts price list',gu:'છૂટા ભાગનું ભાવપત્રક'},w:{en:'Updated 2 Aug',gu:'૨ ઓગસ્ટે અપડેટ'}},
+ {id:'p3',size:'0.8 MB',pg:2,n:{en:'Subsidy paperwork checklist',gu:'સબસિડીના કાગળોની યાદી'},w:{en:'Updated 28 Jul',gu:'૨૮ જુલાઈએ અપડેટ'}}
+];
+const SCANS7=[42,38,55,61,47,73,62];
+const DAY7={en:['Fri','Sat','Sun','Mon','Tue','Wed','Thu'],gu:['શુક્ર','શનિ','રવિ','સોમ','મંગળ','બુધ','ગુરુ']};
+const TOPM=[['cc750',128],['thr',96],['htp',74],['weed',52],['dec',41]];
+const TOPA=[['a3',34],['a1',27],['a10',19],['a7',14],['a18',11]];
+const SRC=[['qr',62],['ig',24],['wa',9],['st',5]];
+let STOCK={cc750:1,dec:1,weed:1,htp:1,batt:1,thr:1,rot:0,mill:1};
+
+const MACH = [
+ {id:'cc750',art:'cc750',cat:'fodder',pr:'₹ 32,500',shots:3,
+  n:{en:'Chaff Cutter 3 HP',gu:'કડબ કટર ૩ એચ.પી.'},
+  t:{en:'Cuts green and dry fodder for 20–40 cattle',gu:'૨૦–૪૦ ઢોર માટે લીલો અને સૂકો ચારો કાપે'},
+  spec:[['Model','મોડેલ','GI-CC-750'],['Power','પાવર','3 HP · 1440 RPM'],['Capacity','ક્ષમતા','750 kg / hr'],['Blades','બ્લેડ','3 forged'],['Weight','વજન','118 kg'],['Warranty','વોરંટી','12 months']],
+  ab:{en:['Two-roller feed pulls the crop in evenly, so the cut length stays the same from start to finish.','Cut length adjusts between 8 mm and 30 mm without any tools.','Safety guard and emergency stop lever fitted as standard.','Runs on single-phase household supply — no separate connection needed.'],
+      gu:['બે રોલરની ફીડ પાકને એકસરખો અંદર ખેંચે, જેથી શરૂથી અંત સુધી કટની લંબાઈ સરખી રહે.','કટની લંબાઈ ૮ મી.મી. થી ૩૦ મી.મી. સુધી, કોઈ ઓજાર વગર સેટ થાય.','સેફ્ટી ગાર્ડ અને ઈમરજન્સી સ્ટોપ લિવર સ્ટાન્ડર્ડમાં આપેલ છે.','ઘરના સિંગલ ફેઝ કરંટ પર ચાલે — અલગ કનેક્શનની જરૂર નથી.']}},
+
+ {id:'dec',art:'dec',cat:'harvest',pr:'₹ 48,000',shots:3,
+  n:{en:'Groundnut Decorticator',gu:'મગફળી ફોલવાનું મશીન'},
+  t:{en:'Shells groundnut with very low kernel breakage',gu:'દાણો તૂટ્યા વગર મગફળી ફોલે'},
+  spec:[['Model','મોડેલ','GI-DEC-500'],['Power','પાવર','2 HP · 1440 RPM'],['Capacity','ક્ષમતા','500 kg / hr'],['Breakage','તૂટ','Under 3%'],['Weight','વજન','96 kg'],['Warranty','વોરંટી','12 months']],
+  ab:{en:['Rubber-tipped beaters shell the pod without cracking the kernel.','Three sieve sizes included for small, medium and bold pods.','Built-in blower separates husk at the outlet — no second cleaning needed.','Sieve changes in under two minutes with wing nuts.'],
+      gu:['રબર ટીપવાળા બીટર દાણો તોડ્યા વગર ફોતરું છૂટું પાડે.','નાની, મધ્યમ અને મોટી સાઈઝ માટે ત્રણ જાળી સાથે મળે.','અંદર જ બ્લોઅર છે — આઉટલેટ પર ફોતરાં અલગ થાય, બીજી વાર સાફ કરવાની જરૂર નહીં.','વિંગ નટથી બે મિનિટમાં જાળી બદલાય.']}},
+
+ {id:'weed',art:'weed',cat:'tillage',pr:'₹ 62,000',shots:3,
+  n:{en:'Power Weeder 7 HP',gu:'પાવર વીડર ૭ એચ.પી.'},
+  t:{en:'Inter-row weeding and light tilling',gu:'બે હાર વચ્ચે નિંદામણ અને હળવી ખેડ'},
+  spec:[['Model','મોડેલ','GI-PW-700'],['Engine','એન્જિન','7 HP diesel'],['Width','પહોળાઈ','600 mm'],['Depth','ઊંડાઈ','Up to 150 mm'],['Weight','વજન','128 kg'],['Warranty','વોરંટી','12 months']],
+  ab:{en:['Handlebar swings to the side so you can walk beside the row, not on the crop.','Working width adjusts from 300 mm to 600 mm.','Tines come off with four bolts — swap to wheels for road movement.','Recoil and self-start options available.'],
+      gu:['હેન્ડલ બાજુમાં ફરે છે, જેથી પાક પર નહીં પણ હારની બાજુમાં ચાલી શકાય.','કામની પહોળાઈ ૩૦૦ થી ૬૦૦ મી.મી. સુધી સેટ થાય.','ચાર બોલ્ટ ખોલીને પાંખડી નીકળે — રસ્તા પર લઈ જવા વ્હીલ લગાવો.','હાથે ખેંચીને અને સેલ્ફ સ્ટાર્ટ — બંને વિકલ્પ મળે.']}},
+
+ {id:'htp',art:'htp',cat:'spray',pr:'₹ 18,900',shots:3,
+  n:{en:'HTP Power Sprayer 22 LPM',gu:'એચ.ટી.પી. પાવર સ્પ્રે પંપ ૨૨ LPM'},
+  t:{en:'High pressure spraying for orchards and tall crops',gu:'બગીચા અને ઊંચા પાક માટે હાઈ પ્રેશર છંટકાવ'},
+  spec:[['Model','મોડેલ','GI-HTP-22'],['Discharge','ડિસ્ચાર્જ','22 litre / min'],['Pressure','પ્રેશર','20 – 40 kg/cm²'],['Drive','ડ્રાઈવ','Motor or engine'],['Weight','વજન','34 kg'],['Warranty','વોરંટી','12 months']],
+  ab:{en:['Triple piston brass head holds pressure steady through a full tank.','Pressure regulator with gauge, adjustable while running.','Works off a 3 HP motor or a 5 HP engine — your choice.','Spare parts kept in stock at the shop for same-day repair.'],
+      gu:['ત્રણ પિસ્ટનવાળું પિત્તળનું હેડ આખી ટાંકી સુધી પ્રેશર એકસરખું રાખે.','ગેજ સાથે પ્રેશર રેગ્યુલેટર, ચાલુ મશીને પણ સેટ થાય.','૩ એચ.પી. મોટર કે ૫ એચ.પી. એન્જિન — તમારી પસંદ પ્રમાણે.','છૂટા ભાગ દુકાનમાં સ્ટોકમાં — તે જ દિવસે રિપેર.']}},
+
+ {id:'batt',art:'batt',cat:'spray',pr:'₹ 3,450',shots:2,
+  n:{en:'Battery Sprayer 16 L',gu:'બેટરી સ્પ્રે પંપ ૧૬ લિટર'},
+  t:{en:'Light knapsack sprayer for daily field work',gu:'રોજિંદા કામ માટે હલકો ખભા પંપ'},
+  spec:[['Model','મોડેલ','GI-BAT-16'],['Tank','ટાંકી','16 litre'],['Battery','બેટરી','12 V · 12 Ah'],['Run time','ચાલવાનો સમય','About 5 hrs'],['Weight','વજન','4.6 kg empty'],['Warranty','વોરંટી','6 months']],
+  ab:{en:['Double mode — run on battery, or hand pump when the charge runs out.','Wide padded straps, sits flat against the back.','Four nozzles included in the box.','Tank marked in litres on both sides for correct mixing.'],
+      gu:['બે રીતે ચાલે — બેટરીથી, અથવા ચાર્જ ખતમ થાય તો હાથેથી.','પહોળા ગાદીવાળા પટ્ટા, પીઠ પર સીધો બેસે.','બોક્સમાં ચાર નોઝલ સાથે મળે.','દવા બરાબર માપવા ટાંકી પર બંને બાજુ લિટરના નિશાન.']}},
+
+ {id:'thr',art:'thr',cat:'harvest',pr:'₹ 1,15,000',shots:3,
+  n:{en:'Multicrop Thresher',gu:'મલ્ટીક્રોપ થ્રેસર'},
+  t:{en:'One machine for wheat, gram, castor and cumin',gu:'ઘઉં, ચણા, દિવેલા અને જીરું — એક જ મશીનમાં'},
+  spec:[['Model','મોડેલ','GI-THR-MC'],['Power','પાવર','35 HP tractor PTO'],['Capacity','ક્ષમતા','900 kg / hr wheat'],['Crops','પાક','8 crops'],['Weight','વજન','640 kg'],['Warranty','વોરંટી','12 months']],
+  ab:{en:['Change the concave sieve and drum speed to switch crops in about ten minutes.','Two-stage cleaning gives grain ready for the market.','Towable on its own wheels behind a tractor.','Chain and belt covers fitted on both sides.'],
+      gu:['જાળી અને ડ્રમની સ્પીડ બદલીને લગભગ દસ મિનિટમાં બીજા પાક પર જઈ શકાય.','બે તબક્કાની સફાઈ — દાણો સીધો બજારમાં લઈ જવા લાયક.','પોતાના વ્હીલ પર ટ્રેક્ટર પાછળ ખેંચી શકાય.','બંને બાજુ ચેઈન અને બેલ્ટ પર કવર લગાવેલ.']}},
+
+ {id:'rot',art:'rot',cat:'tillage',pr:'₹ 78,000',shots:2,
+  n:{en:'Rotavator 5 ft',gu:'રોટાવેટર ૫ ફૂટ'},
+  t:{en:'Seedbed preparation in a single pass',gu:'એક જ ફેરામાં વાવણી લાયક જમીન'},
+  spec:[['Model','મોડેલ','GI-ROT-60'],['Width','પહોળાઈ','1520 mm'],['Blades','બ્લેડ','36 C-type'],['Tractor','ટ્રેક્ટર','35 – 50 HP'],['Weight','વજન','385 kg'],['Warranty','વોરંટી','12 months']],
+  ab:{en:['Boron steel C-blades, hardened at the cutting edge.','Side gear drive — less power lost than chain drive.','Adjustable rear flap controls how fine the soil is left.','Fits any standard three-point linkage.'],
+      gu:['બોરોન સ્ટીલના C-બ્લેડ, ધાર પર હાર્ડન કરેલ.','સાઈડ ગિયર ડ્રાઈવ — ચેઈન ડ્રાઈવ કરતાં પાવર ઓછો વેડફાય.','પાછળનું ફ્લેપ સેટ કરીને માટી કેટલી ઝીણી રાખવી તે નક્કી થાય.','કોઈપણ સ્ટાન્ડર્ડ થ્રી-પોઈન્ટ લિન્કેજમાં બંધબેસે.']}},
+
+ {id:'mill',art:'mill',cat:'fodder',pr:'₹ 21,500',shots:2,
+  n:{en:'Flour Mill 2 HP',gu:'ઘરઘંટી ૨ એચ.પી.'},
+  t:{en:'Home and small shop flour grinding',gu:'ઘર અને નાની દુકાન માટે લોટ દળવાની ઘંટી'},
+  spec:[['Model','મોડેલ','GI-MIL-200'],['Power','પાવર','2 HP single phase'],['Capacity','ક્ષમતા','12 kg / hr'],['Stone','પથ્થર','10 inch emery'],['Weight','વજન','58 kg'],['Warranty','વોરંટી','12 months']],
+  ab:{en:['Grind adjusts from coarse to fine with one handle.','Sealed chamber keeps flour dust out of the room.','Powder coated body, wipes clean.','Fits through a standard doorway.'],
+      gu:['એક જ હેન્ડલથી જાડોથી ઝીણો લોટ સેટ થાય.','બંધ ચેમ્બર — રૂમમાં લોટની ધૂળ ઊડે નહીં.','પાવડર કોટેડ બોડી, સહેલાઈથી લૂછાય.','સામાન્ય બારણામાંથી પસાર થાય.']}}
+];
+
+const CATS=[['all','All machines','બધા મશીન'],['tillage','Tillage','ખેડ'],['spray','Spraying','છંટકાવ'],['harvest','Harvest','કાપણી'],['fodder','Fodder & mill','ચારો અને ઘંટી']];
+
+const T={
+ brand:{en:'GEETA INDUSTRIES',gu:'ગીતા ઈન્ડસ્ટ્રીઝ'},
+ brandSub:{en:'Farm machines & spare parts',gu:'ખેતીના મશીન અને છૂટા ભાગ'},
+ heroH:{en:'Every machine in the shop, in your hand.',gu:'દુકાનનું દરેક મશીન, હવે તમારા હાથમાં.'},
+ heroP:{en:'Prices, spare parts and working videos for all eight machines we build and stock. No app to install.',gu:'અમે બનાવીએ અને રાખીએ છીએ તે આઠેય મશીનના ભાવ, છૂટા ભાગ અને ચાલુ મશીનના વિડિયો. કોઈ એપ ઈન્સ્ટોલ કરવાની જરૂર નથી.'},
+ est:{en:'Serving farmers since 1998',gu:'૧૯૯૮ થી ખેડૂતોની સેવામાં'},
+ call:{en:'Call',gu:'ફોન કરો'},
+ callShop:{en:'Call the shop',gu:'દુકાને ફોન કરો'},
+ wa:{en:'WhatsApp',gu:'વોટ્સએપ'},
+ askPrice:{en:'Ask price',gu:'ભાવ પૂછો'},
+ tCall:{en:'Talk to the owner directly',gu:'સીધા માલિક સાથે વાત કરો'},
+ tWa:{en:'Send a photo of your part',gu:'તમારા ભાગનો ફોટો મોકલો'},
+ tMap:{en:'Directions',gu:'રસ્તો'},
+ tMapS:{en:'Open in Google Maps',gu:'ગૂગલ મેપમાં ખોલો'},
+ tIg:{en:'Instagram',gu:'ઇન્સ્ટાગ્રામ'},
+ tIgS:{en:'New machines, daily',gu:'નવા મશીન, રોજ'},
+ machines:{en:'Our machines',gu:'અમારા મશીન'},
+ viewAll:{en:'View all 8',gu:'બધા ૮ જુઓ'},
+ catalog:{en:'Machine catalog',gu:'મશીન કેટલોગ'},
+ specPlate:{en:'Machine specification',gu:'મશીનની વિગત'},
+ about:{en:'About this machine',gu:'આ મશીન વિશે'},
+ accFor:{en:'Accessories & spare parts',gu:'છૂટા ભાગ અને એક્સેસરીઝ'},
+ accAll:{en:'See all',gu:'બધા જુઓ'},
+ accCount:{en:'parts available',gu:'ભાગ ઉપલબ્ધ'},
+ fitsOn:{en:'Also fits',gu:'આમાં પણ બંધબેસે'},
+ shop:{en:'Visit the shop',gu:'દુકાને પધારો'},
+ addr:{en:'Address',gu:'સરનામું'},
+ hours:{en:'Shop timings',gu:'દુકાનનો સમય'},
+ ph:{en:'Phone',gu:'ફોન'},
+ enquiry:{en:'Send an enquiry',gu:'પૂછપરછ મોકલો'},
+ enqS:{en:'Fill this and it goes straight to our WhatsApp.',gu:'આ ભરો, સીધું અમારા વોટ્સએપ પર પહોંચશે.'},
+ fName:{en:'Your name',gu:'તમારું નામ'},
+ fPhone:{en:'Mobile number',gu:'મોબાઈલ નંબર'},
+ fMach:{en:'Which machine',gu:'કયું મશીન'},
+ fMsg:{en:'Your question',gu:'તમારો સવાલ'},
+ send:{en:'Send on WhatsApp',gu:'વોટ્સએપ પર મોકલો'},
+ sent:{en:'Enquiry ready to send',gu:'પૂછપરછ મોકલવા તૈયાર'},
+ sentS:{en:'In the live version this opens WhatsApp with your message already typed.',gu:'ખરી એપમાં આ સીધું વોટ્સએપ ખોલશે અને મેસેજ લખાયેલો હશે.'},
+ qrT:{en:'Your QR code',gu:'તમારો QR કોડ'},
+ qrS:{en:'Print this and paste it where farmers already stand — the shop board, the machine body, your visiting card and the bill book.',gu:'આ છાપીને ત્યાં લગાવો જ્યાં ખેડૂત પહેલેથી ઊભો રહે છે — દુકાનનું બોર્ડ, મશીનની બોડી, વિઝિટિંગ કાર્ડ અને બિલબુક.'},
+ scanFor:{en:'Scan for machines, prices & parts',gu:'મશીન, ભાવ અને છૂટા ભાગ માટે સ્કેન કરો'},
+ owner:{en:'Owner panel',gu:'માલિક પેનલ'},
+ ownerS:{en:'Only you can open this. Add machines, upload photos and videos, change prices.',gu:'આ ફક્ત તમે જ ખોલી શકો. મશીન ઉમેરો, ફોટા અને વિડિયો ચડાવો, ભાવ બદલો.'},
+ stM:{en:'Machines',gu:'મશીન'},
+ stP:{en:'Spare parts',gu:'છૂટા ભાગ'},
+ stV:{en:'Catalogue PDFs',gu:'કેટલોગ PDF'},
+ stS:{en:'Scans this month',gu:'આ મહિને સ્કેન'},
+ addMach:{en:'Add a new machine',gu:'નવું મશીન ઉમેરો'},
+ upPhoto:{en:'Upload photos',gu:'ફોટા ચડાવો'},
+ upPhotoS:{en:'Up to 6 photos, taken on your phone',gu:'છ ફોટા સુધી, તમારા ફોનથી પાડેલા'},
+ uploading:{en:'Uploading…',gu:'ચડી રહ્યું છે…'},
+ uploaded:{en:'Uploaded',gu:'ચડી ગયું'},
+ save:{en:'Save and publish',gu:'સેવ કરીને પ્રકાશિત કરો'},
+ saved:{en:'Machine published — live on the QR page now',gu:'મશીન પ્રકાશિત — QR પેજ પર હમણાં જ લાઈવ'},
+ quick:{en:'Shop links',gu:'દુકાનની લિંક'},
+ proto:{en:'This is a prototype for review, not a live website. Photos and videos shown here are placeholders — your real ones will be uploaded from the owner panel.',gu:'આ ફક્ત જોવા માટેનો નમૂનો છે, ખરી વેબસાઈટ નથી. અહીંના ફોટા અને વિડિયો નમૂનારૂપ છે — તમારા ખરા ફોટા માલિક પેનલમાંથી ચડાવાશે.'},
+ sample:{en:'Placeholder image',gu:'નમૂનારૂપ ચિત્ર'},
+ photos:{en:'photos',gu:'ફોટા'},
+ back:{en:'Back',gu:'પાછળ'},
+ more:{en:'More from the shop',gu:'દુકાનમાંથી બીજું'},
+ qrLink:{en:'Print QR poster',gu:'QR પોસ્ટર છાપો'},
+ ownerLink:{en:'Owner panel',gu:'માલિક પેનલ'},
+ tabEnq:{en:'Enquiries',gu:'પૂછપરછ'},
+ tabMach:{en:'Machines',gu:'મશીન'},
+ tabIns:{en:'Insights',gu:'રિપોર્ટ'},
+ fAll:{en:'All',gu:'બધી'},
+ sNew:{en:'New',gu:'નવી'},
+ sCalled:{en:'Called',gu:'ફોન કર્યો'},
+ sDone:{en:'Closed',gu:'પૂરું'},
+ noEnq:{en:'Nothing here yet',gu:'અહીં હજી કંઈ નથી'},
+ noEnqS:{en:'Enquiries from the QR page land here the moment a farmer sends one.',gu:'QR પેજ પરથી ખેડૂત પૂછપરછ મોકલે કે તરત જ અહીં આવી જશે.'},
+ markCalled:{en:'Mark as called',gu:'"ફોન કર્યો" નોંધો'},
+ markDone:{en:'Mark as closed',gu:'"પૂરું" નોંધો'},
+ reopen:{en:'Move back to new',gu:'ફરી "નવી" કરો'},
+ callCust:{en:'Call customer',gu:'ગ્રાહકને ફોન કરો'},
+ interested:{en:'Asking about',gu:'આ વિશે પૂછ્યું'},
+ source:{en:'Came from',gu:'ક્યાંથી આવ્યા'},
+ srcqr:{en:'QR at the shop board',gu:'દુકાનના બોર્ડનો QR'},
+ srcig:{en:'Instagram link',gu:'ઇન્સ્ટાગ્રામ લિંક'},
+ srcwa:{en:'Shared on WhatsApp',gu:'વોટ્સએપ પર શેર થયેલી લિંક'},
+ srcst:{en:'Sticker on the machine',gu:'મશીન પરનું સ્ટીકર'},
+ stEnq:{en:'New enquiries',gu:'નવી પૂછપરછ'},
+ scans7:{en:'Scans, last 7 days',gu:'છેલ્લા ૭ દિવસના સ્કેન'},
+ topMach:{en:'Most viewed machines',gu:'સૌથી વધુ જોવાયેલા મશીન'},
+ topAcc:{en:'Most asked spare parts',gu:'સૌથી વધુ પુછાયેલા છૂટા ભાગ'},
+ whereFrom:{en:'Where the scans came from',gu:'સ્કેન ક્યાંથી આવ્યા'},
+ manageMach:{en:'Your machines',gu:'તમારા મશીન'},
+ inStock:{en:'In stock',gu:'સ્ટોકમાં'},
+ outStock:{en:'Out of stock',gu:'સ્ટોકમાં નથી'},
+ statusUp:{en:'Enquiry updated',gu:'પૂછપરછ અપડેટ થઈ'},
+ stockUp:{en:'Stock updated on the QR page',gu:'QR પેજ પર સ્ટોક અપડેટ થયો'},
+ enqGot:{en:'Your enquiry is now waiting in the owner panel',gu:'તમારી પૂછપરછ માલિક પેનલમાં પહોંચી ગઈ'},
+ justNow:{en:'Just now',gu:'હમણાં જ'},
+ unknown:{en:'Not given',gu:'આપ્યું નથી'},
+ views:{en:'views',gu:'વખત જોવાયું'},
+ insNote:{en:'Numbers update on their own. Nothing to fill in.',gu:'આ આંકડા જાતે અપડેટ થાય છે. કંઈ ભરવાનું નથી.'},
+ followUp:{en:'Waiting more than 2 days',gu:'બે દિવસથી વધુ રાહ જુએ છે'},
+ upPdf:{en:'Add a catalogue PDF',gu:'કેટલોગ PDF ઉમેરો'},
+ upPdfS:{en:'Catalogue or price list, up to 10 MB',gu:'કેટલોગ કે ભાવપત્રક, ૧૦ MB સુધી'},
+ pdfsT:{en:'Catalogues & price lists',gu:'કેટલોગ અને ભાવપત્રક'},
+ pdfsS:{en:'These show on the QR page for anyone to download.',gu:'આ QR પેજ પર દેખાય છે, કોઈપણ ડાઉનલોડ કરી શકે.'},
+ pages:{en:'pages',gu:'પાનાં'},
+ dlCat:{en:'Download the catalogue',gu:'કેટલોગ ડાઉનલોડ કરો'},
+ dlCatS:{en:'Full price list as a PDF',gu:'સંપૂર્ણ ભાવપત્રક PDF માં'},
+ dlLeaf:{en:'Machine leaflet',gu:'મશીનનું પત્રક'},
+ pdfRemoved:{en:'Removed from the QR page',gu:'QR પેજ પરથી કાઢી નાખ્યું'},
+ pdfAdded:{en:'Catalogue published',gu:'કેટલોગ પ્રકાશિત'},
+ dlOff:{en:'Download is off in the prototype',gu:'નમૂનામાં ડાઉનલોડ બંધ છે'},
+ waQrT:{en:'WhatsApp QR code',gu:'વોટ્સએપ QR કોડ'},
+ scanWa:{en:'Scan to message us on WhatsApp',gu:'વોટ્સએપ પર મેસેજ કરવા સ્કેન કરો'},
+ waQrS:{en:'Paste this one at the counter and on the bill book. Scanning it opens a WhatsApp chat with the shop straight away — the farmer never has to save your number or type it in.',gu:'આ કાઉન્ટર પર અને બિલબુક પર લગાવો. સ્કેન કરતાં જ દુકાન સાથે વોટ્સએપ ચેટ ખૂલી જાય — ખેડૂતે નંબર સેવ કરવો કે લખવો પડે નહીં.'},
+ qrWhich:{en:'Two codes, two jobs',gu:'બે કોડ, બે કામ'},
+ qrWhichS:{en:'The first code shows your full catalogue. The second one starts a WhatsApp chat. Print both.',gu:'પહેલો કોડ તમારો આખો કેટલોગ બતાવે. બીજો કોડ વોટ્સએપ ચેટ ચાલુ કરે. બંને છપાવો.'},
+ remove:{en:'Remove',gu:'કાઢી નાખો'}
+};
+
+/* ---------- state ---------- */
+let lang='gu', stack=[], route='home';
+const $=id=>document.getElementById(id);
+const view=$('view'), bar=$('bar');
+const t=k=>T[k][lang];
+const L=o=>o[lang];
+const gu=s=>lang==='gu'?` lang="gu"`:'';
+const mach=id=>MACH.find(m=>m.id===id);
+const partsFor=id=>ACC.filter(a=>a.fits.includes(id));
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- router ---------- */
+function go(r,push=true){
+  if(push && r!==route) stack.push(route);
+  route=r;
+  render();
+  view.scrollTop=0;
+}
+function back(){ route = stack.pop() || 'home'; render(); view.scrollTop=0; }
+
+$('backBtn').onclick=back;
+document.querySelectorAll('.jump button').forEach(b=>b.onclick=()=>{
+  let r=b.dataset.go;
+  if(r==='owner-ins'){ window._otab='ins'; return go('owner'); }
+  if(r==='owner'){ window._otab='enq'; }
+  if(r.startsWith('enq:')){ window._otab='enq'; }
+  go(r);
+});
+$('lgEn').onclick=()=>setLang('en');
+$('lgGu').onclick=()=>setLang('gu');
+function setLang(l){
+  lang=l;
+  document.body.classList.toggle('lang-gu',l==='gu');
+  $('lgEn').classList.toggle('on',l==='en');
+  $('lgGu').classList.toggle('on',l==='gu');
+  $('brandName').textContent=t('brand');
+  $('brandSub').textContent=t('brandSub');
+  render();
+}
+
+function toast(msg){
+  const el=$('toast'); el.textContent=msg; el.classList.add('on');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),2600);
+}
+
+/* ---------- fragments ---------- */
+function machCard(m){
+  return `<button class="mcard" onclick="go('machine:${m.id}')">
+    <div class="shot">${ART[m.art]}<span class="cnt">${m.shots} ${t('photos')}</span></div>
+    <div class="mb">
+      <b${gu()}>${L(m.n)}</b>
+      <div class="mm">${m.spec[0][2]}</div>
+      <div class="pr">${m.pr}${STOCK[m.id]?'':` <span class="pill new" style="font-size:8px;padding:2px 5px"${gu()}>${t('outStock')}</span>`}</div>
+    </div></button>`;
+}
+function accRow(a){
+  return `<button class="arow" onclick="go('part:${a.id}')">
+    <span class="stencil">${ICO[a.ic]}</span>
+    <span class="ab"><b${gu()}>${L(a.n)}</b><span class="pcode">${a.code}</span></span>
+    <span class="apr">${a.pr}</span>${UI.chev}</button>`;
+}
+
+/* ---------- screens ---------- */
+function scHome(){
+  return `
+  <section class="hero"><div class="hero-in">
+    <h2${gu()}>${t('heroH')}</h2>
+    <p${gu()}>${t('heroP')}</p>
+    <span class="est"${gu()}>${t('est')}</span>
+  </div></section>
+
+  <div class="tiles">
+    <a class="tile hot" href="tel:${SHOP.phone.replace(/\s/g,'')}"><span class="ic">${UI.phone}</span><span><b${gu()}>${t('call')}</b><span${gu()}>${t('tCall')}</span></span></a>
+    <a class="tile hot" href="${waLink(waMsg())}" target="_blank" rel="noopener"><span class="ic">${UI.wa}</span><span><b${gu()}>${t('wa')}</b><span${gu()}>${t('tWa')}</span></span></a>
+    <a class="tile" href="${SHOP.maps}" target="_blank" rel="noopener"><span class="ic">${UI.pin}</span><span><b${gu()}>${t('tMap')}</b><span${gu()}>${t('tMapS')}</span></span></a>
+    <a class="tile" href="https://instagram.com/${SHOP.ig}" target="_blank" rel="noopener"><span class="ic">${UI.ig}</span><span><b${gu()}>${t('tIg')}</b><span${gu()}>${t('tIgS')}</span></span></a>
+  </div>
+
+  <div class="pad" style="padding-top:2px">
+    <div class="eyebrow"${gu()}>${t('machines')}</div>
+    <div class="grid">${MACH.slice(0,4).map(machCard).join('')}</div>
+    <button class="btn btn-ghost mt" style="width:100%" onclick="go('catalog')"${gu()}>${t('viewAll')} ${UI.chev}</button>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="pad" style="padding-top:0">
+    <div class="eyebrow"${gu()}>${t('shop')}</div>
+    <div class="mapbox">${mapSvg()}</div>
+    <div class="block" style="margin:12px 0 0">
+      <div class="kv"><span class="ic">${UI.pin}</span><span><span class="kt"${gu()}>${t('addr')}</span><span class="kd"${gu()}>${esc(L(SHOP.addr)).replace(/\n/g,'<br>')}</span></span></div>
+      <div class="kv"><span class="ic">${UI.clock}</span><span><span class="kt"${gu()}>${t('hours')}</span><span class="kd"${gu()}>${esc(L(SHOP.hours)).replace(/\n/g,'<br>')}</span></span></div>
+      <div class="kv"><span class="ic">${UI.phone}</span><span><span class="kt"${gu()}>${t('ph')}</span><span class="kd code" style="font-size:14px">${SHOP.phone}</span></span></div>
+    </div>
+  </div>
+
+  <div class="pad" style="padding-top:4px">
+    <div class="eyebrow"${gu()}>${t('quick')}</div>
+    <button class="arow" onclick="go('enquiry')"><span class="stencil">${UI.msg}</span><span class="ab"><b${gu()}>${t('enquiry')}</b><span class="pcode"${gu()}>${lang==='gu'?'વોટ્સએપ':'WHATSAPP'}</span></span>${UI.chev}</button>
+    <button class="arow" onclick="go('cats')"><span class="stencil">${UI.pdf}</span><span class="ab"><b${gu()}>${t('dlCat')}</b><span class="pcode">PDF · ${PDFS.length} ${lang==='gu'?'ફાઈલ':'FILES'}</span></span>${UI.chev}</button>
+    <button class="arow" onclick="go('about')"><span class="stencil">${UI.pin}</span><span class="ab"><b${gu()}>${t('shop')}</b><span class="pcode"${gu()}>${lang==='gu'?'નકશો · સમય':'MAP · TIMINGS'}</span></span>${UI.chev}</button>
+    <button class="arow" onclick="go('qr')"><span class="stencil">${UI.grid}</span><span class="ab"><b${gu()}>${t('qrLink')}</b><span class="pcode"${gu()}>${lang==='gu'?'પોસ્ટર · સ્ટીકર':'A5 / STICKER'}</span></span>${UI.chev}</button>
+    <button class="arow" onclick="go('owner')"><span class="stencil">${UI.up}</span><span class="ab"><b${gu()}>${t('ownerLink')}</b><span class="pcode"${gu()}>${lang==='gu'?'ફક્ત માલિક માટે':'OWNER ONLY'}</span></span>${UI.chev}</button>
+  </div>
+
+  <div class="note"${gu()}>${t('proto')}</div>
+  <div style="height:8px"></div>`;
+}
+
+function scCatalog(){
+  const cat=window._cat||'all';
+  const list=cat==='all'?MACH:MACH.filter(m=>m.cat===cat);
+  return `
+  <div class="pad" style="padding-bottom:10px">
+    <div class="eyebrow"${gu()}>${t('catalog')} · ${MACH.length}</div>
+  </div>
+  <div class="chips">${CATS.map(c=>`<button class="chip ${c[0]===cat?'on':''}" onclick="window._cat='${c[0]}';render()"${gu()}>${lang==='gu'?c[2]:c[1]}</button>`).join('')}</div>
+  <div class="pad" style="padding-top:0"><div class="grid">${list.map(machCard).join('')}</div></div>`;
+}
+
+function scMachine(id){
+  const m=mach(id); const parts=partsFor(id);
+  const shots=Array.from({length:m.shots},(_,i)=>
+    `<div class="galslide ${i%2?'alt':''}">${ART[m.art]}</div>`).join('');
+  return `
+  <div class="gal">
+    <div class="galtrack" id="gt">${shots}</div>
+    <span class="galtag"${gu()}>${t('sample')}</span>
+    <div class="galdots">${Array.from({length:m.shots},(_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>
+  </div>
+
+  <div class="plate">
+    <span class="pr2 l"></span><span class="pr2 r"></span>
+    <div class="ptitle"${gu()}>${t('specPlate')}</div>
+    <dl>${m.spec.map(s=>`<dt${gu()}>${lang==='gu'?s[1]:s[0]}</dt><dd${gu()}>${s[2]}</dd>`).join('')}</dl>
+  </div>
+
+  <div class="pad" style="padding-bottom:0">
+    <h2 class="sec"${gu()}>${L(m.n)}</h2>
+    <p class="lede" style="margin-top:6px"${gu()}>${L(m.t)}</p>
+    ${STOCK[m.id]?'':`<div class="note" style="margin:12px 0 0"${gu()}>${lang==='gu'?'આ મશીન અત્યારે સ્ટોકમાં નથી. ઓર્ડર માટે દુકાને ફોન કરો.':'This machine is out of stock right now. Call the shop to place an order.'}</div>`}
+    <div style="font-family:var(--disp);font-size:26px;font-weight:800;color:var(--orange);margin-top:9px">${m.pr}<span style="font-family:var(--body);font-size:12px;font-weight:500;color:var(--ink3);margin-left:6px"${gu()}>${lang==='gu'?'થી શરૂ':'onwards'}</span></div>
+  </div>
+
+  <div class="block">
+    <h3${gu()}>${t('about')}</h3>
+    <ul class="ul">${L(m.ab).map(b=>`<li${gu()}>${b}</li>`).join('')}</ul>
+  </div>
+
+  <div class="pad" style="padding-top:0;padding-bottom:0">
+    <button class="arow" onclick="toast('${t('dlOff')}')"><span class="stencil">${UI.pdf}</span><span class="ab"><b${gu()}>${t('dlLeaf')}</b><span class="pcode">PDF · 2 ${t('pages')} · 0.6 MB</span></span>${UI.dl}</button>
+  </div>
+
+  <div class="pad" style="padding-top:0">
+    <div class="eyebrow"${gu()}>${t('accFor')} · ${parts.length}</div>
+    ${parts.slice(0,4).map(accRow).join('')}
+    ${parts.length>4?`<button class="btn btn-ghost" style="width:100%;margin-top:4px" onclick="go('parts:${m.id}')"${gu()}>${t('accAll')} ${parts.length} ${UI.chev}</button>`:''}
+  </div>
+
+  <div class="hr"></div>
+  <div class="pad" style="padding-top:0">
+    <div class="eyebrow"${gu()}>${t('more')}</div>
+    <div class="grid">${MACH.filter(x=>x.id!==m.id).slice(0,2).map(machCard).join('')}</div>
+  </div>`;
+}
+
+function scParts(id){
+  const m=mach(id), parts=partsFor(id);
+  return `<div class="pad">
+    <div class="eyebrow"${gu()}>${L(m.n)}</div>
+    <h2 class="sec"${gu()}>${t('accFor')}</h2>
+    <p class="lede" style="margin:6px 0 14px"${gu()}>${parts.length} ${t('accCount')}</p>
+    ${parts.map(accRow).join('')}
+  </div>`;
+}
+
+function scPart(pid){
+  const a=ACC.find(x=>x.id===pid);
+  const fits=a.fits.map(f=>mach(f)).filter(Boolean);
+  return `<div class="pad">
+    <div style="display:flex;gap:13px;align-items:center;margin-bottom:14px">
+      <span class="stencil big">${ICO[a.ic]}</span>
+      <div><h2 class="sec" style="font-size:22px"${gu()}>${L(a.n)}</h2>
+      <div class="code" style="color:var(--ink3);margin-top:5px">${a.code}</div></div>
+    </div>
+    <div class="plate" style="margin:0">
+      <span class="pr2 l"></span><span class="pr2 r"></span>
+      <div class="ptitle"${gu()}>${lang==='gu'?'ભાવ અને ઉપલબ્ધતા':'Price & availability'}</div>
+      <dl>
+        <dt${gu()}>${lang==='gu'?'ભાવ':'Price'}</dt><dd>${a.pr}</dd>
+        <dt${gu()}>${lang==='gu'?'સ્ટોક':'Stock'}</dt><dd${gu()}>${lang==='gu'?'ઉપલબ્ધ':'In stock'}</dd>
+      </dl>
+    </div>
+    <div class="block" style="margin:14px 0 0"><p class="lede"${gu()}>${L(a.d)}</p></div>
+    <div class="eyebrow" style="margin-top:18px"${gu()}>${t('fitsOn')}</div>
+    ${fits.map(f=>`<button class="arow" onclick="go('machine:${f.id}')"><span class="stencil">${ART[f.art].replace('<svg','<svg style="width:26px;height:26px"')}</span><span class="ab"><b${gu()}>${L(f.n)}</b><span class="pcode">${f.spec[0][2]}</span></span>${UI.chev}</button>`).join('')}
+  </div>`;
+}
+
+function scAbout(){
+  return `<div class="pad" style="padding-bottom:0">
+    <div class="eyebrow"${gu()}>${t('shop')}</div>
+    <h2 class="sec"${gu()}>${t('brand')}</h2>
+    <p class="lede" style="margin-top:6px"${gu()}>${t('est')}</p>
+  </div>
+  <div class="pad" style="padding-top:14px;padding-bottom:0"><div class="mapbox">${mapSvg()}</div></div>
+  <div class="block">
+    <div class="kv"><span class="ic">${UI.pin}</span><span><span class="kt"${gu()}>${t('addr')}</span><span class="kd"${gu()}>${esc(L(SHOP.addr)).replace(/\n/g,'<br>')}</span></span></div>
+    <div class="kv"><span class="ic">${UI.clock}</span><span><span class="kt"${gu()}>${t('hours')}</span><span class="kd"${gu()}>${esc(L(SHOP.hours)).replace(/\n/g,'<br>')}</span></span></div>
+    <div class="kv"><span class="ic">${UI.phone}</span><span><span class="kt"${gu()}>${t('ph')}</span><span class="kd code" style="font-size:14px">${SHOP.phone}</span></span></div>
+    <div class="kv"><span class="ic">${UI.ig}</span><span><span class="kt">Instagram</span><span class="kd code" style="font-size:13.5px">@${SHOP.ig}</span></span></div>
+  </div>
+  <div class="pad" style="padding-top:0">
+    <a class="btn btn-wa" style="width:100%;margin-bottom:9px" href="${waLink(waMsg())}" target="_blank" rel="noopener"${gu()}>${UI.wa} ${t('wa')}</a>
+    <a class="btn btn-ghost" style="width:100%;margin-bottom:9px" href="${SHOP.maps}" target="_blank" rel="noopener"${gu()}>${UI.pin} ${t('tMapS')}</a>
+    <a class="btn btn-ghost" style="width:100%" href="https://instagram.com/${SHOP.ig}" target="_blank" rel="noopener"${gu()}>${UI.ig} @${SHOP.ig}</a>
+  </div>`;
+}
+
+function scEnquiry(){
+  if(window._sent) return `<div class="pad center" style="padding-top:56px">
+    <div style="width:64px;height:64px;border-radius:99px;background:#E4F1E9;color:var(--green2);display:grid;place-items:center;margin:0 auto 16px">${UI.ok.replace('viewBox','style="width:30px;height:30px" viewBox')}</div>
+    <h2 class="sec"${gu()}>${t('sent')}</h2>
+    <p class="lede" style="margin-top:8px"${gu()}>${t('sentS')}</p>
+    <button class="btn btn-ghost mt" style="width:100%" onclick="window._sent=false;window._otab='enq';go('owner')"${gu()}>${t('owner')} ${UI.chev}</button>
+    <button class="btn btn-ghost mt" style="width:100%" onclick="window._sent=false;go('home')"${gu()}>${t('back')}</button></div>`;
+  return `<div class="pad">
+    <div class="eyebrow"${gu()}>${t('enquiry')}</div>
+    <p class="lede" style="margin-bottom:16px"${gu()}>${t('enqS')}</p>
+    <label class="f"><span${gu()}>${t('fName')}</span><input class="i" id="qN" placeholder="${lang==='gu'?'દા.ત. રમેશભાઈ પટેલ':'e.g. Rameshbhai Patel'}"></label>
+    <label class="f"><span${gu()}>${t('fPhone')}</span><input class="i" id="qP" type="tel" placeholder="+91"></label>
+    <label class="f"><span${gu()}>${t('fMach')}</span><select class="i" id="qM">${MACH.map(m=>`<option value="${m.id}">${L(m.n)}</option>`).join('')}</select></label>
+    <label class="f"><span${gu()}>${t('fMsg')}</span><textarea class="i" id="qT" placeholder="${lang==='gu'?'ભાવ, ડિલિવરી કે છૂટા ભાગ વિશે…':'Price, delivery or spare parts…'}"></textarea></label>
+    <button class="btn btn-wa" style="width:100%" onclick="submitEnq()"${gu()}>${UI.wa} ${t('send')}</button>
+  </div>`;
+}
+
+function submitEnq(){
+  const n=($('qN')?.value||'').trim(), ph=($('qP')?.value||'').trim();
+  const mid=$('qM')?.value||MACH[0].id, msg=($('qT')?.value||'').trim();
+  const txt = msg || (lang==='gu'?'ભાવ અને ડિલિવરી વિશે જાણવું છે.':'Please share the price and delivery details.');
+  ENQ.unshift({id:'e'+Date.now(), name:n||(lang==='gu'?'નવો ગ્રાહક':'New customer'),
+    ph: ph||t('unknown'), mid, st:'new', src:'qr', old:false,
+    w:{en:'Just now',gu:'હમણાં જ'}, m:{en:txt,gu:txt}});
+  const mn = mach(mid);
+  const draft = lang==='gu'
+    ? `નમસ્તે ગીતા ઈન્ડસ્ટ્રીઝ,\n\nનામ: ${n||'—'}\nમોબાઈલ: ${ph||'—'}\nમશીન: ${mn?L(mn.n):'—'}\n\n${txt}`
+    : `Hello Geeta Industries,\n\nName: ${n||'—'}\nMobile: ${ph||'—'}\nMachine: ${mn?L(mn.n):'—'}\n\n${txt}`;
+  window.open(waLink(draft), '_blank');
+  window._sent=true; window._otab='enq'; window._ef='all';
+  render(); toast(t('enqGot'));
+}
+
+function scCats(){
+  return `<div class="pad">
+    <div class="eyebrow"${gu()}>${t('pdfsT')}</div>
+    <h2 class="sec"${gu()}>${t('dlCat')}</h2>
+    <p class="lede" style="margin:6px 0 16px"${gu()}>${t('dlCatS')}</p>
+    ${PDFS.map(f=>`<button class="arow" onclick="toast('${t('dlOff')}')">
+      <span class="stencil">${UI.pdf}</span>
+      <span class="ab"><b${gu()}>${L(f.n)}</b><span class="pcode">PDF · ${f.pg} ${t('pages')} · ${f.size}</span></span>
+      ${UI.dl}</button>`).join('')}
+    <div class="note" style="margin:16px 0 0"${gu()}>${lang==='gu'?'PDF ફોનમાં સેવ થઈ જાય છે — ઈન્ટરનેટ વગર પણ ખેતરમાં ખોલી શકાય.':'The PDF saves to the phone, so it opens in the field even without internet.'}</div>
+  </div>`;
+}
+
+function scQR(){
+  return `<div class="pad">
+    <div class="eyebrow"${gu()}>${t('qrT')}</div>
+    <div class="poster">
+      <div class="ph"${gu()}>${t('brand')}</div>
+      <div class="pt"${gu()}>${t('brandSub')}</div>
+      <div class="qrwrap">${QR}</div>
+      <div class="pt" style="font-weight:600"${gu()}>${t('scanFor')}</div>
+      <div class="pn">${SHOP.phone}</div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:8px;word-break:break-all;line-height:1.4">${SITE_URL.replace('https://','')}</div>
+      <div class="pf"${gu()}>${lang==='gu'?'કોઈ એપ નહીં · ફક્ત કેમેરો ખોલો':'No app needed · just open the camera'}</div>
+    </div>
+    <div class="note" style="margin:16px 0 0"${gu()}>${t('qrS')}</div>
+
+    <div class="eyebrow" style="margin-top:24px"${gu()}>${t('waQrT')}</div>
+    <div class="poster">
+      <div class="ph"${gu()}>${t('brand')}</div>
+      <div class="pt"${gu()}>${t('brandSub')}</div>
+      <div class="qrwrap" style="border-color:var(--orange)">${QRWA}</div>
+      <div class="pt" style="font-weight:600"${gu()}>${t('scanWa')}</div>
+      <div class="pn">+91 ${SHOP.wa.slice(2,7)} ${SHOP.wa.slice(7)}</div>
+      <div class="pf"${gu()}>${lang==='gu'?'નંબર સેવ કરવાની જરૂર નથી':'No need to save the number'}</div>
+    </div>
+    <div class="note" style="margin:16px 0 0"${gu()}>${t('waQrS')}</div>
+
+    <div class="block" style="margin:16px 0 0">
+      <h3${gu()}>${t('qrWhich')}</h3>
+      <p class="lede" style="font-size:13px"${gu()}>${t('qrWhichS')}</p>
+    </div>
+    <button class="btn btn-call mt" style="width:100%" onclick="downloadQR(1200,'geeta-industries-qr.png')"${gu()}>${UI.dl} ${lang==='gu'?'QR કોડ ડાઉનલોડ કરો':'Download the QR code'}</button>
+    <a class="btn btn-ghost mt" style="width:100%" href="${SITE_URL}" target="_blank" rel="noopener"${gu()}>${lang==='gu'?'લિંક ખોલીને ચકાસો':'Open the link to test it'}</a>
+    <button class="btn btn-ghost mt" style="width:100%" onclick="window.print()"${gu()}>${lang==='gu'?'આ પોસ્ટર છાપો':'Print this poster'}</button>
+  </div>`;
+}
+
+function scOwner(){
+  const tab=window._otab||'enq';
+  const nNew=ENQ.filter(e=>e.st==='new').length;
+  let body='';
+  if(tab==='enq') body=ownEnq();
+  else if(tab==='mach') body=ownMach();
+  else body=ownIns();
+  return `<div class="pad">
+    <div class="eyebrow"${gu()}>${t('owner')}</div>
+    <div class="tabs">
+      <button class="${tab==='enq'?'on':''}" onclick="window._otab='enq';render()"${gu()}>${t('tabEnq')}${nNew?`<span class="badge">${nNew}</span>`:''}</button>
+      <button class="${tab==='mach'?'on':''}" onclick="window._otab='mach';render()"${gu()}>${t('tabMach')}</button>
+      <button class="${tab==='ins'?'on':''}" onclick="window._otab='ins';render()"${gu()}>${t('tabIns')}</button>
+    </div>
+    ${body}
+  </div>`;
+}
+
+function ownEnq(){
+  const f=window._ef||'all';
+  const counts={all:ENQ.length,new:0,called:0,done:0};
+  ENQ.forEach(e=>counts[e.st]++);
+  const list=f==='all'?ENQ:ENQ.filter(e=>e.st===f);
+  const F=[['all',t('fAll')],['new',t('sNew')],['called',t('sCalled')],['done',t('sDone')]];
+  return `
+  <div class="stats">
+    <div class="stat hot"><b>${counts.new}</b><span${gu()}>${t('stEnq')}</span></div>
+    <div class="stat"><b>318</b><span${gu()}>${t('stS')}</span></div>
+  </div>
+  <div style="display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;scrollbar-width:none">
+    ${F.map(x=>`<button class="chip ${f===x[0]?'on':''}" onclick="window._ef='${x[0]}';render()"${gu()}>${x[1]} ${counts[x[0]]}</button>`).join('')}
+  </div>
+  ${list.length?list.map(enqRow).join(''):`<div class="empty">${UI.msg}<b${gu()}>${t('noEnq')}</b><span${gu()}>${t('noEnqS')}</span></div>`}`;
+}
+
+function enqRow(e){
+  const m=mach(e.mid);
+  return `<button class="erow ${e.st==='new'?'unread':''}" onclick="go('enq:${e.id}')">
+    <div class="eh"><b>${esc(e.name)}</b><span class="pill ${e.st}"${gu()}>${t(e.st==='new'?'sNew':e.st==='called'?'sCalled':'sDone')}</span></div>
+    <div class="em"${gu()}>${m?L(m.n):''}</div>
+    <div class="eq"${gu()}>${esc(L(e.m))}</div>
+    <div class="ef"><span class="code">${e.ph}</span><span class="tm"${gu()}>${L(e.w)}</span>${UI.chev}</div>
+  </button>`;
+}
+
+function scEnqDetail(id){
+  const e=ENQ.find(x=>x.id===id); if(!e) return '';
+  const m=mach(e.mid);
+  const acts = e.st==='new'
+    ? `<button class="btn btn-ghost" style="width:100%;margin-bottom:9px" onclick="setSt('${e.id}','called')"${gu()}>${UI.ok} ${t('markCalled')}</button>`
+    : e.st==='called'
+    ? `<button class="btn btn-ghost" style="width:100%;margin-bottom:9px" onclick="setSt('${e.id}','done')"${gu()}>${UI.ok} ${t('markDone')}</button>`
+    : `<button class="btn btn-ghost" style="width:100%;margin-bottom:9px" onclick="setSt('${e.id}','new')"${gu()}>${t('reopen')}</button>`;
+  return `<div class="pad">
+    <div class="eyebrow"${gu()}>${t('tabEnq')}</div>
+    <div style="display:flex;align-items:center;gap:9px">
+      <h2 class="sec" style="flex:1">${esc(e.name)}</h2>
+      <span class="pill ${e.st}"${gu()}>${t(e.st==='new'?'sNew':e.st==='called'?'sCalled':'sDone')}</span>
+    </div>
+    <div class="code" style="color:var(--ink3);margin-top:6px">${e.ph} · ${esc(L(e.w))}</div>
+
+    <div class="block" style="margin:14px 0 0"><p class="lede"${gu()}>${esc(L(e.m))}</p></div>
+
+    <div class="block" style="margin:12px 0 0">
+      <div class="kv"><span class="ic">${UI.grid}</span><span><span class="kt"${gu()}>${t('interested')}</span><span class="kd"${gu()}>${m?L(m.n):'—'}</span></span></div>
+      <div class="kv"><span class="ic">${UI.pin}</span><span><span class="kt"${gu()}>${t('source')}</span><span class="kd"${gu()}>${t('src'+e.src)}</span></span></div>
+    </div>
+
+    ${m?`<button class="arow" style="margin-top:12px" onclick="go('machine:${m.id}')"><span class="stencil">${ART[m.art].replace('<svg','<svg style="width:26px;height:26px"')}</span><span class="ab"><b${gu()}>${L(m.n)}</b><span class="pcode">${m.spec[0][2]} · ${m.pr}</span></span>${UI.chev}</button>`:''}
+
+    <div style="margin-top:14px">${acts}</div>
+  </div>`;
+}
+function setSt(id,st){
+  const e=ENQ.find(x=>x.id===id); if(!e)return;
+  e.st=st; toast(t('statusUp')); render();
+}
+
+function ownMach(){
+  return `
+  <div class="eyebrow"${gu()}>${t('manageMach')} · ${MACH.length}</div>
+  ${MACH.map(m=>`<button class="arow" onclick="toggleStock('${m.id}')">
+    <span class="stencil">${ART[m.art].replace('<svg','<svg style="width:26px;height:26px"')}</span>
+    <span class="ab"><b${gu()}>${L(m.n)}</b><span class="pcode"${gu()}>${m.pr} · ${partsFor(m.id).length} ${lang==='gu'?'ભાગ':'PARTS'}</span></span>
+    <span class="pill ${STOCK[m.id]?'done':'new'}"${gu()}>${STOCK[m.id]?t('inStock'):t('outStock')}</span>
+  </button>`).join('')}
+
+  <div class="eyebrow" style="margin-top:20px"${gu()}>${t('addMach')}</div>
+  <label class="f"><span${gu()}>${lang==='gu'?'મશીનનું નામ':'Machine name'}</span><input class="i" value="${lang==='gu'?'સીડ ડ્રિલ ૯ ટાઈન':'Seed Drill 9 Tine'}"></label>
+  <label class="f"><span${gu()}>${lang==='gu'?'ભાવ':'Price'}</span><input class="i" value="₹ 44,000"></label>
+  <div class="drop" id="dp" onclick="mockUp('dp','${t('uploaded')} · 4 ${t('photos')}')">
+    ${UI.up}<b${gu()}>${t('upPhoto')}</b><span${gu()}>${t('upPhotoS')}</span>
+    <div class="prog"><i></i></div>
+  </div>
+  <button class="btn btn-call" style="width:100%;margin-top:6px" onclick="toast('${t('saved')}')"${gu()}>${t('save')}</button>
+
+  <div class="eyebrow" style="margin-top:24px"${gu()}>${t('pdfsT')} · ${PDFS.length}</div>
+  <p class="lede" style="font-size:13px;margin-bottom:12px"${gu()}>${t('pdfsS')}</p>
+  ${PDFS.length?PDFS.map(f=>`<div class="arow" style="cursor:default">
+      <span class="stencil">${UI.pdf}</span>
+      <span class="ab"><b${gu()}>${L(f.n)}</b><span class="pcode">PDF · ${f.pg} ${t('pages')} · ${f.size}</span>
+      <span class="pcode" style="letter-spacing:0;text-transform:none"${gu()}>${L(f.w)}</span></span>
+      <button class="chip" style="padding:5px 10px;font-size:11px" onclick="rmPdf('${f.id}')"${gu()}>${t('remove')}</button>
+    </div>`).join(''):`<div class="empty">${UI.pdf}<b${gu()}>${t('noEnq')}</b><span${gu()}>${t('pdfsS')}</span></div>`}
+
+  <div class="drop" id="dc" style="margin-top:4px" onclick="mockUp('dc','${t('uploaded')} · 2.6 MB')">
+    ${UI.pdf.replace('viewBox','style="width:24px;height:24px" viewBox')}<b${gu()}>${t('upPdf')}</b><span${gu()}>${t('upPdfS')}</span>
+    <div class="prog"><i></i></div>
+  </div>
+
+  <div class="note" style="margin:14px 0 0"${gu()}>${lang==='gu'?'ફોટા અને PDF સીધા મોબાઈલમાંથી ચડે છે. સેવ કરતાં જ QR પેજ પર દેખાવા લાગે — ફરી અમને કહેવાની જરૂર નહીં.':'Photos and PDFs upload straight from your phone. The moment you save, they appear on the QR page — no need to call us each time.'}</div>`;
+}
+function rmPdf(id){ PDFS=PDFS.filter(f=>f.id!==id); toast(t('pdfRemoved')); render(); }
+function toggleStock(id){ STOCK[id]=STOCK[id]?0:1; toast(t('stockUp')); render(); }
+
+function ownIns(){
+  const mx=Math.max(...SCANS7), W=300, H=76, bw=26, gap=(W-7*bw)/6;
+  const bars=SCANS7.map((v,i)=>{
+    const h=Math.round(v/mx*H), x=i*(bw+gap), y=H-h;
+    return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4" fill="${i===6?'#DE5A14':'#1E7A45'}" opacity="${i===6?1:.28+i*.10}"/>
+    <text x="${x+bw/2}" y="${H+13}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" fill="#8A8471">${L(DAY7)[i]}</text>`;
+  }).join('');
+  const mmax=TOPM[0][1], amax=TOPA[0][1];
+  return `
+  <div class="stats">
+    <div class="stat"><b>318</b><span${gu()}>${t('stS')}</span></div>
+    <div class="stat"><b>${PDFS.length}</b><span${gu()}>${t('stV')}</span></div>
+  </div>
+
+  <div class="block" style="margin:0 0 12px">
+    <h3${gu()}>${t('scans7')}</h3>
+    <svg class="spark" viewBox="0 0 300 96" xmlns="http://www.w3.org/2000/svg">${bars}</svg>
+  </div>
+
+  <div class="block" style="margin:0 0 12px">
+    <h3${gu()}>${t('topMach')}</h3>
+    ${TOPM.map(([id,v])=>{const m=mach(id);return `<div class="barrow"><span class="bn"${gu()}>${L(m.n)}</span><span class="bartrack"><i style="width:${Math.round(v/mmax*100)}%"></i></span><span class="bv">${v}</span></div>`}).join('')}
+  </div>
+
+  <div class="block" style="margin:0 0 12px">
+    <h3${gu()}>${t('topAcc')}</h3>
+    ${TOPA.map(([id,v])=>{const a=ACC.find(x=>x.id===id);return `<div class="barrow"><span class="bn"${gu()}>${L(a.n)}</span><span class="bartrack"><i class="o" style="width:${Math.round(v/amax*100)}%"></i></span><span class="bv">${v}</span></div>`}).join('')}
+  </div>
+
+  <div class="block" style="margin:0">
+    <h3${gu()}>${t('whereFrom')}</h3>
+    ${SRC.map(([k,v])=>`<div class="barrow"><span class="bn"${gu()}>${t('src'+k)}</span><span class="bartrack"><i style="width:${v}%"></i></span><span class="bv">${v}%</span></div>`).join('')}
+  </div>
+
+  <div class="note" style="margin:14px 0 0"${gu()}>${t('insNote')}</div>`;
+}
+
+function mockUp(id,doneTxt){
+  const el=$(id); if(el.classList.contains('done'))return;
+  const p=el.querySelector('.prog i');
+  el.querySelector('span').textContent=t('uploading');
+  requestAnimationFrame(()=>p.style.width='100%');
+  setTimeout(()=>{ el.classList.add('done'); el.querySelector('span').textContent=doneTxt; },1700);
+}
+
+function mapSvg(){
+  return `<svg viewBox="0 0 340 150" xmlns="http://www.w3.org/2000/svg">
+  <rect width="340" height="150" fill="#DFE3D9"/>
+  <path d="M0 96h340M0 40h340M96 0v150M232 0v150" stroke="#CFD4C7" stroke-width="9"/>
+  <path d="M0 96h340M96 0v150" stroke="#F3F4EE" stroke-width="5"/>
+  <path d="M0 40h340M232 0v150" stroke="#F3F4EE" stroke-width="3"/>
+  <rect x="16" y="52" width="62" height="32" fill="#D3D8CB"/><rect x="118" y="12" width="86" height="18" fill="#D3D8CB"/>
+  <rect x="252" y="52" width="70" height="32" fill="#D3D8CB"/><rect x="118" y="110" width="94" height="28" fill="#D3D8CB"/>
+  <path d="M0 130q80-26 170-8t170-6" stroke="#BFCBB4" stroke-width="7" fill="none"/>
+  <g transform="translate(158 62)">
+    <path d="M0 26c0 0-14-13-14-22a14 14 0 0128 0c0 9-14 22-14 22z" fill="#DE5A14"/>
+    <circle cx="0" cy="4" r="5" fill="#fff"/>
+  </g>
+  <text x="176" y="60" font-family="IBM Plex Mono, monospace" font-size="9" fill="#4B5147" letter-spacing="1">GEETA IND.</text>
+  <text x="8" y="146" font-family="IBM Plex Mono, monospace" font-size="7.5" fill="#7B8177" letter-spacing="1">TALALA ROAD · GIDC</text>
+</svg>`;
+}
+
+/* ---------- action bar ---------- */
+function renderBar(){
+  const m=route.startsWith('machine:')?mach(route.split(':')[1]):null;
+  if(route.startsWith('enq:')){
+    const e=ENQ.find(x=>x.id===route.split(':')[1]);
+    const em=mach(e.mid);
+    const reply = lang==='gu'
+      ? `નમસ્તે ${e.name},\n\nગીતા ઈન્ડસ્ટ્રીઝ તરફથી. તમે ${em?L(em.n):'મશીન'} વિશે પૂછ્યું હતું.`
+      : `Hello ${e.name},\n\nThis is Geeta Industries. You had asked about the ${em?L(em.n):'machine'}.`;
+    bar.innerHTML=`<a class="btn btn-call" href="tel:${e.ph.replace(/\s/g,'')}"${gu()}>${UI.phone} ${t('callCust')}</a>
+      <a class="btn btn-wa" style="flex:0 0 auto;padding-left:18px;padding-right:18px" href="https://wa.me/91${e.ph.replace(/\D/g,'').slice(-10)}?text=${encodeURIComponent(reply)}" target="_blank" rel="noopener" aria-label="WhatsApp">${UI.wa}</a>`;
+    return;
+  }
+  if(route==='owner'||route==='qr'){
+    bar.innerHTML=`<button class="btn btn-ghost" style="width:100%" onclick="go('home')"${gu()}>${t('back')}</button>`;
+    return;
+  }
+  let msg = waMsg();
+  if(m) msg = waMsg('machine', `${L(m.n)} (${m.spec[0][2]}) — ${m.pr}`);
+  else if(route.startsWith('part:')){
+    const pa=ACC.find(x=>x.id===route.split(':')[1]);
+    if(pa) msg = waMsg('part', `${L(pa.n)} — ${pa.code}`);
+  }
+  else if(route==='cats') msg = waMsg('cat');
+  bar.innerHTML=`
+   <a class="btn btn-call" href="tel:${SHOP.phone.replace(/\s/g,'')}"${gu()}>${UI.phone} ${t('callShop')}</a>
+   <a class="btn btn-wa" style="flex:0 0 auto;padding-left:18px;padding-right:18px" href="${waLink(msg)}" target="_blank" rel="noopener" aria-label="WhatsApp">${UI.wa}</a>`;
+  if(m) bar.querySelector('.btn-call').innerHTML=UI.phone+' '+t('askPrice');
+}
+
+/* ---------- render ---------- */
+function render(){
+  const [k,arg]=route.split(':');
+  let html='';
+  if(k==='home') html=scHome();
+  else if(k==='catalog') html=scCatalog();
+  else if(k==='machine') html=scMachine(arg);
+  else if(k==='parts') html=scParts(arg);
+  else if(k==='part') html=scPart(arg);
+  else if(k==='about') html=scAbout();
+  else if(k==='enquiry') html=scEnquiry();
+  else if(k==='qr') html=scQR();
+  else if(k==='cats') html=scCats();
+  else if(k==='owner') html=scOwner();
+  else if(k==='enq') html=scEnqDetail(arg);
+  view.innerHTML=`<div class="pad-b">${html}</div>`;
+  $('backBtn').hidden = route==='home';
+  renderBar();
+  const gt=$('gt');
+  if(gt){
+    const dots=[...document.querySelectorAll('.galdots i')];
+    gt.onscroll=()=>{const i=Math.round(gt.scrollLeft/gt.clientWidth);dots.forEach((d,j)=>d.classList.toggle('on',j===i))};
+  }
+}
+
+const QRWA = (function(){
+  const n=29, d="M2 2h7v1h-7zM11 2h1v1h-1zM13 2h1v1h-1zM18 2h1v1h-1zM20 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM26 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM10 4h1v1h-1zM12 4h1v1h-1zM17 4h1v1h-1zM20 4h1v1h-1zM22 4h3v1h-3zM26 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM10 5h2v1h-2zM14 5h4v1h-4zM20 5h1v1h-1zM22 5h3v1h-3zM26 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM11 6h4v1h-4zM16 6h1v1h-1zM20 6h1v1h-1zM22 6h3v1h-3zM26 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM11 7h2v1h-2zM15 7h1v1h-1zM18 7h1v1h-1zM20 7h1v1h-1zM26 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h7v1h-7zM10 9h2v1h-2zM2 10h1v1h-1zM8 10h1v1h-1zM10 10h3v1h-3zM15 10h1v1h-1zM17 10h4v1h-4zM23 10h3v1h-3zM2 11h3v1h-3zM6 11h1v1h-1zM10 11h1v1h-1zM14 11h1v1h-1zM17 11h2v1h-2zM21 11h5v1h-5zM3 12h1v1h-1zM6 12h4v1h-4zM12 12h2v1h-2zM16 12h3v1h-3zM20 12h4v1h-4zM25 12h2v1h-2zM2 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM16 13h1v1h-1zM19 13h3v1h-3zM23 13h1v1h-1zM26 13h1v1h-1zM2 14h2v1h-2zM5 14h2v1h-2zM8 14h3v1h-3zM14 14h1v1h-1zM16 14h1v1h-1zM19 14h2v1h-2zM26 14h1v1h-1zM2 15h1v1h-1zM6 15h2v1h-2zM11 15h2v1h-2zM14 15h1v1h-1zM16 15h2v1h-2zM21 15h1v1h-1zM25 15h1v1h-1zM2 16h1v1h-1zM5 16h1v1h-1zM8 16h2v1h-2zM14 16h2v1h-2zM17 16h3v1h-3zM21 16h3v1h-3zM25 16h2v1h-2zM2 17h1v1h-1zM4 17h1v1h-1zM9 17h3v1h-3zM16 17h2v1h-2zM21 17h1v1h-1zM23 17h2v1h-2zM26 17h1v1h-1zM2 18h1v1h-1zM6 18h3v1h-3zM15 18h1v1h-1zM18 18h5v1h-5zM24 18h1v1h-1zM10 19h1v1h-1zM12 19h3v1h-3zM16 19h1v1h-1zM18 19h1v1h-1zM22 19h1v1h-1zM2 20h7v1h-7zM11 20h3v1h-3zM18 20h1v1h-1zM20 20h1v1h-1zM22 20h1v1h-1zM26 20h1v1h-1zM2 21h1v1h-1zM8 21h1v1h-1zM12 21h2v1h-2zM16 21h1v1h-1zM18 21h1v1h-1zM22 21h1v1h-1zM2 22h1v1h-1zM4 22h3v1h-3zM8 22h1v1h-1zM15 22h1v1h-1zM17 22h6v1h-6zM24 22h1v1h-1zM2 23h1v1h-1zM4 23h3v1h-3zM8 23h1v1h-1zM11 23h4v1h-4zM17 23h4v1h-4zM25 23h2v1h-2zM2 24h1v1h-1zM4 24h3v1h-3zM8 24h1v1h-1zM12 24h1v1h-1zM14 24h2v1h-2zM23 24h2v1h-2zM26 24h1v1h-1zM2 25h1v1h-1zM8 25h1v1h-1zM11 25h4v1h-4zM16 25h1v1h-1zM18 25h2v1h-2zM21 25h2v1h-2zM26 25h1v1h-1zM2 26h7v1h-7zM10 26h2v1h-2zM13 26h1v1h-1zM16 26h1v1h-1zM18 26h1v1h-1zM20 26h1v1h-1zM23 26h1v1h-1zM26 26h1v1h-1z";
+  return `<svg viewBox="0 0 ${n} ${n}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect width="${n}" height="${n}" fill="#fff"/><path d="${d}" fill="#14512F"/></svg>`;
+})();
+
+function waMsg(kind, extra){
+  if(lang==='gu'){
+    if(kind==='machine') return `નમસ્તે ગીતા ઈન્ડસ્ટ્રીઝ,\n\nમારે આ મશીન વિશે જાણવું છે:\n${extra}\n\nભાવ અને ડિલિવરી વિશે માહિતી મોકલશો.`;
+    if(kind==='part')    return `નમસ્તે ગીતા ઈન્ડસ્ટ્રીઝ,\n\nમારે આ છૂટો ભાગ જોઈએ છે:\n${extra}\n\nસ્ટોકમાં છે? ભાવ જણાવશો.`;
+    if(kind==='cat')     return `નમસ્તે ગીતા ઈન્ડસ્ટ્રીઝ,\n\nમારે તમારું આખું કેટલોગ અને ભાવપત્રક જોઈએ છે.`;
+    return `નમસ્તે ગીતા ઈન્ડસ્ટ્રીઝ,\n\nમેં તમારો QR કેટલોગ જોયો. મારે મશીન વિશે માહિતી જોઈએ છે.`;
+  }
+  if(kind==='machine') return `Hello Geeta Industries,\n\nI want to know about this machine:\n${extra}\n\nPlease share the price and delivery details.`;
+  if(kind==='part')    return `Hello Geeta Industries,\n\nI need this spare part:\n${extra}\n\nIs it in stock? Please share the price.`;
+  if(kind==='cat')     return `Hello Geeta Industries,\n\nPlease send me your full catalogue and price list.`;
+  return `Hello Geeta Industries,\n\nI saw your QR catalogue. I would like to know more about your machines.`;
+}
+function waLink(msg){ return 'https://wa.me/'+SHOP.wa+'?text='+encodeURIComponent(msg); }
+
+const SITE_URL = "https://prototype-geeta-industries.sangam-infoanalytics.workers.dev/";
+const QR_N = 41;
+const QR_D = "M2 2h7v1h-7zM11 2h1v1h-1zM13 2h1v1h-1zM16 2h2v1h-2zM25 2h2v1h-2zM28 2h1v1h-1zM30 2h1v1h-1zM32 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM11 3h1v1h-1zM13 3h1v1h-1zM17 3h4v1h-4zM22 3h2v1h-2zM26 3h1v1h-1zM29 3h2v1h-2zM32 3h1v1h-1zM38 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM10 4h2v1h-2zM13 4h1v1h-1zM15 4h4v1h-4zM23 4h3v1h-3zM30 4h1v1h-1zM32 4h1v1h-1zM34 4h3v1h-3zM38 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM10 5h1v1h-1zM15 5h6v1h-6zM22 5h1v1h-1zM24 5h1v1h-1zM26 5h3v1h-3zM30 5h1v1h-1zM32 5h1v1h-1zM34 5h3v1h-3zM38 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h2v1h-2zM19 6h4v1h-4zM25 6h1v1h-1zM30 6h1v1h-1zM32 6h1v1h-1zM34 6h3v1h-3zM38 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM12 7h2v1h-2zM19 7h1v1h-1zM22 7h1v1h-1zM24 7h1v1h-1zM27 7h1v1h-1zM29 7h2v1h-2zM32 7h1v1h-1zM38 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM30 8h1v1h-1zM32 8h7v1h-7zM10 9h2v1h-2zM14 9h1v1h-1zM17 9h4v1h-4zM22 9h3v1h-3zM29 9h1v1h-1zM2 10h1v1h-1zM4 10h5v1h-5zM13 10h3v1h-3zM17 10h2v1h-2zM23 10h1v1h-1zM25 10h1v1h-1zM27 10h2v1h-2zM32 10h5v1h-5zM3 11h4v1h-4zM10 11h2v1h-2zM17 11h1v1h-1zM19 11h2v1h-2zM22 11h1v1h-1zM25 11h1v1h-1zM30 11h2v1h-2zM33 11h1v1h-1zM37 11h1v1h-1zM8 12h2v1h-2zM11 12h1v1h-1zM13 12h1v1h-1zM15 12h5v1h-5zM21 12h1v1h-1zM24 12h1v1h-1zM28 12h3v1h-3zM32 12h2v1h-2zM35 12h4v1h-4zM2 13h1v1h-1zM6 13h2v1h-2zM12 13h1v1h-1zM17 13h1v1h-1zM20 13h4v1h-4zM28 13h1v1h-1zM30 13h1v1h-1zM32 13h1v1h-1zM34 13h1v1h-1zM38 13h1v1h-1zM2 14h7v1h-7zM10 14h1v1h-1zM13 14h2v1h-2zM17 14h1v1h-1zM19 14h1v1h-1zM21 14h1v1h-1zM24 14h1v1h-1zM26 14h2v1h-2zM29 14h10v1h-10zM3 15h2v1h-2zM7 15h1v1h-1zM10 15h2v1h-2zM13 15h3v1h-3zM21 15h2v1h-2zM25 15h3v1h-3zM30 15h2v1h-2zM33 15h1v1h-1zM2 16h1v1h-1zM5 16h1v1h-1zM8 16h2v1h-2zM12 16h2v1h-2zM15 16h1v1h-1zM17 16h2v1h-2zM20 16h1v1h-1zM22 16h1v1h-1zM24 16h1v1h-1zM27 16h1v1h-1zM29 16h1v1h-1zM31 16h5v1h-5zM37 16h2v1h-2zM2 17h3v1h-3zM7 17h1v1h-1zM9 17h1v1h-1zM11 17h1v1h-1zM13 17h1v1h-1zM15 17h4v1h-4zM26 17h1v1h-1zM28 17h3v1h-3zM32 17h3v1h-3zM3 18h2v1h-2zM6 18h1v1h-1zM8 18h1v1h-1zM11 18h2v1h-2zM14 18h1v1h-1zM16 18h1v1h-1zM20 18h5v1h-5zM26 18h9v1h-9zM36 18h2v1h-2zM2 19h1v1h-1zM5 19h1v1h-1zM15 19h1v1h-1zM17 19h2v1h-2zM23 19h1v1h-1zM25 19h1v1h-1zM27 19h1v1h-1zM30 19h1v1h-1zM33 19h1v1h-1zM36 19h2v1h-2zM2 20h2v1h-2zM5 20h1v1h-1zM7 20h6v1h-6zM14 20h1v1h-1zM19 20h2v1h-2zM22 20h3v1h-3zM26 20h1v1h-1zM28 20h2v1h-2zM32 20h1v1h-1zM36 20h3v1h-3zM2 21h1v1h-1zM4 21h4v1h-4zM9 21h1v1h-1zM11 21h1v1h-1zM14 21h2v1h-2zM18 21h1v1h-1zM23 21h1v1h-1zM28 21h1v1h-1zM30 21h1v1h-1zM33 21h2v1h-2zM38 21h1v1h-1zM2 22h4v1h-4zM7 22h4v1h-4zM13 22h3v1h-3zM19 22h1v1h-1zM24 22h1v1h-1zM26 22h3v1h-3zM30 22h3v1h-3zM34 22h3v1h-3zM3 23h1v1h-1zM5 23h1v1h-1zM7 23h1v1h-1zM9 23h1v1h-1zM11 23h1v1h-1zM18 23h8v1h-8zM30 23h1v1h-1zM35 23h1v1h-1zM2 24h1v1h-1zM4 24h1v1h-1zM6 24h1v1h-1zM8 24h2v1h-2zM14 24h1v1h-1zM16 24h4v1h-4zM23 24h1v1h-1zM26 24h1v1h-1zM28 24h3v1h-3zM33 24h3v1h-3zM37 24h2v1h-2zM5 25h1v1h-1zM9 25h1v1h-1zM11 25h1v1h-1zM13 25h3v1h-3zM17 25h1v1h-1zM19 25h3v1h-3zM23 25h2v1h-2zM28 25h1v1h-1zM30 25h5v1h-5zM37 25h2v1h-2zM2 26h8v1h-8zM13 26h1v1h-1zM16 26h3v1h-3zM23 26h1v1h-1zM26 26h3v1h-3zM31 26h2v1h-2zM34 26h1v1h-1zM36 26h1v1h-1zM2 27h1v1h-1zM4 27h1v1h-1zM7 27h1v1h-1zM10 27h2v1h-2zM14 27h1v1h-1zM17 27h1v1h-1zM20 27h1v1h-1zM22 27h4v1h-4zM28 27h1v1h-1zM33 27h1v1h-1zM35 27h1v1h-1zM2 28h1v1h-1zM4 28h1v1h-1zM8 28h5v1h-5zM14 28h1v1h-1zM16 28h3v1h-3zM20 28h2v1h-2zM23 28h2v1h-2zM26 28h6v1h-6zM33 28h1v1h-1zM37 28h2v1h-2zM2 29h1v1h-1zM4 29h1v1h-1zM6 29h1v1h-1zM9 29h1v1h-1zM11 29h1v1h-1zM14 29h1v1h-1zM17 29h1v1h-1zM21 29h5v1h-5zM28 29h1v1h-1zM31 29h1v1h-1zM38 29h1v1h-1zM2 30h1v1h-1zM4 30h2v1h-2zM7 30h3v1h-3zM11 30h3v1h-3zM15 30h1v1h-1zM17 30h1v1h-1zM19 30h1v1h-1zM21 30h2v1h-2zM24 30h2v1h-2zM27 30h12v1h-12zM10 31h2v1h-2zM13 31h1v1h-1zM16 31h1v1h-1zM18 31h1v1h-1zM20 31h3v1h-3zM24 31h2v1h-2zM29 31h2v1h-2zM34 31h2v1h-2zM2 32h7v1h-7zM11 32h1v1h-1zM13 32h2v1h-2zM16 32h3v1h-3zM20 32h1v1h-1zM24 32h1v1h-1zM27 32h1v1h-1zM30 32h1v1h-1zM32 32h1v1h-1zM34 32h1v1h-1zM36 32h3v1h-3zM2 33h1v1h-1zM8 33h1v1h-1zM10 33h4v1h-4zM18 33h1v1h-1zM22 33h1v1h-1zM30 33h1v1h-1zM34 33h2v1h-2zM37 33h2v1h-2zM2 34h1v1h-1zM4 34h3v1h-3zM8 34h1v1h-1zM10 34h1v1h-1zM12 34h6v1h-6zM20 34h1v1h-1zM22 34h3v1h-3zM26 34h9v1h-9zM36 34h2v1h-2zM2 35h1v1h-1zM4 35h3v1h-3zM8 35h1v1h-1zM10 35h2v1h-2zM13 35h1v1h-1zM15 35h5v1h-5zM23 35h1v1h-1zM25 35h2v1h-2zM28 35h2v1h-2zM31 35h2v1h-2zM34 35h1v1h-1zM36 35h1v1h-1zM38 35h1v1h-1zM2 36h1v1h-1zM4 36h3v1h-3zM8 36h1v1h-1zM10 36h2v1h-2zM13 36h1v1h-1zM19 36h1v1h-1zM22 36h1v1h-1zM28 36h1v1h-1zM31 36h1v1h-1zM35 36h4v1h-4zM2 37h1v1h-1zM8 37h1v1h-1zM11 37h1v1h-1zM15 37h2v1h-2zM18 37h1v1h-1zM20 37h1v1h-1zM23 37h4v1h-4zM28 37h1v1h-1zM30 37h1v1h-1zM32 37h1v1h-1zM34 37h1v1h-1zM38 37h1v1h-1zM2 38h7v1h-7zM10 38h3v1h-3zM19 38h1v1h-1zM22 38h1v1h-1zM24 38h1v1h-1zM26 38h3v1h-3zM31 38h1v1h-1zM34 38h5v1h-5z";
+const QR = `<svg viewBox="0 0 ${QR_N} ${QR_N}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect width="${QR_N}" height="${QR_N}" fill="#fff"/><path d="${QR_D}" fill="#14512F"/></svg>`;
+
+function qrSvgString(px){
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}" viewBox="-2 -2 ${QR_N+4} ${QR_N+4}" shape-rendering="crispEdges"><rect x="-2" y="-2" width="${QR_N+4}" height="${QR_N+4}" fill="#ffffff"/><path d="${QR_D}" fill="#14512F"/></svg>`;
+}
+function downloadQR(px, name){
+  try{
+    const img = new Image();
+    img.onload = function(){
+      const c = document.createElement('canvas');
+      c.width = px; c.height = px;
+      const x = c.getContext('2d');
+      x.fillStyle = '#ffffff'; x.fillRect(0,0,px,px);
+      x.drawImage(img,0,0,px,px);
+      const a = document.createElement('a');
+      a.href = c.toDataURL('image/png');
+      a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      toast(lang==='gu' ? 'QR કોડ ડાઉનલોડ થયો' : 'QR code downloaded');
+    };
+    img.onerror = function(){ toast(lang==='gu' ? 'ડાઉનલોડ થઈ શક્યું નહીં' : 'Could not download'); };
+    img.src = 'data:image/svg+xml;base64,' + btoa(qrSvgString(px));
+  }catch(e){ toast(lang==='gu' ? 'ડાઉનલોડ થઈ શક્યું નહીં' : 'Could not download'); }
+}
+
+// Gujarati loads first — most visitors will be rural Gujarati speakers.
+// The EN button switches the whole app to English at any time.
+setLang('gu');
+</script>
+<a class="portfolio-back" href="../../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:rgba(20,81,47,.94);color:#fff;font:600 12px/1.2 'Instrument Sans',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.25);">← Back to portfolios</a>
+</body>
+</html>
