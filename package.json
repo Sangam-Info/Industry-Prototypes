@@ -1,0 +1,10 @@
+{
+  "name": "industry-prototypes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sangam InfoAnalytics client prototype showcase (static site on Cloudflare Workers)",
+  "scripts": {
+    "build": "echo \"Static site: no build step needed. Serving ./public\"",
+    "deploy": "npx wrangler deploy"
+  }
+}

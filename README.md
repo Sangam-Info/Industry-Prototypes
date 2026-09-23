@@ -12,7 +12,16 @@ Sangam InfoAnalytics client prototype showcase, deployed on Cloudflare Workers (
 
 ## Deploy
 
-Cloudflare dashboard settings: Build command empty, Deploy command `npx wrangler deploy`.
+Cloudflare dashboard → Workers & Pages → industry-prototypes → Settings → Build:
+
+| Field | Value |
+|---|---|
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | `/` |
+
+Never put a path (like `/` or `./public`) in the Build command field — it is run as a shell command and fails with `Permission denied`. The folder to serve is set in `wrangler.jsonc` (`assets.directory`).
+
 Every push to `main` redeploys automatically.
 
 ## Adding a new prototype
