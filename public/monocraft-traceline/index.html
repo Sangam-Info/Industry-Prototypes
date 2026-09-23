@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monocraft · TraceLine — Material Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0D12; --bg2:#0E131A; --panel:#131A23; --panel2:#182029; --raised:#1E2833;
+    --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.12);
+    --ink:#EAEEF3; --ink2:#93A0B0; --ink3:#5E6B7A;
+    --ember:#FF6A2C; --ember2:#FF4A17; --emberdim:rgba(255,106,44,.14);
+    --steel:#4FD6E6; --steeldim:rgba(79,214,230,.12);
+    --gold:#F5B14C; --golddim:rgba(245,177,76,.14);
+    --violet:#9B8CFF; --violetdim:rgba(155,140,255,.14);
+    --ok:#54D98C; --okdim:rgba(84,217,140,.14);
+    --danger:#FF5D6C; --dangerdim:rgba(255,93,108,.14);
+    --r:14px; --rs:10px;
+    --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}
+  body{background:radial-gradient(1200px 600px at 78% -8%,rgba(255,106,44,.10),transparent 60%),radial-gradient(1000px 500px at 8% 4%,rgba(79,214,230,.07),transparent 55%),var(--bg)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#26313d;border-radius:20px;border:2px solid var(--bg)}
+  ::-webkit-scrollbar-track{background:transparent}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:var(--mono)}
+
+  /* ---------- shell ---------- */
+  .wrap{max-width:1320px;margin:0 auto;padding:0 22px}
+  header.top{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);background:rgba(10,13,18,.72);border-bottom:1px solid var(--line)}
+  .top .wrap{display:flex;align-items:center;gap:18px;height:62px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--ember),var(--ember2));display:grid;place-items:center;box-shadow:0 6px 20px rgba(255,74,23,.35)}
+  .logo svg{width:19px;height:19px}
+  .bname{font-family:var(--disp);font-weight:700;font-size:16px;letter-spacing:.2px}
+  .bname span{color:var(--ink3);font-weight:500}
+  .btag{font-size:11px;color:var(--ink3);margin-top:1px}
+  .live{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(84,217,140,.6);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(84,217,140,.5)}70%{box-shadow:0 0 0 7px rgba(84,217,140,0)}100%{box-shadow:0 0 0 0 rgba(84,217,140,0)}}
+  .btn{font-family:var(--sans);font-weight:600;font-size:13.5px;border:1px solid var(--line2);background:var(--raised);color:var(--ink);padding:9px 15px;border-radius:var(--rs);cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.16s}
+  .btn:hover{border-color:#3a4757;background:#232e3a}
+  .btn svg{width:15px;height:15px}
+  .btn.primary{background:linear-gradient(135deg,var(--ember),var(--ember2));border:none;color:#fff;box-shadow:0 6px 18px rgba(255,74,23,.32)}
+  .btn.primary:hover{filter:brightness(1.06)}
+
+  /* ---------- hero / 3D ---------- */
+  .hero{position:relative;margin-top:22px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#0C1117,#0A0D12)}
+  #scene{display:block;width:100%;height:460px;touch-action:none}
+  .heroOverlay{position:absolute;inset:0;pointer-events:none}
+  .heroHead{position:absolute;left:24px;top:22px;max-width:440px}
+  .heroHead h1{font-family:var(--disp);font-weight:600;font-size:26px;line-height:1.15;letter-spacing:-.2px}
+  .heroHead p{margin-top:8px;font-size:13.5px;color:var(--ink2)}
+  .kb{position:absolute;right:22px;top:22px;display:flex;gap:10px}
+  .kchip{background:rgba(15,20,27,.66);border:1px solid var(--line);border-radius:12px;padding:9px 13px;backdrop-filter:blur(8px);min-width:96px}
+  .kchip .n{font-family:var(--mono);font-weight:600;font-size:19px}
+  .kchip .l{font-size:10.5px;color:var(--ink3);margin-top:1px;letter-spacing:.2px}
+  .stationLabel{position:absolute;left:0;top:0;transform:translate(-50%,-100%);will-change:transform,opacity;background:rgba(11,15,20,.82);border:1px solid var(--line2);border-radius:8px;padding:4px 9px;font-size:11px;font-weight:500;white-space:nowrap;backdrop-filter:blur(6px);transition:opacity .3s;display:flex;align-items:center;gap:6px}
+  .stationLabel .sd{width:7px;height:7px;border-radius:50%}
+  .stationLabel .sc{font-family:var(--mono);color:var(--ink2);font-size:10.5px}
+  .heroHint{position:absolute;left:24px;bottom:18px;font-size:11.5px;color:var(--ink2);display:flex;align-items:center;gap:7px;text-shadow:0 1px 4px rgba(0,0,0,.7)}
+
+  /* ---------- kpi ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:20px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--acc,var(--steel))}
+  .kpi .kl{font-size:11.5px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+  .kpi .kv{font-family:var(--mono);font-weight:600;font-size:27px;margin-top:9px;letter-spacing:-.5px}
+  .kpi .ks{font-size:11px;color:var(--ink3);margin-top:3px}
+  .kpi svg{width:14px;height:14px;opacity:.7}
+
+  /* ---------- layout main ---------- */
+  .grid{display:grid;grid-template-columns:1fr 312px;gap:16px;margin-top:20px;align-items:start}
+  .grid>*{min-width:0}
+  .sectionHead{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+  .sectionHead h2{font-family:var(--disp);font-weight:600;font-size:16px}
+  .sectionHead .sub{font-size:12px;color:var(--ink3)}
+  .pill{margin-left:auto;font-size:11.5px;color:var(--ink2);background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:4px 11px}
+
+  /* board */
+  .board{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .col{flex:0 0 200px;scroll-snap-align:start;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;min-height:120px}
+  .colHead{padding:11px 13px;border-bottom:1px solid var(--line);border-top:2px solid var(--cc,var(--steel));border-radius:var(--r) var(--r) 0 0;display:flex;align-items:center;gap:8px}
+  .colHead .ci{width:8px;height:8px;border-radius:2px;background:var(--cc)}
+  .colHead .cn{font-weight:600;font-size:13px;font-family:var(--disp)}
+  .colHead .cc2{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--ink2);background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:1px 8px}
+  .colBody{padding:10px;display:flex;flex-direction:column;gap:9px;min-height:40px}
+  .card{background:var(--panel2);border:1px solid var(--line);border-radius:var(--rs);padding:11px;cursor:pointer;transition:.15s}
+  .card:hover{border-color:var(--line2);background:var(--raised);transform:translateY(-1px)}
+  .card.dl{border-color:rgba(255,93,108,.32)}
+  .card .c1{display:flex;align-items:center;gap:7px}
+  .card .jid{font-family:var(--mono);font-weight:600;font-size:12px;color:var(--ember)}
+  .card .prio{width:6px;height:6px;border-radius:50%;margin-left:auto}
+  .card .cust{font-size:12.5px;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card .part{font-size:11.5px;color:var(--ink2);margin-top:2px}
+  .card .cmeta{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
+  .card .due{font-size:10.5px;color:var(--ink3);font-family:var(--mono);display:flex;align-items:center;gap:4px}
+  .card .due.late{color:var(--danger)}
+  .prog{display:flex;gap:3px;margin-top:9px}
+  .prog i{height:3px;flex:1;border-radius:2px;background:#28323d}
+  .prog i.f{background:var(--steel)}
+  .colEmpty{font-size:11.5px;color:var(--ink3);text-align:center;padding:14px 6px}
+
+  /* side */
+  .side{display:flex;flex-direction:column;gap:16px;position:sticky;top:78px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:15px}
+  .panel h3{font-family:var(--disp);font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .panel h3 svg{width:15px;height:15px;opacity:.75}
+  .util{display:flex;flex-direction:column;gap:11px}
+  .urow{display:flex;align-items:center;gap:10px;font-size:12.5px}
+  .urow .un{width:78px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ubar{flex:1;height:7px;background:#232d38;border-radius:20px;overflow:hidden}
+  .ubar i{display:block;height:100%;border-radius:20px}
+  .urow .uv{font-family:var(--mono);font-size:11.5px;color:var(--ink2);width:38px;text-align:right}
+  .feed{display:flex;flex-direction:column;gap:2px}
+  .fitem{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .fitem:last-child{border-bottom:none}
+  .fico{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex:0 0 auto}
+  .fico svg{width:13px;height:13px}
+  .ftxt{font-size:12px;line-height:1.45}
+  .ftxt b{font-weight:600}
+  .ftime{font-size:10.5px;color:var(--ink3);margin-top:2px;font-family:var(--mono)}
+
+  /* ---------- drawer ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(4,7,11,.62);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:.25s;z-index:60}
+  .scrim.on{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,94vw);background:var(--bg2);border-left:1px solid var(--line2);z-index:61;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-30px 0 60px rgba(0,0,0,.4)}
+  .drawer.on{transform:none}
+  .dHead{padding:20px 22px;border-bottom:1px solid var(--line)}
+  .dHead .r1{display:flex;align-items:center;gap:10px}
+  .dHead .jid{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--ember)}
+  .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+  .close{margin-left:auto;width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:var(--panel);cursor:pointer;display:grid;place-items:center;color:var(--ink2)}
+  .close:hover{color:var(--ink);border-color:var(--line2)}
+  .dHead h2{font-family:var(--disp);font-size:20px;font-weight:600;margin-top:12px}
+  .dmeta{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px}
+  .dmeta div{font-size:12px}
+  .dmeta .k{color:var(--ink3);margin-bottom:2px}
+  .dmeta .v{font-weight:500;font-family:var(--mono);font-size:12.5px}
+  .dBody{flex:1;overflow-y:auto;padding:20px 22px}
+  .tl{position:relative;padding-left:6px}
+  .tstep{position:relative;padding:0 0 4px 30px;min-height:52px}
+  .tstep::before{content:"";position:absolute;left:9px;top:20px;bottom:-6px;width:2px;background:var(--line2)}
+  .tstep:last-child::before{display:none}
+  .tnode{position:absolute;left:0;top:2px;width:20px;height:20px;border-radius:50%;border:2px solid #2b3642;background:var(--bg2);display:grid;place-items:center;z-index:1}
+  .tnode svg{width:11px;height:11px}
+  .tstep.done .tnode{background:var(--ok);border-color:var(--ok)}
+  .tstep.done .tnode svg{color:#06210f}
+  .tstep.cur .tnode{border-color:var(--ember);background:var(--ember);animation:pulse2 1.8s infinite}
+  @keyframes pulse2{0%{box-shadow:0 0 0 0 rgba(255,106,44,.5)}70%{box-shadow:0 0 0 8px rgba(255,106,44,0)}100%{box-shadow:0 0 0 0 rgba(255,106,44,0)}}
+  .tname{font-weight:600;font-size:13.5px;font-family:var(--disp)}
+  .tstep.pending .tname{color:var(--ink3)}
+  .tsub{font-size:11.5px;color:var(--ink2);margin-top:3px;font-family:var(--mono)}
+  .tsub .sep{color:var(--ink3);margin:0 6px}
+  .curTag{font-size:10px;font-weight:600;color:var(--ember);border:1px solid rgba(255,106,44,.4);border-radius:20px;padding:1px 7px;margin-left:8px;vertical-align:middle}
+  .dFoot{padding:16px 22px;border-top:1px solid var(--line);display:flex;gap:10px}
+  .dFoot .btn{flex:1;justify-content:center}
+  .doneMsg{flex:1;text-align:center;font-size:12.5px;color:var(--ok);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:500}
+  .dFoot .confirmBox{flex:1;display:flex;flex-direction:column;gap:9px}
+  .confirmBox label{font-size:12px;color:var(--ink2)}
+  .confirmBox label b{color:var(--ink);font-weight:600}
+  .crow{display:flex;align-items:center;gap:10px}
+  .crow input{width:124px;background:var(--panel);border:1px solid var(--line2);border-radius:var(--rs);padding:9px 12px;color:var(--ink);font-family:var(--mono);font-size:16px;font-weight:600}
+  .crow input:focus{outline:none;border-color:var(--ember)}
+  .crow .cin{font-size:12px;color:var(--ink3)}
+  .confirmBox .btn{justify-content:center}
+  .card .good{font-size:10.5px;color:var(--ink2);font-family:var(--mono)}
+
+  /* ---------- modal ---------- */
+  .modal{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px;opacity:0;pointer-events:none;transition:.2s}
+  .modal.on{opacity:1;pointer-events:auto}
+  .mcard{width:min(460px,100%);max-height:92vh;overflow:auto;background:var(--bg2);border:1px solid var(--line2);border-radius:18px;padding:24px;transform:translateY(12px) scale(.98);transition:.24s}
+  .modal.on .mcard{transform:none}
+  .mcard h2{font-family:var(--disp);font-size:19px;font-weight:600}
+  .mcard p.msub{font-size:12.5px;color:var(--ink2);margin-top:4px;margin-bottom:18px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;color:var(--ink2);margin-bottom:6px;font-weight:500}
+  .field input,.field select{width:100%;background:var(--panel);border:1px solid var(--line2);border-radius:var(--rs);padding:10px 12px;color:var(--ink);font-family:var(--sans);font-size:13.5px}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--ember)}
+  .field.err input{border-color:var(--danger)}
+  .ferr{font-size:11px;color:var(--danger);margin-top:5px;display:none}
+  .field.err .ferr{display:block}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .mfoot{display:flex;gap:10px;margin-top:8px}
+  .mfoot .btn{flex:1;justify-content:center}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--raised);border:1px solid var(--line2);border-radius:12px;padding:12px 18px;font-size:13px;z-index:80;opacity:0;transition:.25s;display:flex;align-items:center;gap:10px;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast svg{width:16px;height:16px;color:var(--ok)}
+
+  footer{margin:34px 0 26px;text-align:center;font-size:11.5px;color:var(--ink3)}
+  footer b{color:var(--ink2);font-weight:600}
+
+  @media(max-width:1080px){
+    .grid{grid-template-columns:1fr}
+    .side{position:static;flex-direction:row;flex-wrap:wrap}
+    .side .panel{flex:1;min-width:260px}
+    .kpis{grid-template-columns:repeat(3,1fr)}
+  }
+  @media(max-width:760px){
+    .wrap{padding:0 14px}
+    .top .wrap{gap:10px;height:56px}
+    .btag{display:none}
+    .live{display:none}
+    .bname{font-size:15px}
+    .btn{padding:9px 12px}
+    .kpis{grid-template-columns:repeat(2,1fr);gap:10px}
+    .kpi{padding:13px}
+    .kpi .kv{font-size:23px}
+    .grid{gap:14px;margin-top:16px}
+    .sectionHead .sub{display:none}
+    .hero{margin-top:16px;border-radius:18px}
+    #scene{height:300px}
+    .stationLabel{display:none}
+    .heroOverlay .kb{display:none}
+    .heroHead{position:absolute;left:0;right:0;top:0;max-width:none;padding:16px 16px 34px;background:linear-gradient(180deg,rgba(10,13,18,.92),rgba(10,13,18,.55) 55%,transparent)}
+    .heroHead h1{font-size:20px}
+    .heroHead p{font-size:12.5px;margin-top:6px}
+    .heroHint{left:16px;bottom:12px}
+    .col{flex-basis:186px}
+  }
+  @media(max-width:460px){
+    .btn.primary .lbl{display:none}
+    .btn.primary{padding:9px 11px}
+    .heroHead p{display:none}
+    .heroHead h1{font-size:18px}
+    #scene{height:264px}
+    .col{flex-basis:172px}
+    .drawer{width:100vw}
+    .dHead{padding:18px 18px}
+    .dBody{padding:18px 18px}
+    .dFoot{padding:14px 18px}
+    .kpi .kv{font-size:22px}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+  /* ---------- reports ---------- */
+  .reports{margin-top:26px}
+  .repGrid{display:grid;grid-template-columns:1.05fr 1fr;gap:16px;align-items:stretch}
+  .repChartHead{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .repChartHead h3{font-family:var(--disp);font-size:14px;font-weight:600}
+  .seg{margin-left:auto;display:flex;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:3px}
+  .segbtn{border:none;background:transparent;color:var(--ink2);font-family:var(--sans);font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer}
+  .segbtn.on{background:var(--raised);color:var(--ink)}
+  .pieWrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  #pie{width:200px;height:200px;flex:0 0 auto}
+  .legend{flex:1;min-width:150px;display:flex;flex-direction:column;gap:8px}
+  .lgd{display:flex;align-items:center;gap:9px;font-size:12.5px}
+  .lgc{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+  .lgl{color:var(--ink2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lgv{font-family:var(--mono);color:var(--ink);font-size:12px}
+  .repKpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .rk{background:var(--panel2);border:1px solid var(--line);border-radius:var(--rs);padding:12px}
+  .rkt{font-size:11px;color:var(--ink2);font-weight:600}
+  .rkv{font-family:var(--mono);font-size:20px;font-weight:600;margin-top:6px;letter-spacing:-.3px}
+  .rkd{font-size:10.5px;color:var(--ink3);margin-top:3px;line-height:1.35}
+  .repGrid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .uv2{font-family:var(--mono);font-size:11.5px;color:var(--ink2);width:52px;text-align:right}
+  .uv3{font-family:var(--mono);font-size:11.5px;color:var(--ink3);width:38px;text-align:right}
+  /* ---------- confirm modal extras ---------- */
+  .cfSummary{background:var(--panel);border:1px solid var(--line);border-radius:var(--rs);padding:6px 14px;margin:4px 0 14px}
+  .cfRow{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink2)}
+  .cfRow:last-child{border-bottom:none}
+  .cfRow b{color:var(--ink);font-family:var(--mono);font-size:13.5px}
+  .cfWarn{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--danger);background:var(--dangerdim);border:1px solid rgba(255,93,108,.28);border-radius:var(--rs);padding:9px 11px;margin-bottom:12px}
+  .cfWarn svg{flex:0 0 auto}
+  .field textarea{width:100%;background:var(--panel);border:1px solid var(--line2);border-radius:var(--rs);padding:9px 12px;color:var(--ink);font-family:var(--sans);font-size:13px;resize:vertical}
+  .field textarea:focus,.field select:focus{outline:none;border-color:var(--ember)}
+  .field select{cursor:pointer}
+  .cfAsk{font-size:13.5px;color:var(--ink);margin:2px 0 16px}
+  .cfAsk b{color:var(--ember)}
+  @media(max-width:760px){
+    .repGrid{grid-template-columns:1fr}
+    .repGrid2{grid-template-columns:1fr}
+    .repKpis{grid-template-columns:1fr 1fr}
+    #pie{width:180px;height:180px}
+  }
+
+  .protoTag{margin-left:6px;font-size:9.5px;font-weight:700;letter-spacing:1px;color:var(--gold);border:1px solid rgba(245,177,76,.5);background:var(--golddim);border-radius:6px;padding:3px 7px}
+  .protoBar{max-width:1320px;margin:12px auto 0;padding:9px 22px;font-size:12px;color:var(--gold);background:linear-gradient(90deg,var(--golddim),transparent);border:1px solid rgba(245,177,76,.28);border-left:3px solid var(--gold);border-radius:10px}
+  .protoBar b{color:var(--ink);font-weight:600}
+  .lockBox{flex:1;text-align:center;padding:6px 6px 4px}
+  .lockIco{width:40px;height:40px;border-radius:11px;margin:0 auto 10px;display:grid;place-items:center;background:var(--golddim);border:1px solid rgba(245,177,76,.35);color:var(--gold)}
+  .lockIco svg{width:20px;height:20px}
+  .lockTitle{font-family:var(--disp);font-weight:600;font-size:15px;color:var(--ink)}
+  .lockText{font-size:12.5px;color:var(--ink2);margin-top:6px;line-height:1.5}
+  .lockText b{color:var(--ink)}
+  .lockCta{font-size:11.5px;color:var(--gold);margin-top:12px;font-weight:600}
+  @media(max-width:760px){.protoBar{margin:10px 14px 0;padding:8px 12px;font-size:11.5px}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20l4-9 4 5 3-7 5 11" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="bname">MONOCRAFT <span>· TraceLine</span></div><div class="btag">Material flow &amp; production traceability</div></div>
+    <span class="protoTag">PROTOTYPE</span>
+  </div>
+  <div class="live"><span class="dot"></span> Live shop-floor · <span id="clock" class="mono">—</span></div>
+  <button class="btn primary" onclick="openAdd()"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> <span class="lbl">New order</span></button>
+</div></header>
+
+<div class="protoBar"><b>Prototype demo</b> · sample data · live stage tracking is limited to the first stages — the full 9-stage system is available in the paid version.</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <canvas id="scene"></canvas>
+    <div class="heroOverlay">
+      <div class="heroHead">
+        <h1>Every order, tracked from<br>raw material to dispatch.</h1>
+        <p>Nine live stages. Watch each job move down the line in real time — no more guessing where anything is.</p>
+      </div>
+      <div class="kb">
+        <div class="kchip"><div class="n" id="kb-wip">0</div><div class="l">On the floor</div></div>
+        <div class="kchip"><div class="n" id="kb-today">0</div><div class="l">Dispatched (7d)</div></div>
+      </div>
+      <div class="heroHint"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M6 12h12M13 7l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> drag to look around · orders flow left → right</div>
+    </div>
+  </section>
+
+  <section class="kpis" id="kpis"></section>
+
+  <div class="grid">
+    <div>
+      <div class="sectionHead">
+        <h2>Live production board</h2><span class="sub">work-in-progress by stage</span>
+        <span class="pill" id="activePill">0 active</span>
+      </div>
+      <div class="board" id="board"></div>
+    </div>
+    <aside class="side">
+      <div class="panel">
+        <h3><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h4l3 8 4-16 3 8h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Stage load</h3>
+        <div class="util" id="util"></div>
+      </div>
+      <div class="panel">
+        <h3><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Activity</h3>
+        <div class="feed" id="feed"></div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="reports" id="reports">
+    <div class="sectionHead">
+      <h2>Reports &amp; analytics</h2><span class="sub">production performance for Monocraft</span>
+      <button class="btn" onclick="buildPDF()" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12M8 11l4 4 4-4M4 21h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Download PDF</button>
+    </div>
+    <div class="repGrid">
+      <div class="panel repChart">
+        <div class="repChartHead"><h3 id="pieTitle">Work-in-process by stage</h3>
+          <div class="seg"><button class="segbtn on" data-m="wip" onclick="setReportMode('wip')">WIP</button><button class="segbtn" data-m="rej" onclick="setReportMode('rej')">Rejections</button></div>
+        </div>
+        <div class="pieWrap"><canvas id="pie" width="200" height="200"></canvas><div class="legend" id="pieLegend"></div></div>
+      </div>
+      <div class="repKpis" id="repKpis"></div>
+    </div>
+    <div class="repGrid2">
+      <div class="panel"><h3><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Average time per stage (TAT)</h3><div class="util" id="tat"></div></div>
+      <div class="panel"><h3><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Rejection breakdown</h3><div class="util" id="rejTable"></div></div>
+    </div>
+  </section>
+
+  <footer>Prototype demo · <b>Monocraft Pvt Ltd</b> — built by <b>Sangam InfoAnalytics</b>. Sample data. Delivery timelines counted in working days (Mon–Sat).</footer>
+</div>
+
+<!-- drawer -->
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer"></div>
+
+<!-- add modal -->
+<div class="modal" id="modal">
+  <div class="mcard">
+    <h2>New order</h2>
+    <p class="msub">Create a job and drop it onto the line at stage 1.</p>
+    <div class="field" id="f-cust"><label>Customer</label><input id="i-cust" placeholder="e.g. Patel Agro Industries" maxlength="40"><div class="ferr">Enter a customer name</div></div>
+    <div class="field" id="f-part"><label>Part / component</label><input id="i-part" placeholder="e.g. Hydraulic flange 4&quot;" maxlength="40"><div class="ferr">Enter the part</div></div>
+    <div class="row2">
+      <div class="field" id="f-qty"><label>Quantity (pcs)</label><input id="i-qty" type="number" min="1" placeholder="250"><div class="ferr">Enter a valid quantity</div></div>
+      <div class="field"><label>Priority</label><select id="i-prio"><option value="normal">Normal</option><option value="high">High</option><option value="rush">Rush</option></select></div>
+    </div>
+    <div class="field"><label>Delivery date (working days)</label><input id="i-due" type="date"></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeAdd()">Cancel</button>
+      <button class="btn primary" onclick="submitAdd()"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Add to line</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="confirmModal"><div class="mcard" id="confirmCard"></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ============================ DATA LAYER ============================ */
+let Scene=null;
+/* Clean, swappable store — in production this maps 1:1 to REST/Worker endpoints. */
+const STAGES = [
+  {id:0,name:'Order received',short:'Order',color:'#8FA0B2',kind:'gate'},
+  {id:1,name:'Material inspection',short:'Material QC',color:'#F5B14C',kind:'qc'},
+  {id:2,name:'Cutting',short:'Cutting',color:'#4FD6E6',kind:'proc'},
+  {id:3,name:'Forging',short:'Forging',color:'#FF6A2C',kind:'heat'},
+  {id:4,name:'Heat treatment',short:'Heat treat',color:'#FF4A17',kind:'heat'},
+  {id:5,name:'Shot blasting',short:'Blasting',color:'#9B8CFF',kind:'proc'},
+  {id:6,name:'Machining (CNC + VMC)',short:'Machining',color:'#4FD6E6',kind:'proc'},
+  {id:7,name:'Final inspection',short:'Final QC',color:'#F5B14C',kind:'qc'},
+  {id:8,name:'Dispatch',short:'Dispatch',color:'#54D98C',kind:'gate'},
+];
+const OPS = ['Ramesh','Suresh','Kiran','Jadeja','Mehul','Ashok','Nikhil','Bhavesh'];
+const REJECT_REASONS=['Dimensional — out of tolerance','Forging defect — crack / lap','Forging defect — underfill','Cold shut','Die mismatch / shift','Surface defect — seam / scale pit','Heat-treat — hardness out of range','Heat-treat — distortion / warpage','Decarburization','Machining — burr / tool mark','Machining — bore / OD out of tolerance','Thread defect','Material — inclusion / porosity','Dent / handling damage','Rust / corrosion','Other'];
+const REASON_COLORS=['#FF5D6C','#FF6A2C','#F5B14C','#9B8CFF','#4FD6E6','#54D98C','#E27BB0','#7C9CF0','#C0894B','#5AC8A8'];
+const DEMO_MAX_STAGE=4; // PROTOTYPE: live stage tracking is intentionally locked beyond this stage
+const DAY = 864e5;
+const now = Date.now();
+function ago(d){return now - d*DAY;}
+function fut(d){return now + d*DAY;}
+
+let SEQ = 1043;
+function seed(){
+  const rows = [
+    ['Patel Agro Industries','Tractor axle hub',300,7,6,'normal'],
+    ['Shakti Motors','Steering knuckle',180,6,4,'high'],
+    ['Gokul Hydraulics','Hydraulic flange 6"',450,3,8,'normal'],
+    ['Rajkot Forge Co','Connecting rod blank',600,2,-1,'rush'],
+    ['Anmol Pumps','Pump impeller boss',120,7,3,'normal'],
+    ['Vishwa Engineering','Gear blank 42mm',260,5,2,'high'],
+    ['Krishna Auto','Wheel spindle',210,1,10,'normal'],
+    ['Deep Industries','Valve body forging',90,4,-2,'high'],
+    ['Sardar Castings','Coupling flange',380,8,5,'normal'],
+    ['Meera Metalworks','Yoke forging',150,2,1,'normal'],
+    ['Balaji Tractors','Front axle beam',75,6,12,'normal'],
+  ];
+  const jobs = rows.map((r,i)=>{
+    const [customer,part,qty,stage,dueIn,prio]=r;
+    const id='MC-'+(1032+i);
+    const hist=[];
+    // build plausible history up to current stage
+    let t = ago(stage+3 + Math.random()*2);
+    for(let s=0;s<=stage;s++){
+      const done = s<stage;
+      const rej = (STAGES[s].kind!=='gate' && s<stage && Math.random()<0.32)? Math.round(qty*(0.02+Math.random()*0.05)) : 0;
+      const reason = rej? REJECT_REASONS[Math.floor(Math.random()*(REJECT_REASONS.length-1))] : null;
+      hist.push({stage:s, at:t, op:OPS[(i+s)%OPS.length], qtyIn:qty, qtyOut:qty-rej, rej, reason, done});
+      t += (0.4+Math.random()*0.8)*DAY;
+    }
+    return {id,customer,part,qty,stage,prio,due:fut(dueIn),created:ago(stage+4),hist};
+  });
+  return jobs;
+}
+
+const Store = (()=>{
+  let jobs = seed();
+  const subs=[];
+  const evts=[];
+  function emit(){subs.forEach(f=>f());}
+  jobs.forEach(j=>{ // build initial activity feed from most recent transitions
+    const h=j.hist[j.hist.length-1];
+    evts.push({type:'move',job:j.id,cust:j.customer,stage:j.stage,at:h.at});
+  });
+  evts.sort((a,b)=>b.at-a.at);
+  return {
+    get jobs(){return jobs;},
+    get events(){return evts;},
+    subscribe(f){subs.push(f);},
+    add(o){
+      const id='MC-'+(++SEQ);
+      const j={id,customer:o.customer,part:o.part,qty:o.qty,prio:o.prio,due:o.due,created:now,
+        stage:1, hist:[{stage:0,at:now,op:'Front office',qtyIn:o.qty,qtyOut:o.qty,rej:0,done:true},
+                       {stage:1,at:now,op:OPS[0],qtyIn:o.qty,qtyOut:o.qty,rej:0,done:false}]};
+      jobs=[j,...jobs];
+      evts.unshift({type:'new',job:id,cust:o.customer,stage:1,at:now});
+      if(Scene)Scene.spawn(j);
+      emit();
+      return j;
+    },
+    advance(id,confirmed,reason){
+      const j=jobs.find(x=>x.id===id); if(!j||j.stage>=8||j.stage>=DEMO_MAX_STAGE) return; // prototype cap
+      const cur=j.hist[j.hist.length-1];
+      const good=Math.max(0,Math.min(cur.qtyIn, confirmed==null?cur.qtyIn:confirmed));
+      cur.qtyOut=good; cur.rej=cur.qtyIn-good; cur.done=true; cur.at=now; if(cur.rej>0)cur.reason=reason||'Unspecified';
+      j.stage++;
+      j.hist.push({stage:j.stage,at:now,op:OPS[Math.floor(Math.random()*OPS.length)],qtyIn:good,qtyOut:good,rej:0,done:j.stage===8});
+      evts.unshift({type:j.stage===8?'ship':'move',job:j.id,cust:j.customer,stage:j.stage,at:now});
+      if(Scene)Scene.setStage(j.id,j.stage);
+      emit();
+      return j;
+    }
+  };
+})();
+
+/* ============================ HELPERS ============================ */
+const $=s=>document.querySelector(s);
+function isLate(j){return j.stage<8 && j.due<now;}
+function goodOf(j){const h=j.hist[j.hist.length-1];return h?h.qtyIn:j.qty;}
+function daysTo(t){return Math.round((t-now)/DAY);}
+function fmtDue(t){const d=daysTo(t);if(d<0)return Math.abs(d)+'d over';if(d===0)return 'due today';return 'in '+d+'d';}
+function relTime(t){const m=Math.round((now-t)/6e4);if(m<1)return 'just now';if(m<60)return m+'m ago';const h=Math.round(m/60);if(h<24)return h+'h ago';return Math.round(h/24)+'d ago';}
+const prioColor={normal:'#4FD6E6',high:'#F5B14C',rush:'#FF5D6C'};
+
+/* ============================ RENDER ============================ */
+function renderKPIs(){
+  const j=Store.jobs;
+  const active=j.filter(x=>x.stage<8).length;
+  const inProd=j.filter(x=>x.stage>=2&&x.stage<=6).length;
+  const awaiting=j.filter(x=>x.stage===7).length;
+  const late=j.filter(isLate).length;
+  const shipped7=j.filter(x=>x.stage===8&&x.hist[x.hist.length-1].at>ago(7)).length;
+  const rejTot=j.reduce((a,x)=>a+x.hist.filter(h=>h.at>ago(7)).reduce((b,h)=>b+h.rej,0),0);
+  const onFloor=j.filter(x=>x.stage>=1&&x.stage<8).length;
+  const total=j.length;
+  const onTime=total?Math.round((1-late/Math.max(active,1))*100):100;
+  const K=[
+    ['Active orders',active,total+' in system','var(--steel)','M4 7h16M4 12h16M4 17h10'],
+    ['In production',inProd,'cutting → machining','var(--ember)','M12 2v4M12 18v4M4 12H2M22 12h-2M12 8a4 4 0 100 8 4 4 0 000-8z'],
+    ['Awaiting dispatch',awaiting,'passed final QC','var(--ok)','M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7'],
+    ['Delayed',late,'past delivery date','var(--danger)','M12 8v5M12 16v.5M10.3 3.9L2 18a2 2 0 002 3h16a2 2 0 002-3L13.7 3.9a2 2 0 00-3.4 0z'],
+    ['On-time rate',onTime+'%','rolling estimate','var(--gold)','M12 8v4l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
+    ['Rejections 7d',rejTot,'pcs across stages','var(--violet)','M18 6L6 18M6 6l12 12'],
+  ];
+  $('#kpis').innerHTML=K.map(k=>`<div class="kpi" style="--acc:${k[3]}">
+    <div class="kl"><svg viewBox="0 0 24 24" fill="none" stroke="${k[3]}"><path d="${k[4]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>${k[0]}</div>
+    <div class="kv">${k[1]}</div><div class="ks">${k[2]}</div></div>`).join('');
+  $('#kb-wip').textContent=onFloor;
+  $('#kb-today').textContent=shipped7;
+  $('#activePill').textContent=active+' active';
+}
+
+function cardHTML(j){
+  const late=isLate(j);
+  const prog='<div class="prog">'+STAGES.map((s,i)=>`<i class="${i<=j.stage?'f':''}"></i>`).join('')+'</div>';
+  return `<div class="card ${late?'dl':''}" onclick="openDrawer('${j.id}')">
+    <div class="c1"><span class="jid">${j.id}</span><span class="prio" style="background:${prioColor[j.prio]}" title="${j.prio}"></span></div>
+    <div class="cust">${j.customer}</div>
+    <div class="part">${j.part}</div>
+    <div class="cmeta"><span class="good">${goodOf(j)}/${j.qty} pcs</span><span class="due ${late?'late':''}">${late?'⚠ ':''}${fmtDue(j.due)}</span></div>
+    ${prog}</div>`;
+}
+function renderBoard(){
+  const b=$('#board');
+  b.innerHTML=STAGES.map(s=>{
+    const list=Store.jobs.filter(j=>j.stage===s.id);
+    const cards=list.length?list.map(cardHTML).join(''):'<div class="colEmpty">—</div>';
+    return `<div class="col"><div class="colHead" style="--cc:${s.color}">
+      <span class="ci"></span><span class="cn">${s.short}</span><span class="cc2">${list.length}</span></div>
+      <div class="colBody">${cards}</div></div>`;
+  }).join('');
+}
+function renderUtil(){
+  const rows=STAGES.slice(1,8).map(s=>{const list=Store.jobs.filter(j=>j.stage===s.id);return {s,jobs:list.length,pcs:list.reduce((a,j)=>a+goodOf(j),0)};});
+  const max=Math.max(1,...rows.map(r=>r.pcs));
+  $('#util').innerHTML=rows.map(r=>`<div class="urow" title="${r.jobs} job(s) at this stage"><span class="un">${r.s.short}</span>
+      <span class="ubar"><i style="width:${r.pcs?Math.max(5,r.pcs/max*100):0}%;background:${r.s.color}"></i></span>
+      <span class="uv">${r.pcs}</span></div>`).join('');
+}
+function renderFeed(){
+  const ic={new:['var(--steeldim)','var(--steel)','M12 5v14M5 12h14'],
+            move:['var(--emberdim)','var(--ember)','M6 12h12M13 7l5 5-5 5'],
+            ship:['var(--okdim)','var(--ok)','M20 6L9 17l-5-5']};
+  $('#feed').innerHTML=Store.events.slice(0,7).map(e=>{
+    const s=STAGES[e.stage]; const [bg,fg,d]=ic[e.type];
+    const txt=e.type==='new'?`New order <b>${e.job}</b> logged for ${e.cust}`
+      :e.type==='ship'?`<b>${e.job}</b> dispatched to ${e.cust}`
+      :`<b>${e.job}</b> moved to <b>${s.name}</b>`;
+    return `<div class="fitem"><div class="fico" style="background:${bg}"><svg viewBox="0 0 24 24" fill="none" stroke="${fg}"><path d="${d}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div><div class="ftxt">${txt}</div><div class="ftime">${relTime(e.at)}</div></div></div>`;
+  }).join('');
+}
+function renderAll(){renderKPIs();renderBoard();renderUtil();renderFeed();renderReports();}
+Store.subscribe(renderAll);
+
+/* ============================ DRAWER ============================ */
+let curId=null;
+function openDrawer(id){
+  curId=id;
+  const j=Store.jobs.find(x=>x.id===id);
+  const late=isLate(j);
+  const badge=j.stage===8?['Dispatched','var(--okdim)','var(--ok)']
+    :late?['Delayed','var(--dangerdim)','var(--danger)']
+    :['On track','var(--steeldim)','var(--steel)'];
+  const steps=STAGES.map(s=>{
+    const h=j.hist.find(x=>x.stage===s.id);
+    let cls,inner;
+    if(h&&h.done){cls='done';
+      inner=`<div class="tsub">${new Date(h.at).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}<span class="sep">·</span>${h.op}<span class="sep">·</span>${h.qtyIn}→${h.qtyOut} pcs${h.rej?` <span style="color:var(--danger)">(${h.rej} rej${h.reason?' — '+h.reason:''})</span>`:''}</div>`;}
+    else if(j.stage===s.id){cls='cur';
+      inner=`<div class="tsub">in progress<span class="sep">·</span>${h?h.op:'—'}<span class="sep">·</span>${h?h.qtyIn:j.qty} pcs</div>`;}
+    else{cls='pending';inner=`<div class="tsub" style="color:var(--ink3)">not started</div>`;}
+    const chk=cls==='done'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':'';
+    return `<div class="tstep ${cls}"><div class="tnode" style="${cls==='pending'?'':'border-color:'+s.color}">${chk}</div>
+      <div class="tname">${s.name}${cls==='cur'?'<span class="curTag">current</span>':''}</div>${inner}</div>`;
+  }).join('');
+  const curH=j.hist[j.hist.length-1];
+  const foot=j.stage>=8
+    ? `<div class="doneMsg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Complete &amp; dispatched · ${curH.qtyIn} pcs good</div>`
+    : j.stage>=DEMO_MAX_STAGE
+    ? `<div class="lockBox">
+        <div class="lockIco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 11V8a5 5 0 0110 0v3M5 11h14v9H5z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="lockTitle">Prototype limit reached</div>
+        <div class="lockText">This demo tracks orders up to <b>${STAGES[DEMO_MAX_STAGE].name}</b>. Live updates for <b>${STAGES[DEMO_MAX_STAGE+1].name} → ${STAGES[8].name}</b> are enabled in the full version.</div>
+        <div class="lockCta">Unlock all 9 stages — built by Sangam InfoAnalytics</div>
+      </div>`
+    : `<div class="confirmBox">
+        <label>Finished parts confirmed at <b>${STAGES[j.stage].name}</b></label>
+        <div class="crow"><input id="conf-qty" type="number" min="0" max="${curH.qtyIn}" value="${curH.qtyIn}" oninput="clearConfErr()"><span class="cin">of ${curH.qtyIn} received</span></div>
+        <div class="ferr" id="conf-err" style="display:none">Enter a number between 0 and ${curH.qtyIn}</div>
+        <button class="btn primary" onclick="advance()"><svg viewBox="0 0 24 24" fill="none"><path d="M6 12h12M13 7l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Confirm &amp; move to ${STAGES[j.stage+1].short}</button>
+      </div>`;
+  $('#drawer').innerHTML=`
+    <div class="dHead">
+      <div class="r1"><span class="jid">${j.id}</span>
+        <span class="badge" style="background:${badge[1]};color:${badge[2]}">${badge[0]}</span>
+        <button class="close" onclick="closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+      <h2>${j.customer}</h2>
+      <div class="dmeta">
+        <div><div class="k">Part</div><div class="v">${j.part}</div></div>
+        <div><div class="k">Quantity</div><div class="v">${j.qty} pcs</div></div>
+        <div><div class="k">Delivery</div><div class="v" style="${isLate(j)?'color:var(--danger)':''}">${fmtDue(j.due)}</div></div>
+        <div><div class="k">Priority</div><div class="v" style="text-transform:capitalize;color:${prioColor[j.prio]}">${j.prio}</div></div>
+      </div>
+    </div>
+    <div class="dBody"><div class="tl">${steps}</div></div>
+    <div class="dFoot">${foot}</div>`;
+  $('#scrim').classList.add('on');$('#drawer').classList.add('on');
+}
+function closeDrawer(){curId=null;$('#scrim').classList.remove('on');$('#drawer').classList.remove('on');}
+function clearConfErr(){const e=$('#conf-err');if(e)e.style.display='none';const i=$('#conf-qty');if(i)i.style.borderColor='';}
+function advance(){
+  const j=Store.jobs.find(x=>x.id===curId); if(!j) return;
+  const inp=$('#conf-qty'); const received=j.hist[j.hist.length-1].qtyIn;
+  let q=parseInt(inp&&inp.value,10);
+  if(isNaN(q)||q<0||q>received){const e=$('#conf-err');if(e)e.style.display='block';if(inp)inp.style.borderColor='var(--danger)';return;}
+  openConfirm(j,q,received);
+}
+
+/* ============================ MODAL ============================ */
+function openAdd(){
+  const d=new Date(now+9*DAY);$('#i-due').value=d.toISOString().slice(0,10);
+  $('#modal').classList.add('on');setTimeout(()=>$('#i-cust').focus(),120);
+}
+function closeAdd(){$('#modal').classList.remove('on');['f-cust','f-part','f-qty'].forEach(f=>$('#'+f).classList.remove('err'));['i-cust','i-part','i-qty'].forEach(i=>$('#'+i).value='');}
+function submitAdd(){
+  const c=$('#i-cust').value.trim(),p=$('#i-part').value.trim(),q=parseInt($('#i-qty').value,10);
+  let bad=false;
+  $('#f-cust').classList.toggle('err',!c); $('#f-part').classList.toggle('err',!p);
+  $('#f-qty').classList.toggle('err',!(q>0)); if(!c||!p||!(q>0))return;
+  const due=$('#i-due').value?new Date($('#i-due').value).getTime():fut(9);
+  const j=Store.add({customer:c,part:p,qty:q,prio:$('#i-prio').value,due});
+  closeAdd();toast('Order '+j.id+' added to the line');
+}
+
+/* ============================ TOAST + CLOCK ============================ */
+let tt;
+function toast(m){const t=$('#toast');t.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>${m}`;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600);}
+function tick(){$('#clock').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});}
+setInterval(tick,1000);tick();
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeAdd();if(typeof closeConfirm==='function')closeConfirm();}});
+
+/* ============================ CONFIRM + REPORTS ============================ */
+let _pending=null;
+function reasonOptions(){return '<option value="">Select a reason…</option>'+REJECT_REASONS.map(r=>'<option value="'+r+'">'+r+'</option>').join('');}
+
+function openConfirm(j,good,received){
+  const rej=received-good;
+  const next=STAGES[j.stage+1];
+  _pending={id:j.id,good,rej,received};
+  const rows=`
+    <div class="cfRow"><span>At stage</span><b>${STAGES[j.stage].name}</b></div>
+    <div class="cfRow"><span>Received</span><b>${received} pcs</b></div>
+    <div class="cfRow"><span>Moving forward</span><b style="color:var(--ok)">${good} pcs</b></div>
+    <div class="cfRow"><span>Rejected</span><b style="color:${rej>0?'var(--danger)':'var(--ink2)'}">${rej} pcs</b></div>`;
+  const rejBlock = rej>0 ? `
+    <div class="cfWarn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v5M12 16v.4M10.3 3.9L2 18a2 2 0 002 3h16a2 2 0 002-3L13.7 3.9a2 2 0 00-3.4 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      ${rej} pcs will be marked rejected — a reason is required.</div>
+    <div class="field" id="f-reason"><label>Rejection reason</label><select id="rejReason" onchange="clearRejErr()">${reasonOptions()}</select><div class="ferr" id="rej-err">Please choose a rejection reason</div></div>
+    <div class="field"><label>Note (optional)</label><textarea id="rejNote" rows="2" placeholder="e.g. bore oversize on 20 pcs, tool wear"></textarea></div>` : '';
+  const ask = rej>0
+    ? `Move <b>${good}</b> of ${received} pcs forward to <b>${next.name}</b> and reject <b>${rej}</b>?`
+    : `All ${received} pcs pass. Move them to <b>${next.name}</b>?`;
+  $('#confirmCard').innerHTML=`
+    <h2>Confirm stage move</h2>
+    <p class="msub">${j.id} · ${j.customer}</p>
+    <div class="cfSummary">${rows}</div>
+    ${rejBlock}
+    <p class="cfAsk">${ask}</p>
+    <div class="mfoot">
+      <button class="btn" onclick="closeConfirm()">Cancel</button>
+      <button class="btn primary" onclick="doConfirm()"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Yes, move ${good} pcs</button>
+    </div>`;
+  $('#confirmModal').classList.add('on');
+}
+function clearRejErr(){const e=$('#rej-err');if(e)e.style.display='none';const s=$('#rejReason');if(s)s.style.borderColor='';}
+function closeConfirm(){$('#confirmModal').classList.remove('on');_pending=null;}
+function doConfirm(){
+  if(!_pending)return;
+  let reason=null;
+  if(_pending.rej>0){
+    const sel=$('#rejReason'); const val=sel?sel.value:'';
+    if(!val){const e=$('#rej-err');if(e)e.style.display='block';if(sel)sel.style.borderColor='var(--danger)';return;}
+    const note=($('#rejNote')&&$('#rejNote').value.trim())||'';
+    reason=note?val+' ('+note+')':val;
+  }
+  const res=Store.advance(_pending.id,_pending.good,reason);
+  const g=_pending.good; closeConfirm();
+  if(res){ if(res.stage===8)toast('Order '+res.id+' dispatched · '+g+' pcs good'); else toast(res.id+' → '+STAGES[res.stage].name+' · '+g+' pcs'); openDrawer(res.id); }
+}
+
+/* ---------- report computation ---------- */
+function fmtDur(h){if(!h)return '—';return h>=24?(h/24).toFixed(1)+' d':h.toFixed(1)+' h';}
+function hexToRgb(x){x=x.replace('#','');return [parseInt(x.slice(0,2),16),parseInt(x.slice(2,4),16),parseInt(x.slice(4,6),16)];}
+function computeReport(){
+  const jobs=Store.jobs;
+  const wip=STAGES.filter(s=>s.id>=1&&s.id<=7).map(s=>({label:s.short,color:s.color,value:jobs.filter(j=>j.stage===s.id).reduce((a,j)=>a+goodOf(j),0)}));
+  const rejMap={}; let totalRej=0,totalIn=0;
+  jobs.forEach(j=>j.hist.forEach(h=>{totalIn+=h.qtyIn||0;if(h.rej>0){const r=(h.reason||'Unspecified').replace(/\s*\(.*\)$/,'');rejMap[r]=(rejMap[r]||0)+h.rej;totalRej+=h.rej;}}));
+  const rej=Object.entries(rejMap).sort((a,b)=>b[1]-a[1]).map(([label,value],i)=>({label,value,color:REASON_COLORS[i%REASON_COLORS.length]}));
+  const durs={};
+  jobs.forEach(j=>{for(let k=0;k<j.hist.length-1;k++){const a=j.hist[k],b=j.hist[k+1];if(a.done)(durs[a.stage]=durs[a.stage]||[]).push(b.at-a.at);}});
+  const tat=STAGES.filter(s=>s.id>=1&&s.id<=7).map(s=>{const arr=durs[s.id]||[];const avg=arr.length?arr.reduce((x,y)=>x+y,0)/arr.length:0;return{stage:s,hrs:avg/36e5};});
+  const leads=jobs.map(j=>{const f=j.hist[0].at,l=j.stage===8?j.hist[j.hist.length-1].at:now;return (l-f)/DAY;});
+  const avgLead=leads.length?leads.reduce((a,b)=>a+b,0)/leads.length:0;
+  const wipTotal=wip.reduce((a,d)=>a+d.value,0);
+  const active=jobs.filter(j=>j.stage<8).length, late=jobs.filter(isLate).length;
+  const otd=active?Math.round((1-late/active)*100):100;
+  const rejRate=totalIn?totalRej/totalIn*100:0, fpy=Math.max(0,100-rejRate), ppm=Math.round(rejRate*10000);
+  const shipped7=jobs.filter(j=>j.stage===8&&j.hist[j.hist.length-1].at>ago(7)).length;
+  const bottleneck=wip.slice().sort((a,b)=>b.value-a.value)[0];
+  return {wip,rej,tat,avgLead,wipTotal,otd,rejRate,fpy,ppm,shipped7,bottleneck,totalRej};
+}
+function drawPie(canvas,data,forPdf){
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,r=Math.min(w,h)/2-3,ir=r*0.58;
+  const total=data.reduce((a,d)=>a+d.value,0);
+  if(!total){ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fillStyle=forPdf?'#eef1f5':'#1b2530';ctx.fill();}
+  let a=-Math.PI/2;
+  data.forEach(d=>{const ang=d.value/(total||1)*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+ang);ctx.closePath();ctx.fillStyle=d.color;ctx.fill();a+=ang;});
+  ctx.beginPath();ctx.arc(cx,cy,ir,0,Math.PI*2);ctx.fillStyle=forPdf?'#ffffff':'#131A23';ctx.fill();
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle=forPdf?'#1B222C':'#EAEEF3';ctx.font='bold '+(w*0.13)+'px Inter, Arial, sans-serif';ctx.fillText(String(total),cx,cy-w*0.02);
+  ctx.font=(w*0.05)+'px Inter, Arial, sans-serif';ctx.fillStyle=forPdf?'#6A7683':'#93A0B0';ctx.fillText('pcs',cx,cy+w*0.095);
+}
+function setReportMode(m){window.reportMode=m;document.querySelectorAll('.segbtn').forEach(b=>b.classList.toggle('on',b.dataset.m===m));renderReports();}
+function renderReports(){
+  if(!$('#pie'))return;
+  const d=computeReport(); const mode=window.reportMode||'wip';
+  const pieData = mode==='wip' ? d.wip.filter(x=>x.value>0) : d.rej;
+  drawPie($('#pie'),pieData,false);
+  $('#pieTitle').textContent = mode==='wip'?'Work-in-process by stage':'Rejections by reason';
+  $('#pieLegend').innerHTML = (pieData.length?pieData:[{label:mode==='wip'?'Nothing on floor':'No rejections',value:0,color:'#2a3744'}])
+    .map(s=>`<div class="lgd"><span class="lgc" style="background:${s.color}"></span><span class="lgl">${s.label}</span><span class="lgv">${s.value}</span></div>`).join('');
+  const K=[
+    ['WIP',d.wipTotal+' pcs','Work-in-process on the floor'],
+    ['First Pass Yield',''+d.fpy.toFixed(1)+'%','Passed without any rejection'],
+    ['Rejection rate',d.rejRate.toFixed(1)+'%','≈ '+d.ppm.toLocaleString('en-IN')+' PPM'],
+    ['On-Time Delivery',d.otd+'%','Orders within due date'],
+    ['Avg lead time',d.avgLead.toFixed(1)+' d','Order → dispatch (working days)'],
+    ['Throughput',d.shipped7+' /wk','Orders dispatched, last 7 days'],
+    ['Bottleneck',d.bottleneck?d.bottleneck.label:'—','Stage holding the most work'],
+    ['Rework / scrap',d.totalRej+' pcs','Total rejected this period'],
+  ];
+  $('#repKpis').innerHTML=K.map(k=>`<div class="rk"><div class="rkt">${k[0]}</div><div class="rkv">${k[1]}</div><div class="rkd">${k[2]}</div></div>`).join('');
+  const maxH=Math.max(0.1,...d.tat.map(t=>t.hrs));
+  $('#tat').innerHTML=d.tat.map(t=>`<div class="urow"><span class="un">${t.stage.short}</span><span class="ubar"><i style="width:${t.hrs?Math.max(5,t.hrs/maxH*100):0}%;background:${t.stage.color}"></i></span><span class="uv2">${fmtDur(t.hrs)}</span></div>`).join('');
+  $('#rejTable').innerHTML = d.rej.length ? d.rej.map(r=>`<div class="urow"><span class="un" style="width:auto;flex:1">${r.label}</span><span class="uv2" style="color:var(--danger)">${r.value}</span><span class="uv3">${Math.round(r.value/d.totalRej*100)}%</span></div>`).join('')
+    : '<div class="colEmpty" style="padding:10px 4px">No rejections recorded yet.</div>';
+}
+
+/* ---------- PDF ---------- */
+function buildPDF(){
+  const lib=window.jspdf; if(!lib||!lib.jsPDF){toast('PDF engine still loading — try again in a moment');return;}
+  const {jsPDF}=lib; const d=computeReport(); const doc=new jsPDF({unit:'mm',format:'a4'}); const W=210,M=15;
+  doc.setFillColor(216,80,28);doc.rect(0,0,W,26,'F');
+  doc.setTextColor(255);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('Production Analytics Report',M,13);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('Monocraft Pvt. Ltd.   ·   TraceLine',M,20.5);
+  doc.setFontSize(9);doc.text(new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),W-M,20.5,{align:'right'});
+  doc.setTextColor(255,224,208);doc.setFontSize(8);doc.text('PROTOTYPE DEMO  —  sample data, not for operational use',M,24.6);
+  let y=36;
+  doc.setTextColor(27,34,44);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text('Key metrics',M,y);y+=6;
+  const kpis=[['Work-in-process',d.wipTotal+' pcs'],['First Pass Yield (FPY)',d.fpy.toFixed(1)+'%'],['Rejection rate',d.rejRate.toFixed(1)+'%  ('+d.ppm.toLocaleString('en-IN')+' PPM)'],['On-Time Delivery (OTD)',d.otd+'%'],['Avg lead time',d.avgLead.toFixed(1)+' working days'],['Throughput (7d)',d.shipped7+' orders'],['Bottleneck stage',d.bottleneck?d.bottleneck.label:'-'],['Total rejected / rework',d.totalRej+' pcs']];
+  doc.setFontSize(10);
+  kpis.forEach((k,i)=>{const col=i%2,cx=M+col*95,cy=y+Math.floor(i/2)*10;
+    doc.setFont('helvetica','normal');doc.setTextColor(120,125,135);doc.text(k[0],cx,cy);
+    doc.setFont('helvetica','bold');doc.setTextColor(27,34,44);doc.text(k[1],cx,cy+5);});
+  y+=Math.ceil(kpis.length/2)*10+8;
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(27,34,44);doc.text('Work-in-process by stage',M,y);y+=3;
+  const cv=document.createElement('canvas');cv.width=440;cv.height=440;drawPie(cv,d.wip.filter(x=>x.value>0),true);
+  doc.addImage(cv.toDataURL('image/png'),'PNG',M,y,58,58);
+  let ly=y+6;doc.setFontSize(9);
+  d.wip.filter(x=>x.value>0).forEach(s=>{const c=hexToRgb(s.color);doc.setFillColor(c[0],c[1],c[2]);doc.rect(M+64,ly-3,3.2,3.2,'F');doc.setTextColor(70,78,90);doc.setFont('helvetica','normal');doc.text(s.label+'   —   '+s.value+' pcs',M+70,ly);ly+=6.4;});
+  y+=64;
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(27,34,44);doc.text('Average time per stage (TAT)',M,y);y+=6;doc.setFontSize(9);
+  d.tat.forEach(t=>{doc.setFont('helvetica','normal');doc.setTextColor(70,78,90);doc.text(t.stage.name,M,y);doc.text(fmtDur(t.hrs),W-M,y,{align:'right'});doc.setDrawColor(232,236,240);doc.line(M,y+1.5,W-M,y+1.5);y+=6;});
+  y+=5;
+  if(y>245){doc.addPage();y=20;}
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(27,34,44);doc.text('Rejection breakdown',M,y);y+=6;doc.setFontSize(9);
+  if(d.rej.length){d.rej.forEach(r=>{doc.setFont('helvetica','normal');doc.setTextColor(70,78,90);doc.text(r.label,M,y);doc.text(r.value+' pcs   ('+Math.round(r.value/d.totalRej*100)+'%)',W-M,y,{align:'right'});doc.setDrawColor(232,236,240);doc.line(M,y+1.5,W-M,y+1.5);y+=6;});}
+  else{doc.setTextColor(120,125,135);doc.text('No rejections recorded in this period.',M,y);y+=6;}
+  doc.setFontSize(8);doc.setTextColor(150,155,165);doc.text('Generated by Sangam InfoAnalytics · TraceLine   ·   PROTOTYPE — not for operational use',M,290);
+  const _pg=doc.getNumberOfPages();
+  for(let i=1;i<=_pg;i++){doc.setPage(i);try{if(doc.GState)doc.setGState(new doc.GState({opacity:0.10}));}catch(e){}doc.setTextColor(216,80,28);doc.setFontSize(62);doc.text('PROTOTYPE',105,172,{align:'center',angle:34});try{if(doc.GState)doc.setGState(new doc.GState({opacity:1}));}catch(e){}}
+  doc.save('Monocraft-Production-Report.pdf');
+  toast('Report downloaded');
+}
+
+/* ============================ 3D SCENE (optimized) ============================ */
+function initScene(){
+  const canvas=$('#scene');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:devicePixelRatio<2,alpha:true,powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  const scene=new THREE.Scene();
+  scene.fog=new THREE.Fog(0x0A0D12,24,64);
+  const camera=new THREE.PerspectiveCamera(46,1,0.1,200);
+  const world=new THREE.Group();scene.add(world);
+  const N=STAGES.length,SP=4.4,len=(N-1)*SP,z0=-len/2;
+  const zAt=i=>z0+i*SP;
+
+  scene.add(new THREE.AmbientLight(0x4a5a6a,0.95));
+  const key=new THREE.DirectionalLight(0xcfe0f0,0.85);key.position.set(6,12,8);scene.add(key);
+  const warm=new THREE.DirectionalLight(0xff7a3c,0.42);warm.position.set(-7,3,-5);scene.add(warm);
+
+  const grid=new THREE.GridHelper(90,36,0x1b2530,0x121a22);grid.position.y=-1.2;world.add(grid);
+  const metal=c=>new THREE.MeshLambertMaterial({color:c});
+  const belt=new THREE.Mesh(new THREE.BoxGeometry(2.4,0.3,len+6),metal(0x1a2430));belt.position.set(0,-1.05,0);world.add(belt);
+  [1.28,-1.28].forEach(x=>{const r=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.5,len+6),metal(0x2a3744));r.position.set(x,-0.95,0);world.add(r);});
+
+  const postGeo=new THREE.BoxGeometry(0.22,3,0.22),barGeo=new THREE.BoxGeometry(3.7,0.22,0.22),padGeo=new THREE.CylinderGeometry(1.5,1.7,0.35,6),mkGeo=new THREE.SphereGeometry(0.2,12,12),glowGeo=new THREE.SphereGeometry(1.15,14,14);
+  const anim=[];
+  STAGES.forEach((s,i)=>{
+    const col=new THREE.Color(s.color);
+    const pad=new THREE.Mesh(padGeo,metal(0x18212b));pad.position.set(0,-1.05,zAt(i));pad.rotation.y=Math.PI/6;world.add(pad);
+    const pm=new THREE.MeshLambertMaterial({color:0x222f3b,emissive:col,emissiveIntensity:0.16});
+    [-1.7,1.7].forEach(x=>{const p=new THREE.Mesh(postGeo,pm);p.position.set(x,0.4,zAt(i));world.add(p);});
+    const bar=new THREE.Mesh(barGeo,pm);bar.position.set(0,1.9,zAt(i));world.add(bar);
+    const mk=new THREE.Mesh(mkGeo,new THREE.MeshBasicMaterial({color:col}));mk.position.set(0,1.9,zAt(i));world.add(mk);
+    let glow=null;
+    if(s.kind==='heat'){glow=new THREE.Mesh(glowGeo,new THREE.MeshBasicMaterial({color:0xff5a1e,transparent:true,opacity:0.26,depthWrite:false,blending:THREE.AdditiveBlending}));glow.position.set(0,-0.25,zAt(i));world.add(glow);}
+    anim.push({mk,glow,i});
+  });
+
+  const pucks=new Map();
+  const puckGeo=new THREE.CylinderGeometry(0.42,0.42,0.5,14);
+  const makePuck=st=>new THREE.Mesh(puckGeo,new THREE.MeshLambertMaterial({color:0x8b98a6,emissive:new THREE.Color(STAGES[st].color),emissiveIntensity:0.55}));
+  function layout(){
+    const per={};Store.jobs.forEach(j=>{(per[j.stage]=per[j.stage]||[]).push(j.id);});
+    const want=new Set(Store.jobs.map(j=>j.id));
+    pucks.forEach((m,id)=>{if(!want.has(id)){world.remove(m);pucks.delete(id);}});
+    Object.keys(per).forEach(k=>{const st=+k;per[k].forEach((id,n)=>{
+      let m=pucks.get(id);if(!m){m=makePuck(st);world.add(m);pucks.set(id,m);}
+      m.material.emissive.set(STAGES[st].color);
+      const ox=((n%3)-1)*0.62,oz=Math.floor(n/3)*0.7;
+      m.userData.target=new THREE.Vector3(ox,-0.55,zAt(st)+oz-0.4);
+      if(!m.userData.pos)m.userData.pos=m.userData.target.clone().add(new THREE.Vector3(0,4,0));
+    });});
+  }
+
+  const flow=[],fGeo=new THREE.SphereGeometry(0.12,8,8),cCool=new THREE.Color(0x4FD6E6),cHot=new THREE.Color(0xff6a2c);
+  for(let i=0;i<8;i++){const m=new THREE.Mesh(fGeo,new THREE.MeshBasicMaterial({color:0x4FD6E6,transparent:true,opacity:.8}));m.userData={t:Math.random(),sp:0.03+Math.random()*0.03,x:(Math.random()-.5)*1.4};world.add(m);flow.push(m);}
+  const hz0=zAt(3)-1,hz1=zAt(4)+1;
+
+  let az=-0.62,el=0.34,tAz=-0.62,tEl=0.34,drag=false,px=0,py=0;const R=24;
+  canvas.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;canvas.setPointerCapture(e.pointerId);});
+  canvas.addEventListener('pointermove',e=>{if(!drag)return;tAz-=(e.clientX-px)*0.006;tEl+=(e.clientY-py)*0.005;tEl=Math.max(0.08,Math.min(0.9,tEl));px=e.clientX;py=e.clientY;});
+  const stop=()=>{drag=false;};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
+
+  const overlay=document.querySelector('.heroOverlay');
+  const labels=STAGES.map(s=>{const el=document.createElement('div');el.className='stationLabel';el.style.opacity='0';el.innerHTML='<span class="sd" style="background:'+s.color+'"></span>'+s.short+' <span class="sc">0</span>';overlay.appendChild(el);return{el,sc:el.querySelector('.sc'),last:-1};});
+
+  let W=0,H=0;
+  function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;if(w===W&&h===H)return;W=w;H=h;renderer.setSize(w,h,false);camera.aspect=(w/h)||1;camera.updateProjectionMatrix();}
+  new ResizeObserver(resize).observe(canvas);
+  const vec=new THREE.Vector3();
+  function project(x,y,z){vec.set(x,y,z);world.localToWorld(vec);vec.project(camera);return{x:(vec.x*.5+.5)*W,y:(-vec.y*.5+.5)*H,vis:vec.z<1};}
+
+  let intro=1,raf=0,running=false;
+  function frame(t){
+    if(!running)return;
+    if(!drag)tAz+=0.0008;
+    az+=(tAz-az)*0.06;el+=(tEl-el)*0.06;intro*=0.985;
+    const rr=(R+intro*10)*(W<620?1.32:1);
+    camera.position.set(Math.sin(az)*Math.cos(el)*rr,6+Math.sin(el)*12,Math.cos(az)*Math.cos(el)*rr);
+    camera.lookAt(0,0.4,0);
+    const counts={};Store.jobs.forEach(j=>counts[j.stage]=(counts[j.stage]||0)+1);
+    for(const a of anim){const load=counts[a.i]||0;a.mk.scale.setScalar(1+Math.sin(t*0.004+a.i)*0.12+load*0.05);if(a.glow)a.glow.material.opacity=0.2+Math.abs(Math.sin(t*0.0025+a.i))*0.22;}
+    pucks.forEach(m=>{m.userData.pos.lerp(m.userData.target,0.08);m.position.copy(m.userData.pos);m.position.y+=Math.sin(t*0.003+m.position.z)*0.05;m.rotation.y+=0.01;});
+    for(const m of flow){m.userData.t+=m.userData.sp*0.016;if(m.userData.t>1)m.userData.t-=1;const z=z0-3+m.userData.t*(len+6);m.position.set(m.userData.x,-0.5+Math.sin(m.userData.t*20)*0.05,z);const hot=z>hz0&&z<hz1;m.material.color.copy(hot?cHot:cCool);m.material.opacity=hot?1:.7;}
+    renderer.render(scene,camera);
+    for(let i=0;i<STAGES.length;i++){const p=project(0,3.0,zAt(i)),L=labels[i];
+      if(p.vis&&p.x>-40&&p.x<W+40){L.el.style.opacity=Math.min(1,1-intro*3);L.el.style.transform='translate('+p.x+'px,'+p.y+'px) translate(-50%,-100%)';const cc=counts[i]||0;if(cc!==L.last){L.sc.textContent=cc;L.last=cc;}}
+      else L.el.style.opacity='0';}
+    raf=requestAnimationFrame(frame);
+  }
+  function start(){if(running)return;running=true;raf=requestAnimationFrame(frame);}
+  function pause(){running=false;cancelAnimationFrame(raf);}
+  const onscreen=()=>{const r=canvas.getBoundingClientRect();return r.bottom>0&&r.top<innerHeight;};
+  new IntersectionObserver(es=>{es.forEach(e=>{(e.isIntersecting&&!document.hidden)?start():pause();});},{threshold:0.02}).observe(canvas);
+  document.addEventListener('visibilitychange',()=>{document.hidden?pause():(onscreen()&&start());});
+
+  layout();resize();start();
+  return {spawn:layout,setStage:layout,layout};
+}
+
+renderAll();
+requestAnimationFrame(()=>{Scene=initScene();});
+
+</script>
+<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(79,214,230,.4);border-radius:999px;background:rgba(19,26,35,.94);color:#EAEEF3;font:600 12px/1.2 'Inter',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.32);">← Back to portfolios</a>
+</body>
+</html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deservoir Mobile Quotation System — Prototype Documentation</title>
+<style>
+  :root{
+    --nv:#0F2A47; --nv2:#163F5C; --gold:#D3A135; --acc:#C8901A;
+    --ink:#1D2733; --grey:#5A6675; --mut:#8A94A3; --lt:#F3F7FA; --bd:#D8E1EA;
+    --green:#1B7A45; --green-bg:#E9F6EE; --amber:#FBF1DA; --red:#B4322B; --red-bg:#FCEDEC;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--ink);background:#EEF2F6;line-height:1.6;font-size:15px}
+  .page{max-width:900px;margin:0 auto;background:#fff;box-shadow:0 2px 24px rgba(15,42,71,.08)}
+
+  /* cover */
+  .cover{background:linear-gradient(160deg,var(--nv) 0%,var(--nv2) 100%);color:#fff;padding:54px 56px 46px;position:relative}
+  .cover:after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--gold)}
+  .cover .kicker{font-size:12px;letter-spacing:.16em;color:var(--gold);font-weight:700}
+  .cover h1{font-size:34px;line-height:1.18;margin:12px 0 10px;letter-spacing:-.02em}
+  .cover .sub{font-size:16px;color:#C9D7E4;max-width:620px}
+  .cover .meta{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:28px;font-size:13px;color:#B9CBDA}
+  .cover .meta b{color:#fff;font-weight:600}
+
+  .proto-banner{margin:0;background:var(--amber);border-bottom:1px solid #EFD9A6;padding:16px 56px;
+    display:flex;gap:14px;align-items:flex-start}
+  .proto-banner .ic{flex:none;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;
+    font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .proto-banner p{font-size:14px;color:#5C4410}
+  .proto-banner b{color:#3E2D08}
+
+  .wrap{padding:40px 56px 56px}
+
+  /* contents */
+  .toc{background:var(--lt);border:1px solid var(--bd);border-radius:10px;padding:20px 24px;margin-bottom:36px}
+  .toc h2{font-size:13px;letter-spacing:.12em;color:var(--mut);margin:0 0 10px;border:none;padding:0;display:block}
+  .toc ol{columns:2;column-gap:32px;padding-left:20px;font-size:14px}
+  .toc li{margin:0 0 6px;break-inside:avoid}
+  .toc a{color:var(--nv);text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+
+  h2{font-size:23px;color:var(--nv);letter-spacing:-.015em;margin:44px 0 14px;padding-bottom:9px;
+    border-bottom:2px solid var(--lt);display:flex;align-items:baseline;gap:10px}
+  h2 .n{color:var(--acc);font-size:18px}
+  h3{font-size:17px;color:var(--nv);margin:24px 0 8px}
+  p{margin:0 0 12px}
+  ul.clean{padding-left:22px;margin:0 0 14px}
+  ul.clean li{margin:5px 0}
+  .lead{font-size:16.5px;color:var(--ink)}
+  .muted{color:var(--grey)}
+
+  /* feature cards */
+  .feat{border:1px solid var(--bd);border-radius:10px;padding:18px 20px;margin:0 0 14px;background:#fff}
+  .feat h3{margin:0 0 6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .feat .where{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--nv2);
+    background:var(--lt);border:1px solid var(--bd);border-radius:20px;padding:2px 10px}
+  .feat p:last-child,.feat ul:last-child{margin-bottom:0}
+
+  .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;border-radius:4px;padding:2px 7px;vertical-align:middle}
+  .t-demo{background:var(--amber);color:#7A5A12;border:1px solid #EFD9A6}
+  .t-real{background:var(--green-bg);color:var(--green);border:1px solid #BFE3CD}
+  .t-future{background:#EEF1F8;color:#3D4E7A;border:1px solid #D2DAEC}
+
+  .note{border-left:4px solid var(--acc);background:#FFFAEF;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0 16px;font-size:14px}
+  .note.info{border-color:var(--nv2);background:var(--lt)}
+
+  table{width:100%;border-collapse:collapse;margin:8px 0 18px;font-size:14px}
+  th{background:var(--nv);color:#fff;text-align:left;font-size:12px;letter-spacing:.06em;padding:9px 12px;font-weight:700}
+  td{border-bottom:1px solid var(--bd);padding:9px 12px;vertical-align:top}
+  tr:nth-child(even) td{background:#FAFCFD}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tick{color:var(--green);font-weight:800}
+  .cross{color:var(--red);font-weight:800}
+
+  /* workflow: an even row of seven on a wide screen, a vertical list on a phone */
+  .flow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:18px;margin:18px 0 22px}
+  .step{background:var(--lt);border:1px solid var(--bd);border-radius:10px;padding:13px 8px 12px;
+    text-align:center;position:relative;min-width:0}
+  .step:not(:last-child):after{content:"\2192";position:absolute;right:-15px;top:50%;
+    transform:translateY(-50%);color:var(--acc);font-weight:800;font-size:15px}
+  .step .no{width:26px;height:26px;border-radius:50%;background:var(--nv);color:#fff;font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 7px}
+  .step .t{font-weight:700;font-size:13px;color:var(--nv);line-height:1.25}
+  .step .d{font-size:11.5px;color:var(--grey);margin-top:4px;line-height:1.35}
+  .step.last{background:#E9F6EE;border-color:#BFE3CD}
+  @media (max-width:760px){
+    .flow{grid-template-columns:1fr;gap:22px}
+    .step{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px}
+    .step .no{margin:0;flex:none}
+    .step:not(:last-child):after{content:"\2193";right:auto;left:26px;top:auto;bottom:-20px;transform:none}
+  }
+
+  /* grids */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:10px 0 18px}
+  .card{border:1px solid var(--bd);border-radius:10px;padding:14px 16px;background:#fff}
+  .card .h{font-weight:700;color:var(--nv);margin-bottom:4px}
+  .card p{font-size:13.5px;color:var(--grey);margin:0}
+
+  .qa{counter-reset:q;list-style:none;padding:0}
+  .qa li{counter-increment:q;position:relative;padding:10px 0 10px 42px;border-bottom:1px solid var(--lt)}
+  .qa li:before{content:counter(q);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;
+    background:var(--lt);border:1px solid var(--bd);color:var(--nv);font-weight:700;font-size:13px;
+    display:flex;align-items:center;justify-content:center}
+  .qgroup{font-size:12.5px;font-weight:800;letter-spacing:.1em;color:var(--acc);margin:22px 0 4px}
+
+  .calc{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:#0F1B2A;color:#DCE6EE;
+    border-radius:8px;padding:14px 18px;margin:8px 0 16px;overflow-x:auto;line-height:1.7}
+  .calc .k{color:#8FB3D1}.calc .v{color:#F4C56B}
+
+  footer{border-top:1px solid var(--bd);padding:22px 56px 30px;font-size:13px;color:var(--mut);display:flex;
+    justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media (max-width:640px){
+    .cover,.wrap,.proto-banner,footer{padding-left:22px;padding-right:22px}
+    .cover h1{font-size:27px}
+    .toc ol{columns:1}
+  }
+  @media print{
+    body{background:#fff}
+    .page{box-shadow:none}
+    h2{break-after:avoid}
+    .feat,.card,table,.flow{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="cover">
+    <div class="kicker">PROTOTYPE DOCUMENTATION</div>
+    <h1>Deservoir Mobile<br>Quotation Management System</h1>
+    <p class="sub">A plain-language guide to what this prototype does, how a quotation moves from client to
+      WhatsApp, who it is built for, and what the final application could include.</p>
+    <div class="meta">
+      <span>Prepared by <b>Sangam InfoAnalytics</b></span>
+      <span>For <b>Deservoir Industries Private Limited</b></span>
+      <span>Document <b>v1.0</b> &middot; September 2026</span>
+      <span>Prototype file <b>index.html</b></span>
+    </div>
+  </header>
+
+  <div class="proto-banner">
+    <div class="ic">!</div>
+    <p><b>This is a PROTOTYPE / DEMO, not the final application.</b> It exists to show how the system will look
+      and feel so that decisions can be made before development begins. It runs on built-in sample data:
+      <b>nothing you enter is saved, no PDF is created and no WhatsApp message is actually sent.</b>
+      The final application will be developed according to the client's exact requirements.</p>
+  </div>
+
+  <main class="wrap">
+
+    <nav class="toc">
+      <h2>CONTENTS</h2>
+      <ol>
+        <li><a href="#s1">Main objective</a></li>
+        <li><a href="#s2">Why it is useful for businesses</a></li>
+        <li><a href="#s3">Complete functionality</a></li>
+        <li><a href="#s4">The quotation workflow</a></li>
+        <li><a href="#s5">Business problems it solves</a></li>
+        <li><a href="#s6">Who it is for</a></li>
+        <li><a href="#s7">Business benefits</a></li>
+        <li><a href="#s8">Prototype vs production</a></li>
+        <li><a href="#s9">Possible future features</a></li>
+        <li><a href="#s10">Questions before we build</a></li>
+      </ol>
+    </nav>
+
+    <!-- ================================================================ 1 -->
+    <h2 id="s1"><span class="n">1.</span> Main objective of the Deservoir system</h2>
+    <p class="lead">To let a salesperson prepare a correct, GST-compliant quotation on a mobile phone in a few
+      minutes, and send it to the customer on WhatsApp straight away.</p>
+    <p>In most small and mid-sized businesses a quotation is still typed into Word or Excel, the GST is worked out
+      by hand, and the file is emailed or photographed and forwarded. That is slow, and mistakes in tax are common.
+      This system brings the whole job into one place: the customer, the items, the prices, the tax and the
+      message, with every figure worked out automatically.</p>
+    <ul class="clean">
+      <li><b>Faster quotations</b> &mdash; built from saved clients and items rather than typed from scratch.</li>
+      <li><b>Correct GST every time</b> &mdash; the right tax type and rate applied automatically.</li>
+      <li><b>Sent where customers already are</b> &mdash; shared on WhatsApp with a ready-made message.</li>
+      <li><b>Everything in one view</b> &mdash; what has been quoted, what is waiting, what was accepted.</li>
+    </ul>
+
+    <!-- ================================================================ 2 -->
+    <h2 id="s2"><span class="n">2.</span> Why this system is useful for businesses</h2>
+    <div class="grid">
+      <div class="card"><div class="h">Quotes go out the same day</div>
+        <p>A salesperson can quote from the customer's site or on the phone, instead of waiting to get back to the office.</p></div>
+      <div class="card"><div class="h">No GST errors</div>
+        <p>Whether to charge CGST + SGST or IGST is decided from the customer's state, not remembered by the salesperson.</p></div>
+      <div class="card"><div class="h">A professional image</div>
+        <p>Every quotation carries the same format, company details, bank details and terms.</p></div>
+      <div class="card"><div class="h">Nothing gets lost</div>
+        <p>Every quotation is listed with its status, so follow-ups are not forgotten.</p></div>
+      <div class="card"><div class="h">Works on the phone</div>
+        <p>Designed for a mobile screen first, where most small-business owners actually work.</p></div>
+      <div class="card"><div class="h">Consistent pricing</div>
+        <p>Rates, HSN codes and GST slabs come from one item master, so every salesperson quotes the same price.</p></div>
+    </div>
+
+    <!-- ================================================================ 3 -->
+    <h2 id="s3"><span class="n">3.</span> Complete functionality</h2>
+    <p>Each feature below describes <b>what this prototype actually shows today</b>. Where something is only
+      illustrated rather than working, it is marked
+      <span class="tag t-demo">DEMO ONLY</span>.</p>
+
+    <h3>How the app is organised</h3>
+    <p>The app has a bottom navigation bar with four tabs and a central <b>+</b> button:</p>
+    <table>
+      <tr><th style="width:26%">Tab / button</th><th>What it opens</th></tr>
+      <tr><td><b>Home</b></td><td>The dashboard.</td></tr>
+      <tr><td><b>Quotes</b></td><td>The list of all quotations, with status filters.</td></tr>
+      <tr><td><b>+</b> (centre)</td><td>Starts a new quotation.</td></tr>
+      <tr><td><b>Items</b></td><td>The item master, with HSN codes and GST rates.</td></tr>
+      <tr><td><b>More</b></td><td>Clients, company profile, WhatsApp message template.</td></tr>
+    </table>
+
+    <div class="feat">
+      <h3>Dashboard <span class="where">HOME TAB</span></h3>
+      <p>The first screen, giving an at-a-glance view of the business:</p>
+      <ul class="clean">
+        <li><b>Quoted this month</b> &mdash; total value of quotations raised.</li>
+        <li><b>Awaiting</b> &mdash; quotations that are Sent or Viewed and waiting for a reply.</li>
+        <li><b>Accepted</b> &mdash; value of quotations the customer has accepted this year.</li>
+        <li><b>Expiring</b> &mdash; quotations whose validity runs out within 7 days, so they can be followed up.</li>
+        <li><b>Clients</b> &mdash; number of customers on record.</li>
+        <li><b>Recent quotations</b> &mdash; the latest quotes, each with a share shortcut.</li>
+        <li><b>GST by slab</b> &mdash; how much tax sits in each GST rate.</li>
+      </ul>
+    </div>
+
+    <div class="feat">
+      <h3>Quotation management <span class="where">QUOTES TAB</span></h3>
+      <p>Every quotation is listed with the customer, quotation number, value and status. A row of filter buttons
+        narrows the list to <b>All, Draft, Sent, Viewed, Accepted</b> or <b>Expired</b>. Tapping a quotation opens it;
+        a share button sends it again without opening it first.</p>
+      <table>
+        <tr><th style="width:22%">Status</th><th>Meaning</th></tr>
+        <tr><td><b>Draft</b></td><td>Being prepared, not yet sent.</td></tr>
+        <tr><td><b>Sent</b></td><td>Shared with the customer.</td></tr>
+        <tr><td><b>Viewed</b></td><td>The customer has seen it.</td></tr>
+        <tr><td><b>Accepted</b></td><td>The customer has agreed to it.</td></tr>
+        <tr><td><b>Expired</b></td><td>The validity date has passed.</td></tr>
+      </table>
+      <p class="muted">In the prototype these statuses come from sample data. How a quotation moves between them
+        &mdash; especially "Viewed" &mdash; depends on how sharing is built in the final application.</p>
+    </div>
+
+    <div class="feat">
+      <h3>Create new quotation <span class="where">+ BUTTON</span></h3>
+      <p>The quotation builder shows, from top to bottom:</p>
+      <ul class="clean">
+        <li><b>Quotation number</b> with its status (Draft), the <b>quote date</b> and the <b>valid until</b> date.</li>
+        <li><b>Bill to</b> &mdash; the selected client, with a <b>Change</b> option.</li>
+        <li><b>Items</b> &mdash; each line shows description, HSN, quantity, unit, rate, discount and GST rate.
+          Lines can be added from the item master, edited or removed.</li>
+        <li><b>Tax summary</b> &mdash; worked out live as lines change.</li>
+        <li><b>Amount in words</b>, a short <b>tax logic</b> explanation, and the <b>terms</b>.</li>
+      </ul>
+      <p>When a line is edited, quantity can be stepped up and down, discount entered, and the GST rate chosen from
+        the slabs, with a live preview of the line amount before it is saved.</p>
+    </div>
+
+    <div class="feat">
+      <h3>Client management <span class="where">MORE &rsaquo; CLIENTS</span></h3>
+      <p>A list of customers, each shown with their state and whether they will be charged
+        <b>CGST + SGST</b> or <b>IGST</b>. A new client is added with name, GSTIN, state, address, contact person,
+        email and WhatsApp number (name, email and WhatsApp number are required).</p>
+      <ul class="clean">
+        <li><b>GSTIN checking</b> &mdash; the GSTIN is converted to capitals and checked against the standard
+          15-character pattern; a warning appears if it does not match.</li>
+        <li><b>State from GSTIN</b> &mdash; the first two digits fill in the state automatically
+          (for example 24 = Gujarat, 27 = Maharashtra).</li>
+        <li><b>Unregistered customers</b> &mdash; a customer without a GSTIN is shown as <b>URP</b>
+          (Unregistered Person).</li>
+      </ul>
+    </div>
+
+    <div class="feat">
+      <h3>Item / product management <span class="where">ITEMS TAB</span></h3>
+      <p>The item master holds everything that can be quoted: products and services, each with a name,
+        <b>HSN / SAC code</b>, unit (Nos, Set, Job, Year, Trip and so on), rate and GST rate, and marked as
+        Goods or Service. New items can be added from this screen or from inside a quotation. Once saved, an item
+        can be dropped into any quotation with its HSN, unit, price and GST rate already filled in.</p>
+    </div>
+
+    <div class="feat">
+      <h3>HSN &amp; GST management <span class="where">ITEMS TAB</span></h3>
+      <p>Every item carries its <b>own</b> HSN or SAC code and its <b>own</b> GST rate. This matters because a
+        single quotation often mixes rates &mdash; a pump at 18%, a solar heater at 12% and a testing kit at 5%.
+        The system keeps each line's rate separate and never applies one rate to the whole quotation.
+        The GST slabs available are <b>0%, 5%, 12%, 18% and 28%</b>.</p>
+    </div>
+
+    <div class="feat">
+      <h3>Automatic GST calculation</h3>
+      <p>For each line, and then for the whole quotation:</p>
+      <div class="calc">
+<span class="k">Line amount   </span>= Quantity &times; Rate
+<span class="k">Discount      </span>= Line amount &times; Discount %
+<span class="k">Taxable value </span>= Line amount &minus; Discount
+<span class="k">GST           </span>= Taxable value &times; GST rate of that line
+<span class="k">Grand total   </span>= Total taxable value + total GST, <span class="v">rounded to the nearest rupee</span>
+      </div>
+      <p>The difference caused by rounding is shown as a separate <b>Round off</b> line, as GST documents require.</p>
+    </div>
+
+    <div class="feat">
+      <h3>CGST + SGST for intra-state supply</h3>
+      <p>When the customer is in the <b>same state</b> as the company (both in Gujarat, for example), the GST is
+        split into two equal halves: <b>CGST</b> (Central) and <b>SGST</b> (State). 18% GST becomes
+        CGST 9% + SGST 9%.</p>
+    </div>
+
+    <div class="feat">
+      <h3>IGST for inter-state supply</h3>
+      <p>When the customer is in a <b>different state</b> (the company in Gujarat, the customer in Maharashtra),
+        the full rate is charged as <b>IGST</b> (Integrated GST). 18% GST is charged as IGST 18%.</p>
+      <div class="note info">The decision is made automatically by comparing the company's state with the
+        customer's state. Changing the customer on a quotation switches between CGST + SGST and IGST instantly.
+        <b>The total stays the same either way</b> &mdash; only the way the tax is split changes. The
+        quotation also shows a sentence explaining which rule was applied and why.</div>
+    </div>
+
+    <div class="feat">
+      <h3>Tax summary</h3>
+      <p>Under the items, the quotation shows:</p>
+      <table>
+        <tr><th>Line</th><th>Shows</th></tr>
+        <tr><td>Gross value</td><td>Quantity &times; rate for every line, added up.</td></tr>
+        <tr><td>Discount</td><td>Total discount given.</td></tr>
+        <tr><td>Taxable value</td><td>The amount GST is charged on.</td></tr>
+        <tr><td>CGST / SGST <i>or</i> IGST</td><td>Listed <b>separately for each GST rate</b> used on the quotation.</td></tr>
+        <tr><td>Round off</td><td>The adjustment to reach a whole rupee.</td></tr>
+        <tr><td><b>Total</b></td><td>The final amount payable, with the amount written in words.</td></tr>
+      </table>
+    </div>
+
+    <div class="feat">
+      <h3>Quotation validity</h3>
+      <p>Each quotation has a <b>quote date</b> and a <b>valid until</b> date. The default validity period (in days)
+        is set once in the company profile. Quotations that are about to expire are highlighted on the dashboard,
+        and ones past their date are marked <b>Expired</b>.</p>
+    </div>
+
+    <div class="feat">
+      <h3>Company profile <span class="where">MORE &rsaquo; COMPANY PROFILE</span></h3>
+      <p>The details printed on every quotation, entered once:</p>
+      <ul class="clean">
+        <li><b>Identity</b> &mdash; company name, GSTIN and address. The GSTIN's state code decides whether customers
+          are charged CGST + SGST or IGST.</li>
+        <li><b>Contact</b> &mdash; email, WhatsApp number and landline.</li>
+        <li><b>Bank</b> &mdash; bank name, branch, account number and IFSC.</li>
+        <li><b>Numbering</b> &mdash; quotation prefix, next number and default validity.</li>
+      </ul>
+    </div>
+
+    <div class="feat">
+      <h3>WhatsApp quotation sharing <span class="where">SHARE BUTTON</span> <span class="tag t-demo">DEMO ONLY</span></h3>
+      <p>Tapping share opens a screen that looks like a WhatsApp chat with the customer. It shows the customer's
+        name and number, a PDF attachment named after the quotation, and a ready-written message. A summary lists
+        the contact, number, attachment and total. <b>Send on WhatsApp</b> completes the action.</p>
+      <p>The message is built from a template that fills itself in:</p>
+      <div class="calc">Namaste <span class="v">{contact}</span>,
+
+Please find the quotation from *<span class="v">{company}</span>*.
+
+*Quote no:*  <span class="v">{no}</span>
+*Date:*  <span class="v">{date}</span>
+*Valid until:*  <span class="v">{valid}</span>
+*Items:*  <span class="v">{items}</span>
+*Total (incl. GST):*  <span class="v">{total}</span>
+
+PDF attached. Happy to revise if anything needs a change.
+
+&mdash; <span class="v">{rep}</span>, <span class="v">{company}</span>
+<span class="v">{phone}</span></div>
+      <p>Words between *asterisks* appear <b>bold</b> in WhatsApp. The template can be edited under
+        <b>More &rsaquo; WhatsApp message</b>.</p>
+      <div class="note"><b>In the prototype, nothing is actually sent.</b> Pressing <b>Send on WhatsApp</b> shows a
+        confirmation marked "(demo)". The PDF shown is a placeholder &mdash; no file is created. Real sending, with a
+        real PDF attached, is built in the final application (see Sections 8 and 9).</div>
+    </div>
+
+    <div class="feat">
+      <h3>Terms &amp; conditions</h3>
+      <p>Standard terms appear at the foot of every quotation. The prototype's sample terms are:</p>
+      <ol style="padding-left:22px;margin:0 0 10px">
+        <li>Prices are ex-works Ahmedabad.</li>
+        <li>Payment: 50% advance, balance before dispatch.</li>
+        <li>Delivery: 3&ndash;4 weeks from confirmed order.</li>
+        <li>Warranty: 12 months against manufacturing defects.</li>
+      </ol>
+      <p class="muted">In the final application these would be set by the company, and could be edited for an
+        individual quotation.</p>
+    </div>
+
+    <div class="feat">
+      <h3>Quote numbering / settings <span class="where">COMPANY PROFILE &rsaquo; NUMBERING</span></h3>
+      <p>Quotations are numbered in a running series such as <b>QT/2026-27/0042</b> &mdash; a prefix, the financial
+        year and a sequence number. The <b>prefix</b>, the <b>next number</b> and the <b>default validity in
+        days</b> are all set in the company profile.</p>
+    </div>
+
+    <!-- ================================================================ 4 -->
+    <h2 id="s4"><span class="n">4.</span> The complete quotation workflow</h2>
+    <p>From an enquiry to a quotation in the customer's WhatsApp, in seven steps:</p>
+
+    <div class="flow">
+      <div class="step"><div class="no">1</div><div class="t">Client</div><div class="d">Choose the customer, or add a new one</div></div>
+      <div class="step"><div class="no">2</div><div class="t">Select items</div><div class="d">Pick from the item master</div></div>
+      <div class="step"><div class="no">3</div><div class="t">Qty / price</div><div class="d">Set quantity, rate and discount</div></div>
+      <div class="step"><div class="no">4</div><div class="t">GST</div><div class="d">Each line keeps its own rate</div></div>
+      <div class="step"><div class="no">5</div><div class="t">Tax calc</div><div class="d">CGST + SGST or IGST, applied automatically</div></div>
+      <div class="step"><div class="no">6</div><div class="t">Quotation</div><div class="d">Totals, words, validity, terms</div></div>
+      <div class="step last"><div class="no">7</div><div class="t">WhatsApp</div><div class="d">Share with a ready message</div></div>
+    </div>
+
+    <table>
+      <tr><th style="width:6%">#</th><th style="width:24%">Step</th><th>What happens</th></tr>
+      <tr><td>1</td><td><b>Client</b></td><td>The salesperson taps <b>+</b> and chooses the customer. The state is known,
+        so the tax type is already decided.</td></tr>
+      <tr><td>2</td><td><b>Select items</b></td><td>Products and services are added from the item master. HSN code,
+        unit, price and GST rate come across automatically.</td></tr>
+      <tr><td>3</td><td><b>Quantity / price</b></td><td>Quantity is set for each line, the rate adjusted if needed,
+        and a discount given if agreed.</td></tr>
+      <tr><td>4</td><td><b>GST</b></td><td>Each line keeps its own GST rate. It can be changed per line.</td></tr>
+      <tr><td>5</td><td><b>Tax calculation</b></td><td>The system works out taxable value, splits GST into
+        CGST + SGST or charges IGST, and rounds to the nearest rupee.</td></tr>
+      <tr><td>6</td><td><b>Quotation</b></td><td>The finished quotation shows the tax summary, amount in words,
+        validity date and terms.</td></tr>
+      <tr><td>7</td><td><b>WhatsApp sharing</b></td><td>The quotation is shared on WhatsApp with a pre-written
+        message. <span class="tag t-demo">DEMO ONLY</span> in this prototype.</td></tr>
+    </table>
+
+    <!-- ================================================================ 5 -->
+    <h2 id="s5"><span class="n">5.</span> What business problems this system solves</h2>
+    <table>
+      <tr><th style="width:42%">The problem today</th><th>How the system addresses it</th></tr>
+      <tr><td>Quotations take hours, and often wait until someone is back at the office.</td>
+          <td>Built on a phone in minutes, from saved clients and items.</td></tr>
+      <tr><td>GST worked out by hand, with mistakes in rate or tax type.</td>
+          <td>Every rate and the CGST + SGST / IGST split applied automatically.</td></tr>
+      <tr><td>Different salespeople quote different prices for the same item.</td>
+          <td>One item master that everyone quotes from.</td></tr>
+      <tr><td>Quotations look different every time.</td>
+          <td>One standard format, with company details, bank details and terms.</td></tr>
+      <tr><td>No record of what was quoted to whom, or when.</td>
+          <td>Every quotation listed with customer, value and status.</td></tr>
+      <tr><td>Follow-ups are forgotten and quotations lapse.</td>
+          <td>Quotations near expiry are flagged on the dashboard.</td></tr>
+      <tr><td>Files emailed or photographed and forwarded by hand.</td>
+          <td>Shared on WhatsApp with a ready-written message.</td></tr>
+      <tr><td>Wrong GSTINs entered for customers.</td>
+          <td>GSTIN format checked, and the state filled in from it.</td></tr>
+    </table>
+
+    <!-- ================================================================ 6 -->
+    <h2 id="s6"><span class="n">6.</span> Which clients and businesses this is for</h2>
+    <p>Any business that sends GST quotations to other businesses, particularly where one quotation mixes
+      several products at different GST rates.</p>
+    <div class="grid">
+      <div class="card"><div class="h">Manufacturing companies</div>
+        <p>Quote finished products with HSN codes and different GST rates on one document.</p></div>
+      <div class="card"><div class="h">Engineering companies</div>
+        <p>Combine equipment, fabrication and services such as installation in a single quotation.</p></div>
+      <div class="card"><div class="h">Machinery businesses</div>
+        <p>Quote machines, spares, installation and annual maintenance together.</p></div>
+      <div class="card"><div class="h">Trading companies</div>
+        <p>Quote large product catalogues quickly and consistently.</p></div>
+      <div class="card"><div class="h">Industrial suppliers</div>
+        <p>Handle many items and frequent repeat quotations for the same customers.</p></div>
+      <div class="card"><div class="h">Distributors</div>
+        <p>Quote customers across several states, with IGST applied automatically for inter-state supply.</p></div>
+      <div class="card"><div class="h">B2B businesses</div>
+        <p>Any business selling to GST-registered buyers who expect a properly formatted quotation.</p></div>
+      <div class="card"><div class="h">SMEs</div>
+        <p>Small and mid-sized firms that want a professional system without the cost of a full ERP.</p></div>
+    </div>
+
+    <!-- ================================================================ 7 -->
+    <h2 id="s7"><span class="n">7.</span> Business benefits</h2>
+    <div class="grid">
+      <div class="card"><div class="h">Save time</div><p>Minutes per quotation instead of hours.</p></div>
+      <div class="card"><div class="h">Fewer tax errors</div><p>GST applied the same, correct way every time.</p></div>
+      <div class="card"><div class="h">Faster responses</div><p>Quotes sent while the customer is still interested.</p></div>
+      <div class="card"><div class="h">Better follow-up</div><p>See what is waiting and what is about to expire.</p></div>
+      <div class="card"><div class="h">Professional image</div><p>A consistent, branded quotation every time.</p></div>
+      <div class="card"><div class="h">Standard pricing</div><p>One price list the whole team works from.</p></div>
+      <div class="card"><div class="h">Clear view of sales</div><p>Value quoted, pending and accepted at a glance.</p></div>
+      <div class="card"><div class="h">Work from anywhere</div><p>Quote from the customer's site, not just the office.</p></div>
+    </div>
+
+    <!-- ================================================================ 8 -->
+    <h2 id="s8"><span class="n">8.</span> Prototype vs actual production application</h2>
+    <p>The prototype shows the <b>screens, the flow and the calculations</b>. The production application makes it
+      real, secure and permanent.</p>
+    <table>
+      <tr><th style="width:30%">Area</th><th style="width:35%">This prototype</th><th>Final production application</th></tr>
+      <tr><td><b>Data</b></td><td><span class="cross">&#10007;</span> Built-in sample data; nothing is saved</td>
+          <td><span class="tick">&#10003;</span> Everything saved permanently</td></tr>
+      <tr><td><b>Clients &amp; items</b></td><td>Sample list; new entries last only until the page is closed</td>
+          <td>The company's real customers and products, kept and editable</td></tr>
+      <tr><td><b>Quotations</b></td><td>Sample quotations</td>
+          <td>Real quotations with a history that is never lost</td></tr>
+      <tr><td><b>GST calculation</b></td><td><span class="tick">&#10003;</span> Working, to demonstrate the logic</td>
+          <td><span class="tick">&#10003;</span> Exact to the paisa, tested and verified</td></tr>
+      <tr><td><b>PDF</b></td><td><span class="cross">&#10007;</span> Placeholder only</td>
+          <td><span class="tick">&#10003;</span> Branded PDF, ready to print or send</td></tr>
+      <tr><td><b>WhatsApp</b></td><td><span class="cross">&#10007;</span> Preview; sending is simulated</td>
+          <td><span class="tick">&#10003;</span> Real sharing, with the PDF attached</td></tr>
+      <tr><td><b>Users &amp; security</b></td><td><span class="cross">&#10007;</span> No login</td>
+          <td><span class="tick">&#10003;</span> Login and user access, as required</td></tr>
+      <tr><td><b>Backup</b></td><td><span class="cross">&#10007;</span> None</td>
+          <td><span class="tick">&#10003;</span> Backup and restore</td></tr>
+      <tr><td><b>Search</b></td><td>Button present, not active</td><td>Working search across quotations and clients</td></tr>
+      <tr><td><b>Testing</b></td><td>For demonstration</td><td>Fully tested before handover</td></tr>
+    </table>
+    <div class="note"><b>The final application will be developed according to the client's exact requirements.</b>
+      The prototype is a starting point for discussion. Screens, fields, workflow and features can all be changed
+      once the requirements in Section 10 have been agreed.</div>
+
+    <!-- ================================================================ 9 -->
+    <h2 id="s9"><span class="n">9.</span> Possible future features</h2>
+    <p>Features that can be added in the final application, depending on the client's needs and budget. None of
+      these is in the prototype.</p>
+    <table>
+      <tr><th style="width:30%">Feature <span class="tag t-future" style="margin-left:6px">FUTURE</span></th><th>What it would do</th></tr>
+      <tr><td><b>Login / users</b></td><td>Each person signs in with their own account.</td></tr>
+      <tr><td><b>Database</b></td><td>All clients, items and quotations stored permanently and safely.</td></tr>
+      <tr><td><b>PDF generation</b></td><td>A branded, print-ready PDF for every quotation.</td></tr>
+      <tr><td><b>Invoice conversion</b></td><td>Turn an accepted quotation into a GST tax invoice in one step.</td></tr>
+      <tr><td><b>Payment tracking</b></td><td>Record advances and balances received against each order.</td></tr>
+      <tr><td><b>Reports</b></td><td>Sales by period, by customer, by item, and conversion rates.</td></tr>
+      <tr><td><b>Customer history</b></td><td>Every quotation and order for a customer in one place.</td></tr>
+      <tr><td><b>Inventory</b></td><td>Stock levels, with alerts when an item runs low.</td></tr>
+      <tr><td><b>WhatsApp API</b></td><td>Send quotations automatically through the official WhatsApp Business API, and track delivery.</td></tr>
+      <tr><td><b>Email</b></td><td>Send quotations by email as well as WhatsApp.</td></tr>
+      <tr><td><b>Cloud backup</b></td><td>Automatic backup so data survives a lost or broken device.</td></tr>
+      <tr><td><b>Admin panel</b></td><td>Manage users, settings, price lists and approvals from one screen.</td></tr>
+      <tr><td><b>Role-based access</b></td><td>Control who can see prices, change rates, approve discounts or delete records.</td></tr>
+    </table>
+
+    <!-- ================================================================ 10 -->
+    <h2 id="s10"><span class="n">10.</span> Questions to ask the client before we build</h2>
+    <p>The answers to these decide the scope, the price and the timeline of the final application.</p>
+
+    <div class="qgroup">USERS &amp; ACCESS</div>
+    <ol class="qa">
+      <li>How many people will use the system, and in what roles (owner, sales, accounts)?</li>
+      <li>Should everyone see every quotation, or only their own?</li>
+      <li>Who is allowed to change prices, give discounts or delete a quotation?</li>
+      <li>Do discounts above a certain level need approval?</li>
+    </ol>
+
+    <div class="qgroup">DEVICES &amp; WHERE IT RUNS</div>
+    <ol class="qa" start="5" style="counter-reset:q 4">
+      <li>Will the team use it on mobile phones, a computer in the office, or both?</li>
+      <li>Must it work without an internet connection?</li>
+      <li>Should the data stay on the company's own computer, or be kept online so it can be reached from anywhere?</li>
+    </ol>
+
+    <div class="qgroup">QUOTATION FORMAT</div>
+    <ol class="qa" style="counter-reset:q 7">
+      <li>Can you share a quotation you send today, so the new format matches your existing one?</li>
+      <li>What must appear on every quotation &mdash; logo, bank details, signature, stamp?</li>
+      <li>How should quotations be numbered, and does the series restart each financial year?</li>
+      <li>How many days is a quotation normally valid for?</li>
+      <li>Are your terms the same for every customer, or do they change by customer or product?</li>
+      <li>Do you need a longer description or specification under an item?</li>
+    </ol>
+
+    <div class="qgroup">PRODUCTS, CUSTOMERS &amp; TAX</div>
+    <ol class="qa" style="counter-reset:q 13">
+      <li>Roughly how many products and services do you sell, and can you share the list with HSN codes and GST rates?</li>
+      <li>Roughly how many customers, and can you share that list?</li>
+      <li>Do you sell to customers outside Gujarat (so IGST applies)?</li>
+      <li>Do you have different price lists for different customers?</li>
+      <li>What units do you sell in (Nos, Kg, Set, Job, metre and so on)?</li>
+    </ol>
+
+    <div class="qgroup">SHARING</div>
+    <ol class="qa" style="counter-reset:q 18">
+      <li>Should quotations be sent on WhatsApp, email, or both?</li>
+      <li>Should WhatsApp sending be automatic through the WhatsApp Business API, or through the salesperson's own WhatsApp?</li>
+      <li>Do you want to know when a customer has opened a quotation?</li>
+    </ol>
+
+    <div class="qgroup">BEYOND QUOTATIONS</div>
+    <ol class="qa" style="counter-reset:q 21">
+      <li>Once a quotation is accepted, do you want to turn it into a tax invoice here?</li>
+      <li>Do you need to track payments received?</li>
+      <li>Which reports matter most to you?</li>
+      <li>Do you need stock or inventory tracking?</li>
+      <li>Should it connect to Tally or any accounting software you already use?</li>
+    </ol>
+
+    <div class="qgroup">DATA, SUPPORT &amp; TIMELINE</div>
+    <ol class="qa" style="counter-reset:q 26">
+      <li>How important is backup, and where should backups be kept?</li>
+      <li>Do you have old quotations or records that need to be brought across?</li>
+      <li>Will you need ongoing support and changes after the application goes live?</li>
+      <li>When do you need the application ready, and is there a budget range in mind?</li>
+    </ol>
+
+    <div class="note info" style="margin-top:24px"><b>Next step.</b> Once these questions are answered, we will
+      prepare a fixed scope, a quotation and a delivery timeline in working days (Monday to Saturday) for the
+      final application.</div>
+
+  </main>
+
+  <footer>
+    <span><b>Sangam InfoAnalytics</b> &middot; Junagadh, Gujarat &middot; +91 84900 02023 &middot; sangam.infoanalytics@gmail.com</span>
+    <span>Prototype documentation &middot; not a quotation or a contract</span>
+  </footer>
+
+</div>
+</body>
+</html>

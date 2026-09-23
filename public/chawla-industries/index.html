@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101418">
+<title>Chawla Industries — App Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Noto+Sans+Gujarati:wght@400;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#101418; --ink-2:#1C2228; --ink-3:#2C343C;
+  --field:#F4F5F3; --card:#FFFFFF; --line:#E2E4E0; --mute:#7A8189;
+  --amber:#FFB800; --amber-d:#C98F00;
+  --kraft:#C99A62; --kraft-l:#F5EBDD;
+  --go:#1F9D6B; --go-l:#E8F5EF;
+  --alert:#E24E32; --alert-l:#FCEDEA;
+  --blue:#3D6FA0; --blue-l:#EAF1F7;
+  --violet:#6B5CA5; --violet-l:#EFEDF8;
+  --disp:'Archivo','Helvetica Neue',sans-serif;
+  --body:'Public Sans',system-ui,sans-serif;
+  --mono:'DM Mono','Courier New',monospace;
+  --guj:'Noto Sans Gujarati',sans-serif;
+  --r:14px; --ease:cubic-bezier(.22,.8,.28,1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%}
+body{font-family:var(--body);background:#0A0D10;color:var(--ink);font-size:15px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center}
+button{font-family:inherit;border:0;background:none;cursor:pointer;color:inherit}
+input,select,textarea{font-family:inherit;font-size:16px}
+
+/* device */
+.stage{display:flex;align-items:center;gap:40px}
+.pitch{display:none;max-width:270px;color:#8A929B}
+.pitch h1{font-family:var(--disp);font-size:29px;font-weight:800;color:#fff;margin:0 0 6px;letter-spacing:-.02em;line-height:1.1}
+.pitch .amb{color:var(--amber)}
+.pitch p{font-size:13px;line-height:1.6;margin:0 0 14px}
+.pitch .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#5C646D;margin-bottom:14px}
+.pitch ol{margin:0;padding-left:18px;font-size:12.5px;line-height:1.85}
+.device{width:390px;height:820px;background:var(--field);position:relative;overflow:hidden;
+  border-radius:44px;border:11px solid #05070A;box-shadow:0 0 0 1.5px #2A3138,0 40px 90px rgba(0,0,0,.7)}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#05070A;border-radius:0 0 16px 16px;z-index:99}
+@media (min-width:1120px){.pitch{display:block}}
+@media (max-width:900px){
+  body{display:block}.stage{display:block}
+  .device{width:100%;height:100dvh;border-radius:0;border:0;box-shadow:none}.notch{display:none}
+}
+
+.app{position:absolute;inset:0;overflow:hidden}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--field);
+  transform:translateX(100%);opacity:0;pointer-events:none;
+  transition:transform .32s var(--ease),opacity .2s ease;z-index:1}
+.screen.active{transform:translateX(0);opacity:1;pointer-events:auto;z-index:5}
+.body-scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:20px}
+
+/* top bar */
+.top{background:var(--ink);color:#fff;padding:44px 16px 13px;flex-shrink:0;border-bottom:2px solid var(--amber)}
+.top.plain{border-bottom:1px solid var(--ink-3)}
+.top .row{display:flex;align-items:center;gap:11px}
+.firm{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:-.015em;line-height:1.1}
+.firm em{font-style:normal;color:var(--amber)}
+.sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;color:#79828C;text-transform:uppercase;margin-top:3px}
+.grow{flex:1;min-width:0}
+.iconbtn{width:38px;height:38px;border-radius:11px;background:var(--ink-2);display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;position:relative;transition:background .15s}
+.iconbtn:active{background:var(--ink-3)}
+.iconbtn svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.iconbtn .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;background:var(--alert);border-radius:50%;border:1.5px solid var(--ink-2)}
+
+.gauge{margin-top:12px;display:flex;align-items:center;gap:10px}
+.gauge .track{flex:1;height:5px;background:var(--ink-3);border-radius:99px;overflow:hidden}
+.gauge .fill{height:100%;background:linear-gradient(90deg,var(--go),#3FCB92);width:4%;border-radius:99px;transition:width 1.1s var(--ease)}
+.gauge .lbl{font-family:var(--mono);font-size:10px;color:#8A929B;white-space:nowrap}
+.gauge .lbl b{color:#fff}
+
+/* headline strip inside dark bar */
+.hstats{display:flex;gap:8px;margin-top:13px}
+.hstat{flex:1;background:var(--ink-2);border-radius:10px;padding:9px 10px;border-left:2px solid var(--amber)}
+.hstat.g{border-left-color:var(--go)} .hstat.r{border-left-color:var(--alert)}
+.hstat .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.11em;color:#79828C;text-transform:uppercase}
+.hstat .v{font-family:var(--disp);font-weight:700;font-size:16px;color:#fff;margin-top:2px;line-height:1.1}
+
+/* search */
+.searchwrap{padding:13px 16px 4px;flex-shrink:0}
+.search{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.search svg{width:17px;height:17px;stroke:var(--mute);fill:none;stroke-width:1.9}
+.search input{border:0;outline:0;flex:1;background:none;font-size:15px}
+
+/* machine card */
+.list{padding:8px 16px 0;display:flex;flex-direction:column;gap:11px}
+.mcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;
+  animation:rise .4s var(--ease) both;transition:transform .12s}
+.mcard:active{transform:scale(.985)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.mart{width:110px;flex-shrink:0;background:linear-gradient(160deg,#EDEFEC,#DCDFDA);display:flex;align-items:center;
+  justify-content:center;position:relative;padding:8px}
+.mart svg{width:100%;height:auto}
+.mart .dur{position:absolute;left:6px;bottom:6px;background:rgba(16,20,24,.88);color:#fff;font-family:var(--mono);
+  font-size:9px;padding:2px 5px;border-radius:4px;display:flex;align-items:center;gap:4px}
+.mart .dur i{width:0;height:0;border-left:5px solid var(--amber);border-top:3.5px solid transparent;border-bottom:3.5px solid transparent}
+.minfo{flex:1;min-width:0;padding:12px 13px;display:flex;flex-direction:column}
+.mname{font-family:var(--disp);font-weight:700;font-size:15.5px;line-height:1.2;letter-spacing:-.01em;margin-bottom:5px}
+.mmeta{font-family:var(--mono);font-size:10.5px;color:var(--mute);letter-spacing:.03em;margin-bottom:auto}
+.mprice{font-family:var(--disp);font-weight:700;font-size:15px;margin:8px 0 9px}
+.mprice.ask{font-family:var(--body);font-weight:500;font-size:13px;color:var(--mute)}
+.mrow{display:flex;gap:8px;align-items:center}
+.sendbtn{background:var(--amber);color:var(--ink);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;
+  display:flex;align-items:center;gap:6px;font-family:var(--disp);box-shadow:0 2px 0 var(--amber-d);transition:transform .1s,box-shadow .1s}
+.sendbtn:active{transform:translateY(2px);box-shadow:0 0 0 var(--amber-d)}
+.sendbtn svg{width:14px;height:14px;stroke:var(--ink);fill:none;stroke-width:2.2}
+.chip{font-family:var(--mono);font-size:10px;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:4px 7px}
+
+/* tabs */
+.tabs{flex-shrink:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 2px 22px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;position:relative}
+.tab svg{width:20px;height:20px;stroke:var(--mute);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:stroke .18s}
+.tab span{font-size:9.5px;color:var(--mute);font-weight:600;transition:color .18s}
+.tab.on svg{stroke:var(--ink)}
+.tab.on span{color:var(--ink)}
+.tab.on::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:3px;
+  background:var(--amber);border-radius:0 0 4px 4px;animation:tabin .28s var(--ease)}
+@keyframes tabin{from{width:0}to{width:24px}}
+
+/* generic sections */
+.sec{padding:16px 16px 0}
+.eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:18px 0 9px}
+.eyebrow:first-child{margin-top:0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.pill-row{display:flex;gap:7px;overflow-x:auto;padding:0 16px 2px;scrollbar-width:none}
+.pill-row::-webkit-scrollbar{display:none}
+.pill-btn{flex-shrink:0;padding:8px 14px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);
+  font-size:13px;font-weight:600;color:var(--mute);transition:all .16s}
+.pill-btn.on{background:var(--ink);border-color:var(--ink);color:#fff}
+
+.seg{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin:14px 16px 0}
+.seg button{flex:1;padding:9px;border-radius:9px;font-weight:600;font-size:13px;color:var(--mute);transition:all .18s}
+.seg button.on{background:var(--ink);color:#fff}
+
+.fabrow{padding:14px 16px 4px}
+.bigbtn{width:100%;background:var(--amber);color:var(--ink);font-family:var(--disp);font-weight:800;font-size:15.5px;
+  padding:14px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 3px 0 var(--amber-d);transition:transform .1s,box-shadow .1s}
+.bigbtn:active{transform:translateY(3px);box-shadow:0 0 0 var(--amber-d)}
+.bigbtn.dark{background:var(--ink);color:#fff;box-shadow:0 3px 0 #000}
+.bigbtn.gr{background:var(--go);color:#fff;box-shadow:0 3px 0 #16744F}
+.bigbtn.ghost{background:var(--card);border:1.5px solid var(--line);box-shadow:none;color:var(--ink)}
+.bigbtn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.btnrow{display:flex;gap:9px}
+.btnrow .bigbtn{flex:1}
+.btnrow .bigbtn.narrow{flex:0 0 52px}
+
+/* rows */
+.rowcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 13px;display:flex;
+  align-items:center;gap:11px;margin-bottom:9px;width:100%;text-align:left;animation:rise .35s var(--ease) both}
+.rowcard.fresh{border-color:var(--amber);background:#FFFCF2}
+.av{width:40px;height:40px;border-radius:12px;background:var(--ink);color:#fff;display:flex;align-items:center;
+  justify-content:center;font-family:var(--disp);font-weight:700;font-size:14px;flex-shrink:0}
+.av svg{width:100%;height:auto}
+.av.k{background:var(--kraft)} .av.g{background:var(--go)} .av.b{background:var(--blue)} .av.v{background:var(--violet)}
+.rowcard .t{flex:1;min-width:0}
+.rowcard .t b{display:block;font-size:14.5px;font-weight:600}
+.rowcard .t p{margin:2px 0 0;font-size:12.5px;color:var(--mute)}
+.rowcard .amt{font-family:var(--mono);font-weight:500;font-size:14px;white-space:nowrap}
+.rowcard .amt.in{color:var(--go)} .rowcard .amt.out{color:var(--alert)}
+.rowcard .go{width:20px;height:20px;stroke:var(--mute);fill:none;stroke-width:2;flex-shrink:0}
+
+.stage-chip{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;
+  border-radius:99px;border:1px solid;display:inline-block;margin-top:5px}
+.st-new{color:var(--blue);border-color:#B8CBDD;background:var(--blue-l)}
+.st-video{color:#8A6534;border-color:#E8D6BF;background:var(--kraft-l)}
+.st-quote{color:var(--violet);border-color:#CFC8E6;background:var(--violet-l)}
+.st-won{color:var(--go);border-color:#A9CDBB;background:var(--go-l)}
+.st-lost{color:var(--alert);border-color:#E9C0B6;background:var(--alert-l)}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 13px;border-top:3px solid var(--ink)}
+.kpi.g{border-top-color:var(--go)} .kpi.r{border-top-color:var(--alert)}
+.kpi.a{border-top-color:var(--amber)} .kpi.b{border-top-color:var(--blue)}
+.kpi .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.kpi .v{font-family:var(--disp);font-weight:800;font-size:21px;margin-top:4px;line-height:1.1;letter-spacing:-.02em}
+.kpi .d{font-family:var(--mono);font-size:10px;color:var(--mute);margin-top:3px}
+
+/* chart */
+.chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:6px}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;height:100%}
+.bar .stack{display:flex;align-items:flex-end;gap:3px;height:100%}
+.bar .stack .s{flex:1;min-width:0}
+.bar .s{border-radius:3px 3px 0 0;animation:growh .6s var(--ease) both}
+.bar .s.sale{background:var(--go)} .bar .s.pur{background:var(--kraft)}
+@keyframes growh{from{height:0 !important}}
+.bar .lab{font-family:var(--mono);font-size:8.5px;color:var(--mute);text-align:center}
+.legend{display:flex;gap:14px;margin-top:12px;font-size:11.5px;color:var(--mute)}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:5px}
+
+/* ledger totals */
+.totrow{display:flex;justify-content:space-between;padding:7px 0;font-size:14px;border-bottom:1px dashed var(--line)}
+.totrow:last-child{border-bottom:0}
+.totrow .k{color:var(--mute);font-size:13px}
+.totrow .v{font-family:var(--mono);font-weight:500}
+.totrow.grand{border-top:2px solid var(--ink);border-bottom:0;margin-top:8px;padding-top:11px;
+  font-family:var(--disp);font-weight:800;font-size:18px;align-items:baseline}
+.totrow.grand .v{font-family:var(--mono);font-size:18px;font-weight:500}
+.words{font-size:12px;color:var(--mute);font-style:italic;margin-top:8px}
+
+/* quote lines */
+.qline{display:grid;grid-template-columns:1fr 48px 78px 26px;gap:7px;align-items:center;margin-bottom:9px}
+.qline .nm{font-size:13px;font-weight:600;line-height:1.25}
+.qline .nm span{display:block;font-family:var(--mono);font-size:9.5px;color:var(--mute);font-weight:400}
+.qline input{width:100%;padding:8px 6px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;text-align:center;outline:0}
+.qline input:focus{border-color:var(--ink)}
+.xbtn{color:var(--alert);font-size:17px;font-weight:600;padding:4px}
+
+/* hero / player */
+.hero{background:linear-gradient(165deg,#2A3138,#141A1F);position:relative;aspect-ratio:4/3;display:flex;
+  align-items:center;justify-content:center;overflow:hidden}
+.hero svg.mach{width:78%;height:auto;filter:drop-shadow(0 18px 26px rgba(0,0,0,.45))}
+.hero::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,rgba(255,184,0,.035) 0 14px,transparent 14px 28px);pointer-events:none}
+.playpill{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;
+  background:var(--amber);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 26px rgba(0,0,0,.45);z-index:3}
+.playpill::before{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid rgba(255,184,0,.4);animation:ring 2s ease-out infinite}
+@keyframes ring{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+.playpill .tri{width:0;height:0;border-left:19px solid var(--ink);border-top:11.5px solid transparent;border-bottom:11.5px solid transparent;margin-left:5px}
+.scrub{position:absolute;left:0;right:0;bottom:0;padding:22px 14px 11px;z-index:4;
+  background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;font-family:var(--mono);font-size:10.5px;
+  display:flex;align-items:center;gap:9px}
+.scrub .track{flex:1;height:3px;background:rgba(255,255,255,.28);border-radius:9px;overflow:hidden}
+.scrub .fill{height:100%;width:0;background:var(--amber);border-radius:9px}
+.dname{font-family:var(--disp);font-weight:800;font-size:22px;letter-spacing:-.02em;line-height:1.15;margin:0 0 6px}
+.dprice{font-family:var(--disp);font-weight:700;font-size:19px;margin-bottom:12px}
+.dprice.ask{font-family:var(--body);font-size:15px;font-weight:500;color:var(--mute)}
+.gal{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.gal::-webkit-scrollbar{display:none}
+.gal .shot{width:102px;height:80px;flex-shrink:0;border-radius:10px;overflow:hidden;
+  background:linear-gradient(160deg,#EDEFEC,#D9DCD7);border:1px solid var(--line);display:flex;align-items:center;
+  justify-content:center;padding:7px}
+.gal .shot svg{width:100%;height:auto;transition:transform .3s var(--ease)}
+.gal .shot.v1 svg{transform:scale(1.06)}
+.gal .shot.v2 svg{transform:scale(2.1) translate(-9%,5%)}
+.gal .shot.v3 svg{transform:scale(1.34) rotate(-7deg)}
+.gal .shot.v4 svg{transform:scale(2.5) translate(15%,-7%)}
+.gal .shot.v2{background:linear-gradient(160deg,#E6E9E4,#D2D6D0)}
+.gal .shot.v3{background:linear-gradient(200deg,#EFF1EE,#DDE1DC)}
+.gal .shot.v4{background:linear-gradient(140deg,#E9ECE8,#D6DAD4)}
+.pdfcard{display:flex;align-items:center;gap:12px;background:var(--kraft-l);border:1px solid #E8D6BF;border-radius:12px;padding:12px}
+.pdfcard .ic{width:38px;height:44px;background:#fff;border:1px solid #E0CDB4;border-radius:4px;position:relative;
+  flex-shrink:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px}
+.pdfcard .ic b{font-family:var(--mono);font-size:8.5px;color:var(--kraft)}
+.pdfcard .ic::before{content:"";position:absolute;top:0;right:0;border-width:0 11px 11px 0;border-style:solid;border-color:#E0CDB4 var(--kraft-l)}
+.pdfcard .t{flex:1;min-width:0}
+.pdfcard .t b{display:block;font-size:14px;font-weight:600}
+.pdfcard .t span{font-family:var(--mono);font-size:10.5px;color:#8A6534}
+.spec{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.spec:last-child{border-bottom:0}
+.spec .k{color:var(--mute);font-size:13px}
+.spec .v{font-weight:600;text-align:right}
+.footbar{flex-shrink:0;padding:11px 16px 24px;background:var(--card);border-top:1px solid var(--line);display:flex;gap:9px}
+.footbar .bigbtn{flex:1}
+.footbar .bigbtn.narrow{flex:0 0 52px}
+
+/* customer page chrome */
+.custtop{background:var(--ink);color:#fff;padding:44px 16px 13px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.urlbar{background:var(--ink-2);border-radius:99px;padding:6px 13px;font-family:var(--mono);font-size:10.5px;
+  color:#8A929B;display:flex;align-items:center;gap:7px;flex:1;min-width:0}
+.urlbar b{color:#fff;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lock{width:11px;height:11px;stroke:var(--go);fill:none;stroke-width:2.4;flex-shrink:0}
+.langbtn{background:var(--ink-2);border:1px solid var(--ink-3);border-radius:99px;padding:6px 12px;font-size:12px;color:#fff;font-weight:600;flex-shrink:0}
+.enqcard{margin:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px}
+.enqcard h4{font-family:var(--disp);font-weight:800;font-size:17px;margin:0 0 3px}
+.enqcard p{margin:0 0 13px;font-size:13px;color:var(--mute)}
+.inp{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;outline:0;margin-bottom:9px;background:var(--field)}
+.inp:focus{border-color:var(--ink);background:#fff}
+select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#7A8189 50%),linear-gradient(135deg,#7A8189 50%,transparent 50%);
+  background-position:calc(100% - 18px) 21px,calc(100% - 13px) 21px;background-size:5px 5px;background-repeat:no-repeat}
+
+/* more grid */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;text-align:left;
+  animation:rise .35s var(--ease) both}
+.tile .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.tile .ic svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tile b{display:block;font-family:var(--disp);font-weight:700;font-size:14.5px}
+.tile span{font-size:11.5px;color:var(--mute);line-height:1.35;display:block;margin-top:2px}
+
+/* sheet */
+.scrim{position:absolute;inset:0;background:rgba(10,13,16,.55);z-index:40;opacity:0;pointer-events:none;transition:opacity .24s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--card);z-index:50;border-radius:22px 22px 0 0;
+  transform:translateY(100%);transition:transform .36s var(--ease);max-height:88%;display:flex;flex-direction:column}
+.sheet.on{transform:translateY(0)}
+.grab{width:38px;height:4px;background:var(--line);border-radius:9px;margin:9px auto 0;flex-shrink:0}
+.sheet h3{font-family:var(--disp);font-weight:800;font-size:18.5px;margin:13px 18px 3px;letter-spacing:-.01em}
+.sheet .lead{margin:0 18px 13px;font-size:13px;color:var(--mute)}
+.sheet .inner{overflow-y:auto;padding:0 18px 26px}
+.person{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.person:last-child{border-bottom:0}
+.person .t{flex:1;min-width:0}
+.person .t b{display:block;font-size:14.5px;font-weight:600}
+.person .t span{font-family:var(--mono);font-size:10.5px;color:var(--mute)}
+.person .go{width:20px;height:20px;stroke:var(--mute);fill:none;stroke-width:2;flex-shrink:0}
+.kindsel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.kindsel button{padding:11px;border-radius:10px;border:1.5px solid var(--line);font-weight:600;font-size:13.5px;color:var(--mute)}
+.kindsel button.on{border-color:var(--ink);background:var(--ink);color:#fff}
+
+/* dispatch */
+.stampwrap{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:70;pointer-events:none}
+.stampwrap.on{display:flex}
+.tag{position:absolute;width:118px;padding:11px;background:var(--kraft-l);border:1.5px dashed var(--kraft);
+  border-radius:8px;text-align:center;font-family:var(--mono);font-size:10px;color:#8A6534;animation:fly 1.15s var(--ease) forwards}
+@keyframes fly{0%{transform:translateY(120px) rotate(-4deg) scale(.9);opacity:0}
+  22%{transform:translateY(0) rotate(-2deg) scale(1);opacity:1}
+  62%{transform:translateY(-6px) rotate(-2deg) scale(1);opacity:1}
+  100%{transform:translateY(-320px) rotate(9deg) scale(.7);opacity:0}}
+.stamp{border:4px solid var(--go);color:var(--go);font-family:var(--disp);font-weight:800;font-size:25px;
+  letter-spacing:.06em;padding:9px 20px;border-radius:7px;transform:rotate(-13deg);opacity:0;
+  background:rgba(255,255,255,.9);animation:stampin .55s var(--ease) .5s forwards}
+@keyframes stampin{0%{opacity:0;transform:rotate(-13deg) scale(2.4)}
+  60%{opacity:1;transform:rotate(-13deg) scale(.94)}100%{opacity:1;transform:rotate(-13deg) scale(1)}}
+
+/* login */
+.login{position:absolute;inset:0;background:var(--ink);z-index:80;display:flex;flex-direction:column;
+  justify-content:center;padding:36px 30px;color:#fff;transition:opacity .4s,transform .4s var(--ease)}
+.login.gone{opacity:0;transform:translateY(-14px);pointer-events:none}
+.logo{width:56px;height:56px;border-radius:16px;background:var(--amber);display:flex;align-items:center;
+  justify-content:center;margin-bottom:20px;font-family:var(--disp);font-weight:800;font-size:26px;color:var(--ink);
+  animation:pop .6s var(--ease) both}
+@keyframes pop{from{transform:scale(.6) rotate(-8deg);opacity:0}}
+.login h1{font-family:var(--disp);font-weight:800;font-size:29px;letter-spacing:-.03em;margin:0 0 7px;line-height:1.1}
+.login h1 em{font-style:normal;color:var(--amber)}
+.login p{color:#8A929B;font-size:14px;margin:0 0 24px}
+.pin{width:100%;background:var(--ink-2);border:1.5px solid var(--ink-3);border-radius:12px;padding:14px;color:#fff;
+  outline:0;margin-bottom:10px;font-family:var(--mono);letter-spacing:.08em}
+.pin:focus{border-color:var(--amber)}
+.otphint{font-family:var(--mono);font-size:11px;color:#5C646D;text-align:center;margin-top:13px}
+
+.toast{position:absolute;left:16px;right:16px;bottom:92px;background:var(--ink);color:#fff;padding:12px 15px;
+  border-radius:12px;font-size:13.5px;z-index:90;display:flex;align-items:center;gap:10px;opacity:0;
+  transform:translateY(14px);transition:all .24s var(--ease);pointer-events:none;border-left:3px solid var(--amber)}
+.toast.on{opacity:1;transform:none}
+.toast svg{width:17px;height:17px;stroke:var(--amber);fill:none;stroke-width:2.4;flex-shrink:0}
+
+.empty{text-align:center;color:var(--mute);padding:44px 24px;font-size:13.5px;line-height:1.6}
+.empty b{display:block;font-family:var(--disp);font-size:16px;color:var(--ink);margin-bottom:5px}
+.gu{font-family:var(--guj)}
+.hide{display:none !important}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="pitch">
+    <div class="k">Prototype · sample data</div>
+    <h1>The whole <span class="amb">business</span>, one app</h1>
+    <p>Tap through it exactly as your staff would. Everything responds.</p>
+    <ol>
+      <li>Send a machine in two taps</li>
+      <li>Log the enquiry that comes back</li>
+      <li>Make the quotation with GST</li>
+      <li>Record the sale and the expense</li>
+      <li>See the report for any period</li>
+    </ol>
+    <p style="margin-top:16px;font-size:12px;color:#5C646D">Open this file on a phone for the real feel.</p>
+  </div>
+
+  <div class="device">
+    <div class="notch"></div>
+    <div class="app">
+
+      <!-- LOGIN -->
+      <div class="login" id="login">
+        <div class="logo">C</div>
+        <h1>Chawla<br><em>Machines</em></h1>
+        <p>Machines, customers, bills and reports in one place.</p>
+        <input class="pin" id="phone" value="98250 00000" inputmode="tel" aria-label="Mobile number">
+        <input class="pin" id="otp" value="4 8 2 1" inputmode="numeric" aria-label="OTP">
+        <button class="bigbtn" onclick="doLogin()">Open my business
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <div class="otphint">Demo — OTP already filled. Just press the button.</div>
+      </div>
+
+      <!-- ============ MACHINES ============ -->
+      <section class="screen active" id="s-machines">
+        <div class="top">
+          <div class="row">
+            <div class="grow">
+              <div class="firm">Chawla <em>Machines</em></div>
+              <div class="sub">Ahmedabad · Since 1989</div>
+            </div>
+            <button class="iconbtn" onclick="go('s-activity')" aria-label="Who watched">
+              <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="2.6"/></svg>
+              <span class="dot"></span>
+            </button>
+            <button class="iconbtn" onclick="go('s-upload')" aria-label="Add machine">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <div class="gauge">
+            <span class="lbl">Phone storage</span>
+            <div class="track"><div class="fill" id="gfill"></div></div>
+            <span class="lbl"><b id="gtxt">0.4 GB</b> / 128</span>
+          </div>
+        </div>
+        <div class="searchwrap">
+          <div class="search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input placeholder="Search machine" oninput="renderList(this.value)" aria-label="Search machine">
+          </div>
+        </div>
+        <div class="body-scroll"><div class="list" id="mlist"></div></div>
+        <nav class="tabs tabbar"></nav>
+      </section>
+
+      <!-- ============ MACHINE DETAIL ============ -->
+      <section class="screen" id="s-detail">
+        <div class="top plain">
+          <div class="row">
+            <button class="iconbtn" onclick="go('s-machines')" aria-label="Back">
+              <svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+            <div class="grow"><div class="sub" style="margin:0">Machine details</div></div>
+            <button class="iconbtn" onclick="toast('Link copied. Paste it anywhere.')" aria-label="Copy link">
+              <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></button>
+          </div>
+        </div>
+        <div class="body-scroll">
+          <div class="hero">
+            <div id="heroart"></div>
+            <button class="playpill" id="playpill" onclick="playVid()" aria-label="Play video"><span class="tri"></span></button>
+            <div class="scrub"><span id="vtime">0:00</span><div class="track"><div class="fill" id="vfill"></div></div><span id="vtotal">1:42</span></div>
+          </div>
+          <div class="sec">
+            <h2 class="dname" id="dname"></h2>
+            <div id="dpricebox"></div>
+            <div class="eyebrow">Photos</div>
+            <div class="gal" id="dgal"></div>
+            <div class="eyebrow">Catalog</div>
+            <div class="pdfcard" onclick="toast('Catalog PDF opens — customer can download it')">
+              <div class="ic"><b>PDF</b></div>
+              <div class="t"><b id="dpdf">Machine catalog</b><span>4 pages · 1.2 MB</span></div>
+              <svg style="width:20px;height:20px;stroke:#8A6534;fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M12 4v12M6 12l6 6 6-6"/></svg>
+            </div>
+            <div class="eyebrow">Specifications</div>
+            <div id="dspecs"></div>
+            <div style="height:8px"></div>
+          </div>
+        </div>
+        <div class="footbar">
+          <button class="bigbtn ghost narrow" onclick="openCustomer()" aria-label="Preview as customer">
+            <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+          <button class="bigbtn" onclick="openSend()">Send to customer
+            <svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6L4 12z"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ============ ENQUIRY REGISTER ============ -->
+      <section class="screen" id="s-enquiries">
+        <div class="top">
+          <div class="row">
+            <div class="grow">
+              <div class="firm">Enquiry <em>register</em></div>
+              <div class="sub">Every call, every link, one list</div>
+            </div>
+            <button class="iconbtn" onclick="openAddEnq()" aria-label="Add enquiry">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+          <div class="hstats">
+            <div class="hstat"><div class="k">Open</div><div class="v" id="e-open">0</div></div>
+            <div class="hstat g"><div class="k">Won this month</div><div class="v" id="e-won">0</div></div>
+            <div class="hstat r"><div class="k">Follow up today</div><div class="v" id="e-fu">0</div></div>
+          </div>
+        </div>
+        <div style="padding-top:13px"><div class="pill-row" id="e-filters"></div></div>
+        <div class="body-scroll" style="padding:12px 16px 0"><div id="e-list"></div></div>
+        <nav class="tabs tabbar"></nav>
+      </section>
+
+      <!-- ============ QUOTATION & GST ============ -->
+      <section class="screen" id="s-quote">
+        <div class="top plain">
+          <div class="row">
+            <button class="iconbtn" onclick="go('s-enquiries')" aria-label="Back">
+              <svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+            <div class="grow"><div class="firm" style="font-size:17px">Quotation &amp; GST</div>
+              <div class="sub" id="q-no">CI / Q / 0418</div></div>
+          </div>
+        </div>
+        <div class="body-scroll">
+          <div class="sec">
+            <div class="eyebrow">Customer</div>
+            <select class="inp" id="q-cust" onchange="renderQuote()"></select>
+
+            <div class="eyebrow">Machines</div>
+            <div class="panel">
+              <div id="q-lines"></div>
+              <div style="display:flex;gap:8px;margin-top:6px">
+                <select class="inp" id="q-add" style="margin:0"></select>
+                <button class="bigbtn dark" style="width:auto;padding:12px 16px;flex-shrink:0" onclick="addQLine()">Add</button>
+              </div>
+            </div>
+
+            <div class="eyebrow">Charges &amp; tax</div>
+            <div class="panel">
+              <div style="display:flex;gap:8px">
+                <div style="flex:1">
+                  <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--mute);text-transform:uppercase;margin-bottom:5px">Freight</div>
+                  <input class="inp" id="q-fr" type="number" value="2500" oninput="renderQuote()" style="margin:0">
+                </div>
+                <div style="flex:1">
+                  <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--mute);text-transform:uppercase;margin-bottom:5px">GST rate</div>
+                  <select class="inp" id="q-gst" onchange="renderQuote()" style="margin:0">
+                    <option value="18" selected>18%</option><option value="12">12%</option><option value="28">28%</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="eyebrow">Total</div>
+            <div class="panel">
+              <div class="totrow"><span class="k">Sub total</span><span class="v" id="t-sub">₹0</span></div>
+              <div class="totrow"><span class="k">Freight &amp; installation</span><span class="v" id="t-fr">₹0</span></div>
+              <div class="totrow"><span class="k">CGST <span id="t-r1">9</span>%</span><span class="v" id="t-c">₹0</span></div>
+              <div class="totrow"><span class="k">SGST <span id="t-r2">9</span>%</span><span class="v" id="t-s">₹0</span></div>
+              <div class="totrow grand"><span>Total</span><span class="v" id="t-tot">₹0</span></div>
+              <div class="words" id="t-words"></div>
+            </div>
+            <p style="font-size:11.5px;color:var(--mute);margin:10px 2px 0;line-height:1.55">
+              GSTIN 24ACJPC2080K1ZT · HSN 8422 · Delivery 15–20 days · 50% advance
+            </p>
+            <div style="height:10px"></div>
+          </div>
+        </div>
+        <div class="footbar">
+          <button class="bigbtn ghost narrow" onclick="toast('Quotation PDF ready to download')" aria-label="Save PDF">
+            <svg viewBox="0 0 24 24"><path d="M12 4v12M6 12l6 6 6-6"/><path d="M4 20h16"/></svg></button>
+          <button class="bigbtn gr" onclick="sendQuote()">Send on WhatsApp
+            <svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6L4 12z"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ============ MONEY ============ -->
+      <section class="screen" id="s-money">
+        <div class="top">
+          <div class="row">
+            <div class="grow">
+              <div class="firm">Money <em>book</em></div>
+              <div class="sub">Sales · purchase · income · expense</div>
+            </div>
+            <button class="iconbtn" onclick="openAddEntry()" aria-label="Add entry">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+        </div>
+        <div class="seg">
+          <button class="on" id="mseg-book" onclick="moneyTab('book')">Day book</button>
+          <button id="mseg-rep" onclick="moneyTab('rep')">Reports</button>
+        </div>
+
+        <div class="body-scroll" id="m-book">
+          <div class="sec">
+            <div class="panel" style="margin-bottom:14px">
+              <div class="totrow"><span class="k">Money in — this month</span><span class="v" style="color:var(--go)" id="b-in">₹0</span></div>
+              <div class="totrow"><span class="k">Money out — this month</span><span class="v" style="color:var(--alert)" id="b-out">₹0</span></div>
+              <div class="totrow grand"><span>Net</span><span class="v" id="b-net">₹0</span></div>
+            </div>
+            <div class="eyebrow">Recent entries</div>
+            <div id="b-list"></div>
+          </div>
+        </div>
+
+        <div class="body-scroll hide" id="m-rep">
+          <div class="pill-row" style="padding-top:14px" id="r-periods"></div>
+          <div class="sec">
+            <div class="kpis">
+              <div class="kpi g"><div class="k">Sales</div><div class="v" id="r-sale">₹0</div><div class="d" id="r-salen">0 bills</div></div>
+              <div class="kpi"><div class="k">Purchases</div><div class="v" id="r-pur">₹0</div><div class="d" id="r-purn">0 bills</div></div>
+              <div class="kpi b"><div class="k">Other income</div><div class="v" id="r-inc">₹0</div><div class="d">service, repair</div></div>
+              <div class="kpi r"><div class="k">Expenses</div><div class="v" id="r-exp">₹0</div><div class="d">shop, salary, travel</div></div>
+            </div>
+            <div class="panel" style="margin-top:11px;border-top:3px solid var(--amber)">
+              <div style="font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)">Net profit</div>
+              <div style="font-family:var(--disp);font-weight:800;font-size:28px;letter-spacing:-.02em;margin-top:3px" id="r-net">₹0</div>
+            </div>
+
+            <div class="eyebrow">Sales vs purchase</div>
+            <div class="panel">
+              <div class="chart" id="r-chart"></div>
+              <div class="legend">
+                <span><i style="background:var(--go)"></i>Sales</span>
+                <span><i style="background:var(--kraft)"></i>Purchase</span>
+              </div>
+            </div>
+
+            <div class="eyebrow">GST summary</div>
+            <div class="panel">
+              <div class="totrow"><span class="k">Taxable value (outward)</span><span class="v" id="g-tax">₹0</span></div>
+              <div class="totrow"><span class="k">CGST 9%</span><span class="v" id="g-c">₹0</span></div>
+              <div class="totrow"><span class="k">SGST 9%</span><span class="v" id="g-s">₹0</span></div>
+              <div class="totrow grand"><span>Tax collected</span><span class="v" id="g-tot">₹0</span></div>
+              <button class="bigbtn ghost" style="margin-top:12px" onclick="toast('Sent to your CA as an Excel file')">Send to my CA</button>
+            </div>
+            <div style="height:10px"></div>
+          </div>
+        </div>
+        <nav class="tabs tabbar"></nav>
+      </section>
+
+      <!-- ============ CUSTOMERS ============ -->
+      <section class="screen" id="s-customers">
+        <div class="top">
+          <div class="row">
+            <div class="grow">
+              <div class="firm">My <em>customers</em></div>
+              <div class="sub"><span id="c-count">0</span> saved</div>
+            </div>
+            <button class="iconbtn" onclick="openAddCust()" aria-label="Add customer">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+        </div>
+        <div class="searchwrap">
+          <div class="search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input placeholder="Search customer" oninput="renderCusts(this.value)" aria-label="Search customer">
+          </div>
+        </div>
+        <div class="body-scroll" style="padding:12px 16px 0"><div id="c-list"></div></div>
+        <nav class="tabs tabbar"></nav>
+      </section>
+
+      <!-- ============ CUSTOMER PROFILE ============ -->
+      <section class="screen" id="s-custprofile">
+        <div class="top plain">
+          <div class="row">
+            <button class="iconbtn" onclick="go('s-customers')" aria-label="Back">
+              <svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+            <div class="grow"><div class="firm" style="font-size:17px" id="cp-name">Customer</div>
+              <div class="sub" id="cp-meta"></div></div>
+          </div>
+        </div>
+        <div class="body-scroll">
+          <div class="sec">
+            <div class="kpis">
+              <div class="kpi g"><div class="k">Total business</div><div class="v" id="cp-total">₹0</div></div>
+              <div class="kpi a"><div class="k">Enquiries</div><div class="v" id="cp-enq">0</div></div>
+            </div>
+            <div class="eyebrow">Their enquiries</div>
+            <div id="cp-enqlist"></div>
+            <div class="eyebrow">Their bills</div>
+            <div id="cp-bills"></div>
+            <div style="height:8px"></div>
+            <button class="bigbtn ghost" style="color:var(--alert);border-color:#E9C0B6" onclick="removeCust()">
+              Remove this customer</button>
+            <div style="height:14px"></div>
+          </div>
+        </div>
+        <div class="footbar">
+          <button class="bigbtn ghost narrow" onclick="toast('Calling…')" aria-label="Call">
+            <svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a12 12 0 005 5l2-3 5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></button>
+          <button class="bigbtn" onclick="openSend()">Send a machine
+            <svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6L4 12z"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ============ MORE ============ -->
+      <section class="screen" id="s-more">
+        <div class="top">
+          <div class="row"><div class="grow">
+            <div class="firm">More</div><div class="sub">Everything else</div></div></div>
+        </div>
+        <div class="body-scroll">
+          <div class="grid2" id="tiles"></div>
+          <p style="margin:2px 20px 20px;font-size:12px;color:var(--mute);line-height:1.6">
+            Prototype with sample data. Nothing is saved — refresh and it starts fresh.
+          </p>
+        </div>
+        <nav class="tabs tabbar"></nav>
+      </section>
+
+      <!-- ============ CUSTOMER VIEW (public link) ============ -->
+      <section class="screen" id="s-customer">
+        <div class="custtop">
+          <div class="urlbar">
+            <svg class="lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
+            chawla.link/<b id="cslug">shrink-tunnel</b>
+          </div>
+          <button class="langbtn" onclick="toggleLang()" id="langbtn">ગુજરાતી</button>
+        </div>
+        <div class="body-scroll">
+          <div class="hero" style="aspect-ratio:16/11">
+            <div id="cart"></div>
+            <button class="playpill" id="cplay" onclick="playCust()" aria-label="Play video"><span class="tri"></span></button>
+            <div class="scrub"><span id="ctime">0:00</span><div class="track"><div class="fill" id="cfill"></div></div><span id="ctotal">1:42</span></div>
+          </div>
+          <div class="sec">
+            <h2 class="dname" id="cname"></h2>
+            <div id="cpricebox"></div>
+            <div class="gal" id="cgal"></div>
+            <div style="height:13px"></div>
+            <div class="pdfcard">
+              <div class="ic"><b>PDF</b></div>
+              <div class="t"><b id="t-cat">Machine catalog</b><span>4 pages · 1.2 MB</span></div>
+              <svg style="width:20px;height:20px;stroke:#8A6534;fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M12 4v12M6 12l6 6 6-6"/></svg>
+            </div>
+            <div id="cspecs" style="margin-top:14px"></div>
+          </div>
+          <div class="enqcard">
+            <h4 id="t-enqh">Interested in this machine?</h4>
+            <p id="t-enqp">Send your details and we will call you back.</p>
+            <input class="inp" id="ce-nm" placeholder="Your name" aria-label="Your name">
+            <input class="inp" id="ce-mo" placeholder="Mobile number" inputmode="tel" aria-label="Mobile number">
+            <input class="inp" id="ce-ci" placeholder="City" aria-label="City">
+            <input class="inp" id="ce-ms" placeholder="Your requirement (optional)" aria-label="Requirement">
+            <button class="bigbtn dark" onclick="custEnquiry()" id="t-enqb">Send enquiry</button>
+          </div>
+          <div style="text-align:center;padding:16px;font-family:var(--mono);font-size:10px;color:var(--mute)">
+            CHAWLA INDUSTRIES · AHMEDABAD · SINCE 1989
+          </div>
+        </div>
+        <div class="footbar">
+          <button class="bigbtn dark" onclick="go(backFromCust)">Back to my app</button>
+        </div>
+      </section>
+
+      <!-- ============ ACTIVITY ============ -->
+      <section class="screen" id="s-activity">
+        <div class="top plain">
+          <div class="row">
+            <button class="iconbtn" onclick="go('s-machines')" aria-label="Back">
+              <svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+            <div class="grow"><div class="firm" style="font-size:17px">Who <em>watched</em></div>
+              <div class="sub">Live · updates on its own</div></div>
+          </div>
+        </div>
+        <div class="body-scroll" style="padding:16px"><div id="actlist"></div></div>
+      </section>
+
+      <!-- ============ UPLOAD ============ -->
+      <section class="screen" id="s-upload">
+        <div class="top plain">
+          <div class="row">
+            <button class="iconbtn" onclick="go('s-machines')" aria-label="Back">
+              <svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+            <div class="grow"><div class="firm" style="font-size:17px">Add a machine</div></div>
+          </div>
+        </div>
+        <div class="body-scroll">
+          <div style="margin:16px;border:2px dashed var(--line);border-radius:16px;padding:28px 20px;text-align:center;background:var(--card)" onclick="startUpload()">
+            <svg style="width:40px;height:40px;stroke:var(--mute);fill:none;stroke-width:1.5;margin-bottom:9px" viewBox="0 0 24 24">
+              <path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>
+            <b style="display:block;font-family:var(--disp);font-size:16px;font-weight:700;margin-bottom:4px">Pick video from your phone</b>
+            <span style="font-size:13px;color:var(--mute)">Photos and catalog PDF can be added after</span>
+          </div>
+          <div id="uplist"></div>
+          <p style="margin:4px 20px;font-size:12.5px;color:var(--mute);line-height:1.6">
+            Your phone only sends the file. The video is made small automatically, so it opens fast on your customer's mobile — and nothing stays on your phone.
+          </p>
+        </div>
+        <nav class="tabs tabbar"></nav>
+      </section>
+
+      <!-- SHEETS -->
+      <div class="scrim" id="scrim" onclick="closeSheet()"></div>
+      <div class="sheet" id="sheet">
+        <div class="grab"></div>
+        <h3 id="sheetTitle"></h3>
+        <p class="lead" id="sheetLead"></p>
+        <div class="inner" id="sheetBody"></div>
+      </div>
+
+      <div class="stampwrap" id="stampwrap">
+        <div class="tag" id="tag"></div><div class="stamp">SENT</div>
+      </div>
+      <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span id="toasttext"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================== artwork ===================== */
+function art(t){
+  const s='stroke="#0E1216" stroke-width="1.5" stroke-linejoin="round"';
+  const A={
+  shrink:`<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="40" width="168" height="44" rx="5" fill="#3D6FA0" ${s}/><rect x="58" y="47" width="84" height="30" rx="3" fill="#0E1216" ${s}/><path d="M62 77h76" stroke="#FFB800" stroke-width="3.5"/><rect x="6" y="80" width="188" height="7" rx="3" fill="#AEB6BE" ${s}/><rect x="152" y="47" width="26" height="15" rx="3" fill="#E8EBEE" ${s}/><circle cx="160" cy="70" r="3" fill="#FFB800"/><circle cx="170" cy="70" r="3" fill="#E24E32"/><rect x="86" y="24" width="28" height="17" rx="2" fill="#C99A62" ${s}/><rect x="26" y="87" width="9" height="16" rx="2" fill="#0E1216"/><rect x="165" y="87" width="9" height="16" rx="2" fill="#0E1216"/></svg>`,
+  vacuum:`<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="24" y="46" width="152" height="52" rx="5" fill="#3D6FA0" ${s}/><rect x="28" y="20" width="144" height="27" rx="4" fill="#AEB6BE" ${s}/><rect x="42" y="26" width="52" height="15" rx="2" fill="#E8EBEE" ${s}/><rect x="106" y="26" width="52" height="15" rx="2" fill="#E8EBEE" ${s}/><rect x="140" y="54" width="28" height="19" rx="3" fill="#0E1216"/><path d="M145 60h18M145 66h11" stroke="#FFB800" stroke-width="2"/><circle cx="148" cy="83" r="4" fill="#FFB800" ${s}/><circle cx="162" cy="83" r="4" fill="#E24E32" ${s}/><rect x="34" y="98" width="10" height="14" rx="2" fill="#0E1216"/><rect x="156" y="98" width="10" height="14" rx="2" fill="#0E1216"/></svg>`,
+  strap:`<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="56" width="140" height="34" rx="4" fill="#3D6FA0" ${s}/><rect x="46" y="30" width="108" height="26" rx="3" fill="#AEB6BE" ${s}/><rect x="62" y="12" width="76" height="19" rx="9" fill="none" stroke="#FFB800" stroke-width="4.5"/><rect x="80" y="36" width="42" height="17" rx="2" fill="#C99A62" ${s}/><circle cx="150" cy="43" r="9" fill="#E8EBEE" ${s}/><circle cx="150" cy="43" r="3" fill="#0E1216"/><rect x="40" y="90" width="10" height="15" rx="2" fill="#0E1216"/><rect x="150" y="90" width="10" height="15" rx="2" fill="#0E1216"/></svg>`,
+  coding:`<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="38" y="34" width="124" height="54" rx="5" fill="#E24E32" ${s}/><rect x="50" y="44" width="56" height="28" rx="3" fill="#0E1216" ${s}/><path d="M56 53h44M56 62h30" stroke="#FFB800" stroke-width="2.5"/><circle cx="126" cy="53" r="8" fill="#E8EBEE" ${s}/><circle cx="146" cy="53" r="8" fill="#E8EBEE" ${s}/><rect x="118" y="66" width="36" height="11" rx="2" fill="#AEB6BE" ${s}/><rect x="26" y="88" width="148" height="8" rx="3" fill="#AEB6BE" ${s}/><rect x="82" y="96" width="36" height="16" rx="2" fill="#C99A62" ${s}/></svg>`,
+  seal:`<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="66" width="176" height="24" rx="4" fill="#3D6FA0" ${s}/><rect x="62" y="34" width="76" height="32" rx="3" fill="#C99A62" ${s}/><path d="M100 34v32" stroke="#0E1216" stroke-width="1.4" stroke-dasharray="5 4"/><rect x="76" y="16" width="48" height="11" rx="2" fill="#E8EBEE" ${s}/><circle cx="40" cy="78" r="8" fill="#0E1216"/><circle cx="160" cy="78" r="8" fill="#0E1216"/><rect x="150" y="40" width="30" height="20" rx="3" fill="#FFB800" ${s}/></svg>`,
+  print:`<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="34" y="30" width="132" height="46" rx="5" fill="#2C343C" ${s}/><rect x="46" y="40" width="70" height="26" rx="3" fill="#E8EBEE" ${s}/><path d="M52 48h56M52 56h38" stroke="#3D6FA0" stroke-width="2.5"/><rect x="126" y="40" width="30" height="26" rx="3" fill="#FFB800" ${s}/><rect x="20" y="76" width="160" height="9" rx="3" fill="#AEB6BE" ${s}/><rect x="70" y="85" width="30" height="20" rx="2" fill="#C99A62" ${s}/><rect x="110" y="85" width="30" height="20" rx="2" fill="#C99A62" ${s}/></svg>`};
+  return A[t]||A.shrink;
+}
+
+/* ===================== data ===================== */
+const machines=[
+ {id:1,name:'Shrink Tunnel Machine',slug:'shrink-tunnel',art:'shrink',price:null,dur:'1:42',photos:3,views:81,
+  specs:[['Tunnel size','450 × 250 mm'],['Speed','0–10 m/min'],['Heater','4.5 kW'],['Conveyor','Teflon mesh']]},
+ {id:2,name:'Vacuum Packaging Double Chamber',slug:'vacuum-double-chamber',art:'vacuum',price:null,dur:'2:10',photos:4,views:64,
+  specs:[['Chamber','Double'],['Seal bar','2 × 500 mm'],['Power','1.5 kW / 3 phase'],['Use','Food, spares, powder']]},
+ {id:3,name:'Semi Automatic Box Strapping',slug:'box-strapping',art:'strap',price:36000,dur:'1:18',photos:3,views:57,
+  specs:[['Type','Pack-way semi automatic'],['Strap width','9–15 mm'],['Power','0.25 kW'],['Table','Fixed height']]},
+ {id:4,name:'Batch Coding Machine',slug:'batch-coding',art:'coding',price:16000,dur:'0:58',photos:3,views:96,
+  specs:[['Marking','Batch, MFG, EXP'],['Type','Manual pad'],['Power','Single phase'],['Ink','Solvent based']]},
+ {id:5,name:'Solid Ink Code Printer',slug:'solid-ink-printer',art:'print',price:42000,dur:'1:05',photos:3,views:44,
+  specs:[['Print','Hot solid ink'],['Lines','Up to 3'],['Speed','60 packs/min'],['Mounting','Online']]},
+ {id:6,name:'Carton Sealing Machine',slug:'carton-sealing',art:'seal',price:null,dur:'1:36',photos:4,views:38,
+  specs:[['Drive','Dual side drive'],['Tape','48–72 mm BOPP'],['Height','Adjustable'],['Flap','Auto closing']]}
+];
+
+let seqC=100, seqE=200, seqT=300;
+let customers=[
+ {id:1,name:'Ramesh Patel',city:'Rajkot',phone:'98250 xxxxx',email:'ramesh@…',tone:''},
+ {id:2,name:'Imran Shaikh',city:'Surat',phone:'99090 xxxxx',email:'imran@…',tone:'k'},
+ {id:3,name:'Nilesh Trading Co.',city:'Ahmedabad',phone:'97240 xxxxx',email:'nilesh@…',tone:'g'},
+ {id:4,name:'Kiran Foods',city:'Mehsana',phone:'94260 xxxxx',email:'kiran@…',tone:'b'},
+ {id:5,name:'Shreeji Packaging',city:'Vadodara',phone:'99780 xxxxx',email:'shreeji@…',tone:'v'},
+ {id:6,name:'Alpha Spices',city:'Junagadh',phone:'90990 xxxxx',email:'alpha@…',tone:''}
+];
+
+const STAGES={new:'New',video:'Video sent',quote:'Quote sent',won:'Won',lost:'Lost'};
+let enquiries=[
+ {id:1,cust:1,mach:1,stage:'video',note:'Opened link · watched 71%',when:'2 min ago',fu:true},
+ {id:2,cust:2,mach:4,stage:'quote',note:'Quotation CI/Q/0417 sent',when:'Yesterday',fu:true},
+ {id:3,cust:3,mach:3,stage:'new',note:'Call received 11:20 AM',when:'Today',fu:false},
+ {id:4,cust:4,mach:2,stage:'video',note:'Opened link twice, no reply',when:'2 days ago',fu:true},
+ {id:5,cust:5,mach:5,stage:'won',note:'Order confirmed, 50% advance',when:'Last week',fu:false},
+ {id:6,cust:6,mach:6,stage:'lost',note:'Went with local supplier',when:'Last week',fu:false}
+];
+
+let acts=[
+ {who:'Ramesh Patel',what:'watched Shrink Tunnel Machine',when:'2 min ago',pct:71,live:true},
+ {who:'Kiran Foods',what:'opened Vacuum Double Chamber twice',when:'40 min ago',pct:100,live:false},
+ {who:'Imran Shaikh',what:'downloaded the Batch Coding catalog',when:'Yesterday',pct:0,live:false}
+];
+
+/* deterministic sample ledger over the last 14 months */
+let entries=[];
+(function seed(){
+  let s=20260807;
+  const rnd=()=>{s=(s*9301+49297)%233280;return s/233280};
+  const notes={
+    sale:['Machine sale','Machine sale + installation','Spare parts sale','Strapping roll sale'],
+    purchase:['Steel & fabrication','Motor and gearbox','Electrical parts','Packing material'],
+    income:['Servicing charges','Repair work','Installation charges'],
+    expense:['Shop rent','Staff salary','Electricity bill','Transport','Tea & office','Tools']
+  };
+  const today=new Date(); today.setHours(12,0,0,0);
+  for(let d=430; d>=0; d--){
+    const day=new Date(today); day.setDate(today.getDate()-d);
+    if(day.getDay()===0) continue;
+    if(rnd()<0.42) push('sale', 16000+Math.floor(rnd()*104000), day);
+    if(rnd()<0.30) push('purchase', 8000+Math.floor(rnd()*52000), day);
+    if(rnd()<0.34) push('income', 2000+Math.floor(rnd()*18000), day);
+    if(rnd()<0.55) push('expense', 600+Math.floor(rnd()*14000), day);
+  }
+  function push(kind,amt,day){
+    entries.push({
+      id:++seqT, kind, amt,
+      party: kind==='sale'||kind==='income' ? customers[Math.floor(rnd()*customers.length)].name : ['Shakti Steel','Gupta Traders','Local vendor','Staff'][Math.floor(rnd()*4)],
+      note: notes[kind][Math.floor(rnd()*notes[kind].length)],
+      d: new Date(day)
+    });
+  }
+  entries.sort((a,b)=>b.d-a.d);
+})();
+
+let current=machines[0], channel='wa', lang='en', storage=0.4, uploads=0;
+let period='month', eFilter='all', backFromCust='s-detail', activeCust=null;
+let quoteLines=[{mid:3,qty:1,rate:36000},{mid:4,qty:2,rate:16000}];
+
+/* ===================== helpers ===================== */
+const $=id=>document.getElementById(id);
+const rs=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const shortRs=n=>n>=10000000?'₹'+(n/10000000).toFixed(2)+'Cr':n>=100000?'₹'+(n/100000).toFixed(2)+'L':n>=1000?'₹'+Math.round(n/1000)+'k':'₹'+Math.round(n);
+const initials=n=>n.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const custById=id=>customers.find(c=>c.id===id);
+const machById=id=>machines.find(m=>m.id===id);
+const priceBox=(m,id)=>m.price?`<div class="dprice" id="${id}">${rs(m.price)}</div>`:`<div class="dprice ask" id="${id}">Price on request</div>`;
+const gallery=m=>Array.from({length:m.photos},(_,i)=>`<div class="shot v${i+1}">${art(m.art)}</div>`).join('');
+
+function toast(msg){
+  $('toasttext').textContent=msg;
+  const t=$('toast'); t.classList.add('on');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),2600);
+}
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  $(id).querySelectorAll('.body-scroll').forEach(b=>b.scrollTo(0,0));
+  syncTabs(id);
+}
+function doLogin(){
+  $('login').classList.add('gone');
+  setTimeout(()=>toast('Welcome back. 3 enquiries need follow-up.'),700);
+}
+function words(n){
+  if(!n) return '';
+  const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  const two=x=>x<20?a[x]:b[Math.floor(x/10)]+(x%10?' '+a[x%10]:'');
+  const three=x=>Math.floor(x/100)?a[Math.floor(x/100)]+' Hundred'+(x%100?' '+two(x%100):''):two(x);
+  n=Math.round(n); let out='';
+  const cr=Math.floor(n/10000000); n%=10000000;
+  const la=Math.floor(n/100000); n%=100000;
+  const th=Math.floor(n/1000); n%=1000;
+  if(cr)out+=three(cr)+' Crore '; if(la)out+=three(la)+' Lakh ';
+  if(th)out+=three(th)+' Thousand '; if(n)out+=three(n);
+  return 'Rupees '+out.trim()+' only';
+}
+
+/* ===================== tabs ===================== */
+const TABS=[
+ {id:'s-machines',label:'Machines',icon:'<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/>'},
+ {id:'s-enquiries',label:'Enquiry',icon:'<path d="M21 12a9 9 0 01-13.2 8L3 21l1.2-4.6A9 9 0 1121 12z"/>'},
+ {id:'s-money',label:'Money',icon:'<rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.6"/><path d="M6 3h12"/>'},
+ {id:'s-customers',label:'Customers',icon:'<circle cx="9" cy="8" r="3.4"/><path d="M3 20a6 6 0 0112 0"/><path d="M16 5.5a3 3 0 010 5.6M17.5 20a6 6 0 00-2-4.4"/>'},
+ {id:'s-more',label:'More',icon:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'}
+];
+function renderTabs(){
+  const html=TABS.map(t=>`<button class="tab" data-t="${t.id}" onclick="go('${t.id}')">
+    <svg viewBox="0 0 24 24">${t.icon}</svg><span>${t.label}</span></button>`).join('');
+  document.querySelectorAll('.tabbar').forEach(n=>n.innerHTML=html);
+}
+function syncTabs(id){
+  const map={'s-detail':'s-machines','s-upload':'s-machines','s-activity':'s-machines',
+             's-quote':'s-enquiries','s-custprofile':'s-customers','s-customer':'s-more'};
+  const t=map[id]||id;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+}
+
+/* ===================== machines ===================== */
+function renderList(filter=''){
+  const f=filter.toLowerCase();
+  const rows=machines.filter(m=>m.name.toLowerCase().includes(f));
+  $('mlist').innerHTML=rows.map((m,i)=>`
+   <article class="mcard" style="animation-delay:${i*50}ms" onclick="openDetail(${m.id})">
+    <div class="mart">${art(m.art)}<span class="dur"><i></i>${m.dur}</span></div>
+    <div class="minfo">
+      <div class="mname">${m.name}</div>
+      <div class="mmeta">${m.photos} PHOTOS · CATALOG PDF</div>
+      ${m.price?`<div class="mprice">${rs(m.price)}</div>`:`<div class="mprice ask">Price on request</div>`}
+      <div class="mrow">
+        <button class="sendbtn" onclick="event.stopPropagation();openSend(${m.id})">
+          <svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6L4 12z"/></svg>Send</button>
+        <span class="chip">${m.views} watched</span>
+      </div>
+    </div></article>`).join('') ||
+   `<div class="empty"><b>No machine by that name</b>Try another word, or add it from the + button.</div>`;
+}
+function openDetail(id){
+  current=machById(id);
+  $('heroart').innerHTML=art(current.art).replace('<svg','<svg class="mach"');
+  $('dname').textContent=current.name;
+  $('dpricebox').innerHTML=priceBox(current,'dprice');
+  $('vtotal').textContent=current.dur; $('vtime').textContent='0:00';
+  $('vfill').style.width='0%'; $('playpill').classList.remove('hide');
+  $('dgal').innerHTML=gallery(current);
+  $('dspecs').innerHTML=current.specs.map(s=>`<div class="spec"><span class="k">${s[0]}</span><span class="v">${s[1]}</span></div>`).join('');
+  $('dpdf').textContent=current.name+' catalog';
+  go('s-detail');
+}
+function runPlayer(fill,time,btn,dur){
+  const b=$(btn); b.classList.add('hide');
+  const total=dur.split(':').reduce((a,c)=>a*60+ +c,0);
+  let t=0; clearInterval(window['_p'+fill]);
+  window['_p'+fill]=setInterval(()=>{
+    t+=2;
+    if(t>=total){clearInterval(window['_p'+fill]);b.classList.remove('hide');t=0}
+    $(fill).style.width=(t/total*100)+'%';
+    $(time).textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
+  },220);
+}
+function playVid(){runPlayer('vfill','vtime','playpill',current.dur);toast('Playing from server — nothing downloads')}
+function playCust(){runPlayer('cfill','ctime','cplay',current.dur)}
+
+/* ===================== send sheet ===================== */
+function openSheet(title,lead,body){
+  $('sheetTitle').textContent=title; $('sheetLead').textContent=lead; $('sheetBody').innerHTML=body;
+  $('scrim').classList.add('on'); $('sheet').classList.add('on');
+}
+function closeSheet(){$('scrim').classList.remove('on');$('sheet').classList.remove('on')}
+
+function openSend(id){
+  if(id) current=machById(id);
+  openSheet('Send '+current.name,'Choose how, then pick the customer',`
+    <div class="kindsel">
+      <button class="${channel==='wa'?'on':''}" onclick="setChannel('wa')">WhatsApp</button>
+      <button class="${channel==='ml'?'on':''}" onclick="setChannel('ml')">E-mail</button>
+    </div>
+    <div id="people"></div>`);
+  renderPeople();
+}
+function setChannel(c){channel=c;openSend()}
+function renderPeople(){
+  $('people').innerHTML=customers.map(c=>`
+    <button class="person" onclick="dispatch(${c.id})">
+      <span class="av ${c.tone}">${initials(c.name)}</span>
+      <span class="t"><b>${c.name}</b><span>${channel==='wa'?c.phone:c.email} · ${c.city}</span></span>
+      <svg class="go" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>`).join('');
+}
+function dispatch(cid){
+  const c=custById(cid); closeSheet();
+  $('tag').innerHTML=`TO<br><b style="font-size:12px;color:#0E1216">${c.name}</b><br>${current.name.toUpperCase()}`;
+  const w=$('stampwrap'); w.classList.add('on');
+  setTimeout(()=>{
+    w.classList.remove('on');
+    toast((channel==='wa'?'WhatsApp':'E-mail')+' sent to '+c.name.split(' ')[0]+' — link, not a file');
+    enquiries.unshift({id:++seqE,cust:c.id,mach:current.id,stage:'video',note:'Link sent, waiting for reply',when:'just now',fu:true,fresh:true});
+    acts.unshift({who:c.name,what:'was sent '+current.name,when:'just now',pct:0,live:false,fresh:true});
+    renderEnq(); renderActs();
+  },1500);
+}
+
+/* ===================== enquiry register ===================== */
+function renderEnqFilters(){
+  const list=[['all','All'],...Object.entries(STAGES)];
+  $('e-filters').innerHTML=list.map(([k,v])=>{
+    const n=k==='all'?enquiries.length:enquiries.filter(e=>e.stage===k).length;
+    return `<button class="pill-btn ${eFilter===k?'on':''}" onclick="eFilter='${k}';renderEnq()">${v} ${n}</button>`;
+  }).join('');
+}
+function renderEnq(){
+  renderEnqFilters();
+  const rows=eFilter==='all'?enquiries:enquiries.filter(e=>e.stage===eFilter);
+  $('e-list').innerHTML=rows.map((e,i)=>{
+    const c=custById(e.cust), m=machById(e.mach);
+    if(!c) return '';
+    return `<button class="rowcard ${e.fresh?'fresh':''}" style="animation-delay:${i*40}ms" onclick="openEnq(${e.id})">
+      <span class="av ${c.tone}">${initials(c.name)}</span>
+      <span class="t">
+        <b>${c.name}</b>
+        <p>${m?m.name:'—'} · ${c.city}</p>
+        <span class="stage-chip st-${e.stage}">${STAGES[e.stage]}</span>
+      </span>
+      <svg class="go" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>`;
+  }).join('') || `<div class="empty"><b>Nothing here yet</b>Enquiries appear when a customer opens your link, or add one with the + button.</div>`;
+  $('e-open').textContent=enquiries.filter(e=>e.stage!=='won'&&e.stage!=='lost').length;
+  $('e-won').textContent=enquiries.filter(e=>e.stage==='won').length;
+  $('e-fu').textContent=enquiries.filter(e=>e.fu).length;
+}
+function openEnq(id){
+  const e=enquiries.find(x=>x.id===id), c=custById(e.cust), m=machById(e.mach);
+  openSheet(c.name, (m?m.name:'')+' · '+c.city, `
+    <p style="font-size:13.5px;margin:0 0 14px">${e.note}</p>
+    <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase;margin-bottom:8px">Change stage</div>
+    <div class="pill-row" style="padding:0 0 14px">
+      ${Object.entries(STAGES).map(([k,v])=>`<button class="pill-btn ${e.stage===k?'on':''}" onclick="setStage(${id},'${k}')">${v}</button>`).join('')}
+    </div>
+    <div class="btnrow" style="margin-bottom:9px">
+      <button class="bigbtn ghost" onclick="toast('Calling ${c.name.split(' ')[0]}…')">Call</button>
+      <button class="bigbtn gr" onclick="closeSheet();openSend(${e.mach})">Send video</button>
+    </div>
+    <button class="bigbtn dark" onclick="closeSheet();makeQuote(${e.cust},${e.mach})">Make quotation</button>
+  `);
+}
+function setStage(id,st){
+  const e=enquiries.find(x=>x.id===id);
+  e.stage=st; e.note='Stage changed to '+STAGES[st]; e.when='just now'; e.fresh=false;
+  e.fu=(st!=='won'&&st!=='lost');
+  closeSheet(); renderEnq(); toast('Moved to '+STAGES[st]);
+}
+function openAddEnq(){
+  openSheet('New enquiry','Log the call while the customer is still on the line',`
+    <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase;margin-bottom:6px">Customer</div>
+    <select class="inp" id="ne-cust">${customers.map(c=>`<option value="${c.id}">${c.name} — ${c.city}</option>`).join('')}</select>
+    <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase;margin-bottom:6px">Machine asked for</div>
+    <select class="inp" id="ne-mach">${machines.map(m=>`<option value="${m.id}">${m.name}</option>`).join('')}</select>
+    <input class="inp" id="ne-note" placeholder="Note (optional)">
+    <button class="bigbtn" onclick="addEnq()">Save enquiry</button>`);
+}
+function addEnq(){
+  enquiries.unshift({id:++seqE,cust:+$('ne-cust').value,mach:+$('ne-mach').value,stage:'new',
+    note:$('ne-note').value.trim()||'Call logged',when:'just now',fu:true,fresh:true});
+  closeSheet(); renderEnq(); toast('Enquiry saved');
+}
+
+/* ===================== quotation ===================== */
+function makeQuote(custId,machId){
+  quoteLines=[{mid:machId,qty:1,rate:machById(machId).price||0}];
+  fillQuoteSelects(custId); renderQuote(); go('s-quote');
+}
+function fillQuoteSelects(custId){
+  $('q-cust').innerHTML=customers.map(c=>`<option value="${c.id}" ${c.id===custId?'selected':''}>${c.name} — ${c.city}</option>`).join('');
+  $('q-add').innerHTML=machines.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+}
+function addQLine(){
+  const m=machById(+$('q-add').value);
+  quoteLines.push({mid:m.id,qty:1,rate:m.price||0}); renderQuote();
+}
+function delQLine(i){quoteLines.splice(i,1);renderQuote()}
+function upQ(i,f,v){quoteLines[i][f]=+v||0;renderQuote()}
+function renderQuote(){
+  $('q-lines').innerHTML=quoteLines.map((l,i)=>{
+    const m=machById(l.mid);
+    return `<div class="qline">
+      <div class="nm">${m.name}<span>HSN 8422</span></div>
+      <input type="number" min="1" value="${l.qty}" onchange="upQ(${i},'qty',this.value)" aria-label="Quantity">
+      <input type="number" value="${l.rate}" onchange="upQ(${i},'rate',this.value)" aria-label="Rate">
+      <button class="xbtn" onclick="delQLine(${i})" aria-label="Remove">✕</button>
+    </div>`;
+  }).join('') || `<p style="color:var(--mute);font-size:13px;margin:0 0 10px">No machine added yet.</p>`;
+
+  const sub=quoteLines.reduce((s,l)=>s+l.qty*l.rate,0);
+  const fr=+$('q-fr').value||0, rate=+$('q-gst').value;
+  const taxable=sub+fr, half=taxable*(rate/2)/100, tot=taxable+half*2;
+  $('t-sub').textContent=rs(sub); $('t-fr').textContent=rs(fr);
+  $('t-r1').textContent=rate/2; $('t-r2').textContent=rate/2;
+  $('t-c').textContent=rs(half); $('t-s').textContent=rs(half);
+  $('t-tot').textContent=rs(tot); $('t-words').textContent=words(tot);
+}
+function sendQuote(){
+  const c=custById(+$('q-cust').value);
+  const e=enquiries.find(x=>x.cust===c.id);
+  if(e){e.stage='quote';e.note='Quotation sent on WhatsApp';e.when='just now';e.fresh=true}
+  renderEnq();
+  toast('Quotation sent to '+c.name.split(' ')[0]+' on WhatsApp');
+}
+
+/* ===================== money ===================== */
+function moneyTab(t){
+  $('mseg-book').classList.toggle('on',t==='book');
+  $('mseg-rep').classList.toggle('on',t==='rep');
+  $('m-book').classList.toggle('hide',t!=='book');
+  $('m-rep').classList.toggle('hide',t!=='rep');
+  if(t==='rep') renderReport();
+}
+const IN_KINDS=['sale','income'];
+const KIND_LABEL={sale:'Sale',purchase:'Purchase',income:'Income',expense:'Expense'};
+function renderBook(){
+  const from=startOf('month');
+  const mIn=entries.filter(e=>e.d>=from&&IN_KINDS.includes(e.kind)).reduce((s,e)=>s+e.amt,0);
+  const mOut=entries.filter(e=>e.d>=from&&!IN_KINDS.includes(e.kind)).reduce((s,e)=>s+e.amt,0);
+  $('b-in').textContent=rs(mIn); $('b-out').textContent=rs(mOut);
+  $('b-net').textContent=rs(mIn-mOut);
+  $('b-list').innerHTML=entries.slice(0,24).map((e,i)=>{
+    const isIn=IN_KINDS.includes(e.kind);
+    return `<div class="rowcard ${e.fresh?'fresh':''}" style="animation-delay:${Math.min(i,10)*30}ms">
+      <span class="av ${isIn?'g':'k'}">${KIND_LABEL[e.kind][0]}</span>
+      <span class="t"><b>${e.party}</b><p>${e.note} · ${e.d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</p></span>
+      <span class="amt ${isIn?'in':'out'}">${isIn?'+':'−'}${rs(e.amt)}</span>
+    </div>`;
+  }).join('');
+}
+function openAddEntry(){
+  openSheet('New entry','Sales, purchase, income or expense',`
+    <div class="kindsel" id="ke">
+      ${Object.entries(KIND_LABEL).map(([k,v],i)=>`<button class="${i===0?'on':''}" data-k="${k}" onclick="pickKind('${k}')">${v}</button>`).join('')}
+    </div>
+    <input class="inp" id="te-party" placeholder="Customer or party name">
+    <input class="inp" id="te-amt" type="number" placeholder="Amount ₹" inputmode="numeric">
+    <input class="inp" id="te-note" placeholder="Note (optional)">
+    <button class="bigbtn" onclick="addEntry()">Save entry</button>`);
+  window._kind='sale';
+}
+function pickKind(k){
+  window._kind=k;
+  document.querySelectorAll('#ke button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+}
+function addEntry(){
+  const amt=+$('te-amt').value;
+  if(!amt){toast('Enter the amount to save');return}
+  entries.unshift({id:++seqT,kind:window._kind,amt,
+    party:$('te-party').value.trim()||'Cash',
+    note:$('te-note').value.trim()||KIND_LABEL[window._kind],
+    d:new Date(),fresh:true});
+  closeSheet(); renderBook();
+  if(!$('m-rep').classList.contains('hide')) renderReport();
+  toast(KIND_LABEL[window._kind]+' of '+rs(amt)+' saved');
+}
+
+function startOf(p,ref){
+  const d=ref?new Date(ref):new Date(); d.setHours(0,0,0,0);
+  if(p==='day') return d;
+  if(p==='week'){const x=new Date(d);x.setDate(d.getDate()-((d.getDay()+6)%7));return x}
+  if(p==='month') return new Date(d.getFullYear(),d.getMonth(),1);
+  return new Date(d.getFullYear(),0,1);
+}
+function agg(from,to){
+  const r={sale:0,saleN:0,purchase:0,purchaseN:0,income:0,expense:0};
+  entries.forEach(e=>{
+    if(e.d>=from && e.d<to){
+      r[e.kind]+=e.amt;
+      if(e.kind==='sale')r.saleN++;
+      if(e.kind==='purchase')r.purchaseN++;
+    }
+  });
+  return r;
+}
+function renderPeriods(){
+  $('r-periods').innerHTML=[['day','Today'],['week','This week'],['month','This month'],['year','This year']]
+    .map(([k,v])=>`<button class="pill-btn ${period===k?'on':''}" onclick="period='${k}';renderReport()">${v}</button>`).join('');
+}
+function renderReport(){
+  renderPeriods();
+  const from=startOf(period), to=new Date(); to.setDate(to.getDate()+1); to.setHours(0,0,0,0);
+  const r=agg(from,to);
+  const bills=n=>n+(n===1?' bill':' bills');
+  $('r-sale').textContent=shortRs(r.sale); $('r-salen').textContent=bills(r.saleN);
+  $('r-pur').textContent=shortRs(r.purchase); $('r-purn').textContent=bills(r.purchaseN);
+  $('r-inc').textContent=shortRs(r.income);
+  $('r-exp').textContent=shortRs(r.expense);
+  const net=r.sale+r.income-r.purchase-r.expense;
+  $('r-net').textContent=rs(net);
+  $('r-net').style.color=net>=0?'var(--go)':'var(--alert)';
+
+  // GST on outward supply
+  const tax=r.sale*0.18;
+  $('g-tax').textContent=rs(r.sale); $('g-c').textContent=rs(tax/2);
+  $('g-s').textContent=rs(tax/2); $('g-tot').textContent=rs(tax);
+
+  // chart buckets
+  const buckets=[];
+  const now=new Date(); now.setHours(0,0,0,0);
+  if(period==='day'||period==='week'){
+    for(let i=6;i>=0;i--){
+      const a=new Date(now); a.setDate(now.getDate()-i);
+      const b=new Date(a); b.setDate(a.getDate()+1);
+      buckets.push({label:a.toLocaleDateString('en-IN',{weekday:'short'})[0],...agg(a,b)});
+    }
+  }else if(period==='month'){
+    for(let i=5;i>=0;i--){
+      const a=new Date(now.getFullYear(),now.getMonth()-i,1);
+      const b=new Date(now.getFullYear(),now.getMonth()-i+1,1);
+      buckets.push({label:a.toLocaleDateString('en-IN',{month:'short'}),...agg(a,b)});
+    }
+  }else{
+    for(let i=11;i>=0;i--){
+      const a=new Date(now.getFullYear(),now.getMonth()-i,1);
+      const b=new Date(now.getFullYear(),now.getMonth()-i+1,1);
+      buckets.push({label:a.toLocaleDateString('en-IN',{month:'short'})[0],...agg(a,b)});
+    }
+  }
+  const max=Math.max(1,...buckets.map(b=>Math.max(b.sale,b.purchase)));
+  $('r-chart').innerHTML=buckets.map((b,i)=>`
+    <div class="bar">
+      <div class="stack">
+        <div class="s sale" style="height:${b.sale/max*88}%;animation-delay:${i*40}ms"></div>
+        <div class="s pur" style="height:${b.purchase/max*88}%;animation-delay:${i*40+60}ms"></div>
+      </div>
+      <div class="lab">${b.label}</div>
+    </div>`).join('');
+}
+
+/* ===================== customers ===================== */
+function renderCusts(filter=''){
+  const f=filter.toLowerCase();
+  const rows=customers.filter(c=>c.name.toLowerCase().includes(f)||c.city.toLowerCase().includes(f));
+  $('c-count').textContent=customers.length;
+  $('c-list').innerHTML=rows.map((c,i)=>{
+    const biz=entries.filter(e=>e.party===c.name&&e.kind==='sale').reduce((s,e)=>s+e.amt,0);
+    return `<button class="rowcard" style="animation-delay:${i*35}ms" onclick="openCust(${c.id})">
+      <span class="av ${c.tone}">${initials(c.name)}</span>
+      <span class="t"><b>${c.name}</b><p>${c.city} · ${c.phone}</p></span>
+      <span class="amt">${biz?shortRs(biz):'—'}</span>
+      <svg class="go" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>`;
+  }).join('') || `<div class="empty"><b>No customer found</b>Add one with the + button at the top.</div>`;
+}
+function openAddCust(){
+  openSheet('Add customer','Saved once, used everywhere',`
+    <input class="inp" id="nc-nm" placeholder="Name or firm name">
+    <input class="inp" id="nc-ph" placeholder="Mobile number" inputmode="tel">
+    <input class="inp" id="nc-ci" placeholder="City">
+    <input class="inp" id="nc-em" placeholder="E-mail (optional)">
+    <button class="bigbtn" onclick="addCust()">Save customer</button>`);
+}
+function addCust(){
+  const n=$('nc-nm').value.trim();
+  if(!n){toast('Enter a name to save the customer');return}
+  const tones=['','k','g','b','v'];
+  customers.push({id:++seqC,name:n,city:$('nc-ci').value.trim()||'—',
+    phone:$('nc-ph').value.trim()||'—',email:$('nc-em').value.trim()||'—',
+    tone:tones[customers.length%tones.length]});
+  closeSheet(); renderCusts(); toast(n+' added');
+}
+function openCust(id){
+  activeCust=custById(id);
+  const c=activeCust;
+  $('cp-name').textContent=c.name;
+  $('cp-meta').textContent=c.city+' · '+c.phone;
+  const bills=entries.filter(e=>e.party===c.name&&(e.kind==='sale'||e.kind==='income'));
+  const total=bills.reduce((s,e)=>s+e.amt,0);
+  $('cp-total').textContent=shortRs(total);
+  const es=enquiries.filter(e=>e.cust===c.id);
+  $('cp-enq').textContent=es.length;
+  $('cp-enqlist').innerHTML=es.map(e=>{
+    const m=machById(e.mach);
+    return `<div class="rowcard"><span class="av" style="background:linear-gradient(160deg,#EDEFEC,#DCDFDA);padding:5px">${m?art(m.art):''}</span>
+      <span class="t"><b>${m?m.name:'—'}</b><p>${e.note}</p>
+      <span class="stage-chip st-${e.stage}">${STAGES[e.stage]}</span></span></div>`;
+  }).join('') || `<p style="color:var(--mute);font-size:13px">No enquiry yet.</p>`;
+  $('cp-bills').innerHTML=bills.slice(0,6).map(e=>`
+    <div class="rowcard"><span class="av g">${KIND_LABEL[e.kind][0]}</span>
+      <span class="t"><b>${e.note}</b><p>${e.d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'})}</p></span>
+      <span class="amt in">${rs(e.amt)}</span></div>`).join('') ||
+    `<p style="color:var(--mute);font-size:13px">No bill yet.</p>`;
+  go('s-custprofile');
+}
+function removeCust(){
+  const c=activeCust;
+  openSheet('Remove '+c.name+'?','Their enquiries will be removed too. Bills stay in the money book.',`
+    <div class="btnrow">
+      <button class="bigbtn ghost" onclick="closeSheet()">Keep</button>
+      <button class="bigbtn" style="background:var(--alert);color:#fff;box-shadow:0 3px 0 #A8341F" onclick="confirmRemove()">Remove</button>
+    </div>`);
+}
+function confirmRemove(){
+  const c=activeCust;
+  customers=customers.filter(x=>x.id!==c.id);
+  enquiries=enquiries.filter(e=>e.cust!==c.id);
+  closeSheet(); renderCusts(); renderEnq(); go('s-customers');
+  toast(c.name+' removed');
+}
+
+/* ===================== customer view ===================== */
+const GU={cat:'મશીન કેટલોગ',enqh:'આ મશીનમાં રસ છે?',enqp:'તમારી વિગત મોકલો, અમે તમને ફોન કરીશું.',
+  enqb:'પૂછપરછ મોકલો',nm:'તમારું નામ',mo:'મોબાઈલ નંબર',ci:'શહેર',ms:'તમારી જરૂરિયાત',btn:'English'};
+const EN={cat:'Machine catalog',enqh:'Interested in this machine?',enqp:'Send your details and we will call you back.',
+  enqb:'Send enquiry',nm:'Your name',mo:'Mobile number',ci:'City',ms:'Your requirement (optional)',btn:'ગુજરાતી'};
+function toggleLang(){
+  lang=lang==='en'?'gu':'en';
+  const d=lang==='en'?EN:GU, guj=lang==='gu';
+  ['t-cat','t-enqh','t-enqp','t-enqb'].forEach(id=>$(id).classList.toggle('gu',guj));
+  $('t-cat').textContent=d.cat; $('t-enqh').textContent=d.enqh;
+  $('t-enqp').textContent=d.enqp; $('t-enqb').textContent=d.enqb;
+  $('ce-nm').placeholder=d.nm; $('ce-mo').placeholder=d.mo;
+  $('ce-ci').placeholder=d.ci; $('ce-ms').placeholder=d.ms;
+  $('langbtn').textContent=d.btn; $('langbtn').classList.toggle('gu',guj);
+}
+function openCustomer(from){
+  backFromCust=from||'s-detail';
+  $('cslug').textContent=current.slug;
+  $('cart').innerHTML=art(current.art).replace('<svg','<svg class="mach"');
+  $('cname').textContent=current.name;
+  $('cpricebox').innerHTML=priceBox(current,'cprice');
+  $('ctotal').textContent=current.dur; $('ctime').textContent='0:00';
+  $('cfill').style.width='0%'; $('cplay').classList.remove('hide');
+  $('cgal').innerHTML=gallery(current);
+  $('cspecs').innerHTML=current.specs.map(s=>`<div class="spec"><span class="k">${s[0]}</span><span class="v">${s[1]}</span></div>`).join('');
+  go('s-customer');
+}
+function custEnquiry(){
+  const n=$('ce-nm').value.trim()||'New customer';
+  const city=$('ce-ci').value.trim()||'—';
+  const ph=$('ce-mo').value.trim()||'—';
+  let c=customers.find(x=>x.name.toLowerCase()===n.toLowerCase());
+  if(!c){
+    const tones=['','k','g','b','v'];
+    c={id:++seqC,name:n,city,phone:ph,email:'—',tone:tones[customers.length%tones.length]};
+    customers.push(c);
+  }
+  enquiries.unshift({id:++seqE,cust:c.id,mach:current.id,stage:'new',
+    note:$('ce-ms').value.trim()||'Enquiry from the link',when:'just now',fu:true,fresh:true});
+  acts.unshift({who:n,what:'sent an enquiry for '+current.name,when:'just now',pct:0,live:true,fresh:true});
+  ['ce-nm','ce-mo','ce-ci','ce-ms'].forEach(i=>$(i).value='');
+  renderEnq(); renderCusts(); renderActs();
+  toast('Enquiry sent. It is already in your register.');
+}
+
+/* ===================== activity ===================== */
+function renderActs(){
+  $('actlist').innerHTML=acts.map((a,i)=>`
+    <div class="rowcard ${a.fresh?'fresh':''}" style="animation-delay:${i*45}ms;align-items:flex-start">
+      <span class="av ${i%3===1?'k':i%3===2?'g':''}">${initials(a.who)}</span>
+      <span class="t">
+        <b>${a.live?'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--go);margin-right:5px"></span>':''}${a.who}</b>
+        <p>${a.what}</p>
+        ${a.pct?`<div style="height:4px;background:var(--field);border-radius:9px;overflow:hidden;margin-top:7px">
+          <i style="display:block;height:100%;background:var(--go);width:${a.pct}%"></i></div>
+          <p style="font-family:var(--mono);font-size:10px;margin-top:5px">WATCHED ${a.pct}% OF THE VIDEO</p>`:''}
+      </span>
+      <span style="font-family:var(--mono);font-size:9.5px;color:var(--mute);white-space:nowrap">${a.when}</span>
+    </div>`).join('');
+}
+
+/* ===================== more ===================== */
+const TILES=[
+ {t:'Add a machine',s:'Video, photos, catalog',c:'var(--amber)',ic:'<path d="M12 5v14M5 12h14"/>',go:"go('s-upload')"},
+ {t:'Quotation & GST',s:'Make and send a quote',c:'var(--violet)',ic:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',go:"fillQuoteSelects(customers[0].id);renderQuote();go('s-quote')"},
+ {t:'Who watched',s:'Live link activity',c:'var(--go)',ic:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="2.6"/>',go:"go('s-activity')"},
+ {t:'Customer view',s:'What your customer sees',c:'var(--blue)',ic:'<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',go:"openCustomer('s-more')"},
+ {t:'Reports',s:'Day, week, month, year',c:'var(--ink)',ic:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',go:"go('s-money');moneyTab('rep')"},
+ {t:'Backup',s:'Download everything',c:'var(--kraft)',ic:'<path d="M12 4v12M6 12l6 6 6-6"/><path d="M4 20h16"/>',go:"toast('Backup file downloaded')"}
+];
+function renderTiles(){
+  $('tiles').innerHTML=TILES.map((t,i)=>`
+    <button class="tile" style="animation-delay:${i*45}ms" onclick="${t.go}">
+      <span class="ic" style="background:${t.c}"><svg viewBox="0 0 24 24">${t.ic}</svg></span>
+      <b>${t.t}</b><span>${t.s}</span>
+    </button>`).join('');
+}
+
+/* ===================== upload ===================== */
+function startUpload(){
+  uploads++;
+  const id='up'+uploads;
+  const el=document.createElement('div');
+  el.className='panel'; el.style.margin='0 16px 12px';
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:11px">
+      <svg id="${id}w" width="44" height="44" viewBox="0 0 44 44" style="transform:rotate(-90deg);flex-shrink:0">
+        <circle cx="22" cy="22" r="20" fill="none" stroke="#F4F5F3" stroke-width="4"/>
+        <circle id="${id}r" cx="22" cy="22" r="20" fill="none" stroke="#FFB800" stroke-width="4"
+          stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="126" style="transition:stroke-dashoffset .4s linear"/>
+      </svg>
+      <div style="flex:1;min-width:0">
+        <b style="font-size:14.5px">Shrink Tunnel — new video</b>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--mute)" id="${id}s">Sending from your phone…</div>
+      </div>
+    </div>
+    <div style="display:none;align-items:center;gap:9px;font-family:var(--mono);font-size:12px" id="${id}z">
+      <span style="color:var(--alert);text-decoration:line-through">348 MB</span>
+      <span style="color:var(--mute)">→</span>
+      <span style="color:var(--go)">17 MB</span>
+      <span style="color:var(--mute)">on the server</span>
+    </div>`;
+  $('uplist').appendChild(el);
+  let pct=0;
+  const ring=$(id+'r'), st=$(id+'s');
+  const iv=setInterval(()=>{
+    pct+=4+Math.random()*7;
+    if(pct>=100){
+      pct=100; clearInterval(iv);
+      st.textContent='Making it small for mobile…';
+      setTimeout(()=>{
+        $(id+'w').outerHTML=`<svg width="44" height="44" viewBox="0 0 44 44" style="flex-shrink:0">
+          <circle cx="22" cy="22" r="20" fill="none" stroke="#1F9D6B" stroke-width="4"/>
+          <path d="M13 22.5l6 6 12-12" fill="none" stroke="#1F9D6B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        st.textContent='Ready to send to customers'; st.style.color='var(--go)';
+        $(id+'z').style.display='flex';
+        storage=Math.max(0.4,storage-0.9); updateGauge();
+        toast('Video ready. Your phone is 331 MB lighter.');
+      },1400);
+    }
+    ring.style.strokeDashoffset=126-(126*pct/100);
+  },190);
+}
+function updateGauge(){
+  const pct=Math.max(3,storage/128*100);
+  $('gfill').style.width=pct+'%';
+  $('gtxt').textContent=storage.toFixed(1)+' GB';
+}
+
+/* ===================== boot ===================== */
+renderTabs(); renderList(); renderEnq(); renderBook(); renderCusts();
+renderActs(); renderTiles(); fillQuoteSelects(1); renderQuote(); renderPeriods();
+updateGauge(); syncTabs('s-machines');
+
+setTimeout(()=>{
+  if(!$('login').classList.contains('gone')) return;
+  acts.unshift({who:'Nilesh Trading Co.',what:'just opened Carton Sealing Machine',when:'now',pct:34,live:true,fresh:true});
+  renderActs(); toast('Nilesh Trading just opened your link');
+},16000);
+</script>
+<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(16,20,24,.9);color:#fff;font:600 12px/1.2 'Public Sans',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.28);">← Back to portfolios</a>
+</body>
+</html>

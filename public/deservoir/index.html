@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B1020">
+<title>Deservoir · Mobile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&family=Inter+Tight:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B1020; --ink-2:#151C33; --ink-3:#222B47;
+  --paper:#EEF0F6; --surface:#FFFFFF; --subtle:#F7F8FC;
+  --bd:#E3E6EF; --bd2:#CFD4E2; --sec:#5B6480; --mut:#8E96AD;
+  --mg:#FF8A1E; --mg-2:#FFA23D; --mg-d:#D96C00; --mg-50:#FFF3E4; --mg-100:#FFE0BE; --on-mg:#241300;
+  --tl:#0FA3A3; --tl-50:#E2F6F6; --tl-100:#BEE9E9;
+  --gr:#17A34A; --gr-50:#E7F7EE; --rd:#E5484D; --rd-50:#FDECEC; --bl:#3B5BF0; --bl-50:#EDF0FE;
+  --wa:#25D366; --wa-d:#075E54;
+  --d:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;
+  --u:'Inter Tight',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --m:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --sh:0 1px 2px rgba(11,16,32,.05),0 2px 8px rgba(11,16,32,.05);
+  --sh-m:0 6px 20px rgba(11,16,32,.10);
+  --tab:62px; --tot:74px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--u);background:#111726;color:var(--ink);font-size:15px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;display:grid;place-items:center;min-height:100vh;padding:22px}
+.n{font-family:var(--m);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.dp{font-family:var(--d);letter-spacing:-.04em}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none}
+:focus-visible{outline:2px solid var(--mg);outline-offset:2px}
+
+/* ---------- device ---------- */
+.device{width:392px;background:#05070D;border-radius:46px;padding:11px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #262E42;position:relative}
+.screen{position:relative;width:370px;height:790px;border-radius:36px;overflow:hidden;background:var(--paper);display:flex;flex-direction:column}
+.notch{position:absolute;top:20px;left:50%;transform:translateX(-50%);width:104px;height:26px;background:#05070D;border-radius:99px;z-index:60}
+
+.status{background:var(--ink);color:#fff;padding:13px 22px 5px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:600;flex:none;z-index:50}
+.status .rt{display:flex;gap:5px;align-items:center}
+
+.appbar{background:var(--ink);color:#fff;padding:6px 16px 15px;flex:none;position:relative;overflow:hidden;z-index:40}
+.appbar::after{content:"";position:absolute;right:-50px;top:-70px;width:190px;height:190px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,138,30,.24),transparent 70%);pointer-events:none}
+.ab-row{display:flex;align-items:center;gap:12px;position:relative}
+.ab-t{font-family:var(--d);font-size:22px;font-weight:800;letter-spacing:-.04em;flex:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ab-s{font-size:11.5px;color:#8892AD;margin-top:1px}
+.iconbtn{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:#C3CBDE;background:rgba(255,255,255,.07);flex:none}
+.iconbtn:active{background:rgba(255,255,255,.16)}
+.back{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.09);flex:none}
+
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px 14px calc(var(--tab) + 24px);background:var(--paper)}
+.scroll.hastot{padding-bottom:calc(var(--tab) + var(--tot) + 16px)}
+.view{display:none}
+.view.on{display:block;animation:in .2s ease}
+@keyframes in{from{opacity:0;transform:translateY(7px)}}
+
+/* ---------- cards ---------- */
+.card{background:var(--surface);border-radius:16px;box-shadow:var(--sh);overflow:hidden;margin-bottom:12px}
+.ch{padding:13px 15px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+.ch h3{font-family:var(--d);font-size:14.5px;font-weight:700;letter-spacing:-.03em;flex:1}
+.ch .lk{font-size:12px;font-weight:700;color:var(--mg-d)}
+.cb{padding:15px}
+.sp{flex:1}
+
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.tile{background:#fff;border-radius:16px;padding:14px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.tile .k{font-size:9px;font-weight:800;letter-spacing:.13em;color:var(--mut)}
+.tile .v{font-family:var(--d);font-size:23px;font-weight:800;letter-spacing:-.05em;margin-top:7px;line-height:1}
+.tile .s{font-size:10.5px;color:var(--sec);margin-top:5px}
+.tile .bar{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--mg)}
+.tile.t .bar{background:var(--tl)}.tile.o .bar{background:var(--gr)}.tile.w .bar{background:var(--bl)}
+
+.hero{background:var(--ink);border-radius:18px;padding:17px;color:#fff;position:relative;overflow:hidden;margin-bottom:12px}
+.hero::after{content:"";position:absolute;right:-46px;top:-46px;width:170px;height:170px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,138,30,.26),transparent 70%)}
+.hero .lb{font-size:9px;font-weight:800;letter-spacing:.16em;color:#7E89A6;position:relative}
+.hero .big{font-family:var(--d);font-size:30px;font-weight:800;letter-spacing:-.05em;margin-top:6px;position:relative}
+.hero .sm{font-size:11.5px;color:#96A0BA;margin-top:5px;position:relative}
+
+/* ---------- rows ---------- */
+.row{display:flex;align-items:center;gap:12px;padding:13px 15px;border-bottom:1px solid #F1F3F8;background:#fff}
+.row:last-child{border-bottom:none}
+.row:active{background:var(--subtle)}
+.row .mn{flex:1;min-width:0}
+.row .t1{font-size:14px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .t2{font-size:11.5px;color:var(--mut);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .rt{text-align:right;flex:none}
+.row .amt{font-family:var(--m);font-size:14px;font-weight:700;letter-spacing:-.03em}
+.chev{color:var(--bd2);flex:none}
+
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:700;white-space:nowrap}
+.pill::before{content:"";width:4.5px;height:4.5px;border-radius:50%;background:currentColor}
+.p-draft{background:#EDEFF5;color:#5B6480}.p-sent{background:var(--bl-50);color:var(--bl)}
+.p-viewed{background:var(--tl-50);color:#0A8686}.p-accepted{background:var(--gr-50);color:var(--gr)}
+.p-expired{background:var(--mg-50);color:var(--mg-d)}.p-rejected{background:var(--rd-50);color:var(--rd)}
+.tag{display:inline-block;padding:2.5px 8px;border-radius:7px;font-size:10px;font-weight:700;font-family:var(--m)}
+.t-gst{background:var(--tl-50);color:#0A8686}
+.t-hsn{background:var(--subtle);color:var(--sec);border:1px solid var(--bd)}
+
+/* ---------- chips ---------- */
+.chips{display:flex;gap:7px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:#fff;color:var(--sec);
+  border:1px solid var(--bd);white-space:nowrap;flex:none}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border-radius:13px;
+  font-size:14.5px;font-weight:700;width:100%;transition:.14s}
+.btn:active{transform:scale(.985)}
+.btn-p{background:linear-gradient(180deg,var(--mg-2),var(--mg));color:var(--on-mg);box-shadow:0 3px 12px rgba(255,138,30,.35)}
+.btn-k{background:var(--ink);color:#fff}
+.btn-wa{background:var(--wa);color:#04321A;box-shadow:0 3px 12px rgba(37,211,102,.35)}
+.btn-s{background:#fff;border:1px solid var(--bd2);color:var(--ink)}
+.btn-sm{padding:9px 14px;font-size:12.5px;border-radius:10px;width:auto}
+
+/* ---------- forms ---------- */
+label.f{display:block;font-size:9.5px;font-weight:800;letter-spacing:.13em;color:var(--sec);margin-bottom:6px}
+label.f i{color:var(--mg-d);font-style:normal}
+.inp{width:100%;padding:12px 13px;border:1px solid var(--bd2);border-radius:12px;background:#fff;font-size:15px;outline:none}
+.inp:focus{border-color:var(--mg);box-shadow:0 0 0 3px var(--mg-50)}
+select.inp{appearance:none;padding-right:34px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 8l3-3.5' stroke='%235B6480' stroke-width='1.7' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center}
+textarea.inp{min-height:88px;resize:none;line-height:1.55;font-size:14px}
+.fld{margin-bottom:13px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11px;color:var(--mut);margin-top:5px}
+.warn{font-size:11px;color:var(--rd);margin-top:5px;display:none}
+.warn.on{display:block}
+.inp.bad{border-color:var(--rd)}
+
+/* qty stepper */
+.step{display:flex;align-items:center;border:1px solid var(--bd2);border-radius:12px;overflow:hidden;background:#fff}
+.step button{width:46px;height:46px;display:grid;place-items:center;font-size:21px;font-weight:600;color:var(--ink);flex:none}
+.step button:active{background:var(--paper)}
+.step input{flex:1;min-width:0;text-align:center;border:none;outline:none;font-family:var(--m);font-size:16px;font-weight:600;
+  border-left:1px solid var(--bd);border-right:1px solid var(--bd);height:46px}
+.gstrow{display:flex;gap:7px}
+.gstopt{flex:1;padding:11px 0;border-radius:11px;border:1.5px solid var(--bd2);background:#fff;
+  font-family:var(--m);font-size:13px;font-weight:700;color:var(--sec);text-align:center}
+.gstopt.on{border-color:var(--tl);background:var(--tl-50);color:#0A7A7A}
+
+/* ---------- line item card ---------- */
+.line{background:#fff;border-radius:14px;box-shadow:var(--sh);padding:13px 14px;margin-bottom:9px;position:relative;overflow:hidden}
+.line:active{background:var(--subtle)}
+.line .sr{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--mg)}
+.line .top{display:flex;align-items:flex-start;gap:10px}
+.line .nm{font-size:14px;font-weight:600;letter-spacing:-.01em;flex:1;line-height:1.35}
+.line .aa{font-family:var(--m);font-size:15px;font-weight:700;letter-spacing:-.03em;text-align:right;flex:none}
+.line .gg{font-family:var(--m);font-size:10px;color:#0A8686;font-weight:600;text-align:right;margin-top:2px}
+.line .mid{display:flex;align-items:center;gap:6px;margin-top:9px;flex-wrap:wrap}
+.line .calcline{font-family:var(--m);font-size:11px;color:var(--mut);margin-top:8px;
+  padding-top:8px;border-top:1px dashed var(--bd)}
+
+/* ---------- receipt ---------- */
+.receipt{background:var(--ink);color:#fff;border-radius:16px 16px 0 0;padding-bottom:12px;margin-bottom:12px;position:relative;
+  -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 9px) no-repeat,
+    conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) bottom/18px 9px repeat-x;
+  mask:linear-gradient(#000 0 0) top/100% calc(100% - 9px) no-repeat,
+    conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) bottom/18px 9px repeat-x}
+.rc-h{padding:14px 16px 12px;border-bottom:1px dashed rgba(255,255,255,.18)}
+.rc-h .t{font-size:8.5px;font-weight:800;letter-spacing:.17em;color:#7E89A6}
+.rc-h .s{font-family:var(--d);font-size:15px;font-weight:700;letter-spacing:-.03em;margin-top:4px}
+.supply{display:inline-block;background:rgba(15,163,163,.2);color:#6FE0E0;padding:3px 9px;border-radius:7px;
+  font-size:9px;font-weight:800;letter-spacing:.08em;margin-top:8px}
+.rc-b{padding:12px 16px 2px}
+.tx{display:flex;justify-content:space-between;padding:5px 0;font-size:12.5px}
+.tx .l{color:#98A2BC}.tx .v{font-family:var(--m);color:#E8EBF3}
+.tx.st .l,.tx.st .v{color:#fff;font-weight:600}
+.tx.tax .l,.tx.tax .v{color:#6FE0E0;font-weight:600}
+.tx-div{height:1px;margin:8px 0;background-image:linear-gradient(90deg,rgba(255,255,255,.22) 50%,transparent 0);background-size:7px 1px}
+.rc-w{margin:11px 16px 0;font-size:10.5px;color:#8A93AD;line-height:1.5}
+.rc-w b{display:block;font-size:8px;letter-spacing:.15em;color:#5E6883;margin-bottom:3px}
+
+/* ---------- sticky total bar ---------- */
+.totbar{position:absolute;left:0;right:0;bottom:var(--tab);background:rgba(255,255,255,.97);backdrop-filter:blur(14px);
+  border-top:1px solid var(--bd);padding:11px 14px;display:none;align-items:center;gap:11px;z-index:35}
+.totbar.on{display:flex}
+.totbar .l{font-size:8.5px;font-weight:800;letter-spacing:.14em;color:var(--mut)}
+.totbar .v{font-family:var(--d);font-size:22px;font-weight:800;letter-spacing:-.05em;line-height:1.1}
+.totbar .sub{font-size:10px;color:var(--mut);font-family:var(--m)}
+
+/* ---------- tab bar ---------- */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:var(--tab);background:rgba(255,255,255,.97);
+  backdrop-filter:blur(14px);border-top:1px solid var(--bd);display:flex;align-items:center;z-index:36}
+.tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mut);
+  text-decoration:none;font-size:9.5px;font-weight:700;padding-top:4px}
+.tabbar a.on{color:var(--ink)}
+.tabbar a.on svg{color:var(--mg-d)}
+.tabbar .fab{flex:none;width:52px;margin:0 4px}
+.tabbar .fab .circ{width:50px;height:50px;border-radius:17px;background:linear-gradient(180deg,var(--mg-2),var(--mg));
+  display:grid;place-items:center;color:var(--on-mg);box-shadow:0 5px 16px rgba(255,138,30,.45);margin-top:-16px}
+.tabbar .fab span{font-size:9px;color:var(--mg-d)}
+
+/* ---------- sheets ---------- */
+.ov{position:absolute;inset:0;background:rgba(11,16,32,.5);backdrop-filter:blur(2px);z-index:70;display:none}
+.ov.on{display:block;animation:fade .18s}
+@keyframes fade{from{opacity:0}}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;max-height:88%;
+  display:flex;flex-direction:column;animation:up .26s cubic-bezier(.2,.9,.3,1)}
+@keyframes up{from{transform:translateY(100%)}}
+.grab{width:38px;height:4px;border-radius:99px;background:var(--bd2);margin:9px auto 3px;flex:none}
+.sh-h{padding:9px 17px 13px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;flex:none}
+.sh-h h3{font-family:var(--d);font-size:16.5px;font-weight:700;letter-spacing:-.03em;flex:1}
+.sh-h p{font-size:11px;color:var(--mut);margin-top:1px}
+.sh-b{overflow-y:auto;padding:15px 17px;flex:1}
+.sh-b.flush{padding:0}
+.sh-f{padding:12px 17px;border-top:1px solid var(--bd);background:var(--subtle);display:flex;gap:9px;flex:none}
+.x{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--mut);background:var(--paper);flex:none}
+.pickrow{display:flex;align-items:center;gap:12px;padding:13px 17px;border-bottom:1px solid #F1F3F8}
+.pickrow:active{background:var(--subtle)}
+.pickrow.sel{background:var(--mg-50)}
+.tick{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--bd2);display:grid;place-items:center;flex:none;color:#fff;font-size:11px}
+.pickrow.sel .tick{background:var(--mg);border-color:var(--mg);color:var(--on-mg)}
+.srch{padding:11px 17px;border-bottom:1px solid var(--bd);background:var(--subtle)}
+.srch input{width:100%;padding:10px 13px;border:1px solid var(--bd2);border-radius:11px;font-size:14px;outline:none}
+
+/* ---------- whatsapp ---------- */
+.wa-h{background:var(--wa-d);color:#fff;padding:11px 15px;display:flex;align-items:center;gap:10px}
+.wa-av{width:34px;height:34px;border-radius:50%;background:var(--tl);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.wa-h b{font-size:13.5px;font-weight:600;display:block}
+.wa-h span{font-size:10.5px;opacity:.75}
+.wa-body{padding:14px 11px 18px;background-color:#EFE7DE;min-height:250px;
+  background-image:radial-gradient(circle at 11px 11px,rgba(11,16,32,.045) 1.5px,transparent 0);background-size:24px 24px}
+.wa-day{text-align:center;margin-bottom:12px}
+.wa-day span{background:#FFF6DD;color:#5B6480;font-size:9px;font-weight:600;padding:3px 10px;border-radius:7px}
+.bub{background:#DCF8C6;border-radius:11px 2px 11px 11px;padding:8px 9px 6px;margin-left:auto;max-width:255px;
+  box-shadow:0 1px 1px rgba(0,0,0,.13);position:relative}
+.bub::after{content:"";position:absolute;top:0;right:-7px;border:7px solid transparent;border-top-color:#DCF8C6;border-right:0}
+.bub .tx2{font-size:12.5px;color:#0F1F14;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.bub .tm{font-size:9.5px;color:#6B8A72;text-align:right;margin-top:3px;display:flex;align-items:center;justify-content:flex-end;gap:3px}
+.pdfc{background:#CDEBB6;border-radius:8px;padding:9px;display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.pdfc .pi{width:32px;height:32px;border-radius:7px;background:var(--rd);display:grid;place-items:center;color:#fff;
+  font-size:8px;font-weight:800;flex:none;font-family:var(--m)}
+.pdfc b{font-size:11.5px;display:block;color:#0F1F14}.pdfc span{font-size:9.5px;color:#5E7A66}
+
+.note{background:var(--mg-50);border:1px solid var(--mg-100);border-radius:12px;padding:11px 13px;font-size:12px;color:#7A4200;line-height:1.5}
+.sect{font-size:9px;font-weight:800;letter-spacing:.15em;color:var(--mut);margin:16px 2px 9px}
+.empty{padding:44px 20px;text-align:center}
+.empty .e1{font-family:var(--d);font-size:16px;font-weight:700;margin-bottom:5px}
+.empty .e2{font-size:13px;color:var(--mut)}
+.toast{position:absolute;left:14px;right:14px;bottom:calc(var(--tab) + 14px);background:var(--ink);color:#fff;
+  padding:13px 16px;border-radius:13px;font-size:13px;font-weight:500;z-index:90;display:flex;align-items:center;gap:9px;
+  opacity:0;transform:translateY(16px);transition:.26s;pointer-events:none}
+.toast.on{opacity:1;transform:translateY(0)}
+.toast .tk{width:19px;height:19px;border-radius:50%;background:var(--mg);display:grid;place-items:center;
+  color:var(--on-mg);font-size:11px;font-weight:800;flex:none}
+
+/* ---------- real phone: drop the frame ---------- */
+@media(max-width:560px){
+  body{display:block;padding:0;background:var(--paper)}
+  .device{width:100%;border-radius:0;padding:0;box-shadow:none}
+  .screen{width:100%;height:100dvh;border-radius:0}
+  .notch{display:none}
+  .status{padding-top:max(13px,env(safe-area-inset-top))}
+  .tabbar{height:calc(var(--tab) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom)}
+  .totbar{bottom:calc(var(--tab) + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="device"><div class="notch"></div><div class="screen">
+
+  <div class="status">
+    <span class="n" id="clock">9:41</span>
+    <span class="rt">
+      <svg width="16" height="11" viewBox="0 0 18 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity=".4"/></svg>
+      <svg width="15" height="11" viewBox="0 0 16 12" fill="#fff"><path d="M8 10.5 9.8 8.6a2.6 2.6 0 0 0-3.6 0L8 10.5zM8 6.4c1.4 0 2.7.5 3.7 1.5l1.4-1.5A7.4 7.4 0 0 0 8 4.3a7.4 7.4 0 0 0-5.1 2.1l1.4 1.5A5.2 5.2 0 0 1 8 6.4zM8 2.2c2.5 0 4.8 1 6.5 2.6L16 3.3A11.6 11.6 0 0 0 8 0C4.9 0 2.1 1.2 0 3.3l1.5 1.5A9.2 9.2 0 0 1 8 2.2z"/></svg>
+      <svg width="24" height="12" viewBox="0 0 26 12" fill="none"><rect x=".6" y=".6" width="21" height="10.8" rx="3" stroke="#fff" stroke-opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="2" fill="#fff"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="#fff" fill-opacity=".5"/></svg>
+    </span>
+  </div>
+
+  <header class="appbar">
+    <div class="ab-row">
+      <button class="back" id="backBtn" onclick="go(BACK_TO)" style="display:none">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div style="flex:1;min-width:0"><div class="ab-t" id="abTitle">Hello, Ravi</div><div class="ab-s" id="abSub">Deservoir · FY 2026–27</div></div>
+      <button class="iconbtn" id="abAction" onclick="abAct()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
+    </div>
+  </header>
+
+  <main class="scroll" id="scroll">
+
+    <!-- HOME -->
+    <section class="view on" id="v-home">
+      <div class="hero">
+        <div class="lb">QUOTED THIS MONTH</div>
+        <div class="big n" id="hBig">₹0</div>
+        <div class="sm" id="hSm">—</div>
+      </div>
+      <div class="tiles">
+        <div class="tile t"><div class="bar"></div><div class="k">AWAITING</div><div class="v n" id="hA">0</div><div class="s">Sent &amp; viewed</div></div>
+        <div class="tile o"><div class="bar"></div><div class="k">ACCEPTED</div><div class="v n" id="hB">₹0</div><div class="s">This year</div></div>
+        <div class="tile w"><div class="bar"></div><div class="k">EXPIRING</div><div class="v n" id="hC">0</div><div class="s">Within 7 days</div></div>
+        <div class="tile"><div class="bar"></div><div class="k">CLIENTS</div><div class="v n" id="hD">0</div><div class="s">On record</div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Recent quotations</h3><button class="lk" onclick="go('quotes')">See all</button></div>
+        <div id="homeRows"></div>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>GST by slab</h3></div>
+        <div class="cb" id="slabBox"></div>
+      </div>
+    </section>
+
+    <!-- QUOTES -->
+    <section class="view" id="v-quotes">
+      <div class="chips" id="qChips"></div>
+      <div id="quoteRows"></div>
+    </section>
+
+    <!-- BUILD -->
+    <section class="view" id="v-build">
+      <div class="card">
+        <div class="ch"><h3 id="bNo">QT/2026-27/0042</h3><span class="pill p-draft">Draft</span></div>
+        <div class="cb">
+          <div class="two">
+            <div class="fld" style="margin:0"><label class="f">QUOTE DATE</label><input class="inp" type="date" id="qDate"></div>
+            <div class="fld" style="margin:0"><label class="f">VALID UNTIL</label><input class="inp" type="date" id="qValid"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><h3>Bill to</h3><button class="lk" onclick="openSheet('client')">Change</button></div>
+        <div class="cb" style="padding:14px 15px">
+          <div style="font-family:var(--d);font-size:16px;font-weight:700;letter-spacing:-.03em" id="clName">—</div>
+          <div style="font-size:12.5px;color:var(--sec);margin-top:4px;line-height:1.55" id="clMeta">—</div>
+          <div style="margin-top:9px"><span class="tag t-gst" id="clGst">—</span></div>
+        </div>
+      </div>
+
+      <div class="sect">ITEMS</div>
+      <div id="lineCards"></div>
+      <button class="btn btn-s" style="margin-bottom:12px" onclick="openSheet('item')">＋ Add item</button>
+
+      <div class="receipt">
+        <div class="rc-h"><div class="t">TAX SUMMARY</div><div class="s" id="rcName">—</div><div class="supply" id="rcSupply">—</div></div>
+        <div class="rc-b">
+          <div class="tx"><span class="l">Gross value</span><span class="v" id="tGross">₹0.00</span></div>
+          <div class="tx"><span class="l">Discount</span><span class="v" id="tDisc">− ₹0.00</span></div>
+          <div class="tx st"><span class="l">Taxable value</span><span class="v" id="tTaxable">₹0.00</span></div>
+          <div class="tx-div"></div><div id="taxLines"></div><div class="tx-div"></div>
+          <div class="tx"><span class="l">Round off</span><span class="v" id="tRound">₹0.00</span></div>
+        </div>
+        <div class="rc-w"><b>AMOUNT IN WORDS</b><span id="tWords">—</span></div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><h3>Tax logic</h3></div>
+        <div class="cb" style="font-size:12.5px;color:var(--sec);line-height:1.65" id="logicNote">—</div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><h3>Terms</h3></div>
+        <div class="cb"><textarea class="inp" id="qTerms"></textarea></div>
+      </div>
+    </section>
+
+    <!-- ITEMS -->
+    <section class="view" id="v-items">
+      <div class="card" style="margin-bottom:12px"><div id="itemRows"></div></div>
+      <button class="btn btn-p" onclick="openSheet('newitem')">＋ Add new item</button>
+    </section>
+
+    <!-- MORE -->
+    <section class="view" id="v-more">
+      <div class="sect">MASTERS</div>
+      <div class="card">
+        <div class="row" onclick="go('clients')"><div class="mn"><div class="t1">Clients</div><div class="t2" id="mClients">—</div></div>
+          <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+        <div class="row" onclick="go('items')"><div class="mn"><div class="t1">Items &amp; GST rates</div><div class="t2" id="mItems">—</div></div>
+          <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+      </div>
+      <div class="sect">SETUP</div>
+      <div class="card">
+        <div class="row" onclick="go('settings')"><div class="mn"><div class="t1">Company profile</div><div class="t2">GSTIN, address, contact, bank</div></div>
+          <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+        <div class="row" onclick="openSheet('watpl')"><div class="mn"><div class="t1">WhatsApp message</div><div class="t2">Template used when sharing</div></div>
+          <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+      </div>
+      <div class="note" style="margin-top:16px">Prototype for demonstration. Nothing is saved and no messages are sent.</div>
+    </section>
+
+    <!-- CLIENTS -->
+    <section class="view" id="v-clients">
+      <div class="card" style="margin-bottom:12px"><div id="clientRows"></div></div>
+      <button class="btn btn-p" onclick="openSheet('newclient')">＋ Add new client</button>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="v-settings">
+      <div class="card"><div class="ch"><h3>Identity</h3></div><div class="cb">
+        <div class="fld"><label class="f">COMPANY NAME</label><input class="inp" value="Deservoir Industries Pvt. Ltd."></div>
+        <div class="fld"><label class="f">GSTIN</label><input class="inp n" value="24AABCD1234E1Z5"><div class="hint">24 = Gujarat. Decides CGST+SGST vs IGST.</div></div>
+        <div class="fld" style="margin:0"><label class="f">ADDRESS</label><textarea class="inp">Plot 42, GIDC Phase II, Vatva
+Ahmedabad, Gujarat 382445</textarea></div>
+      </div></div>
+      <div class="card"><div class="ch"><h3>Contact</h3></div><div class="cb">
+        <div class="fld"><label class="f">EMAIL</label><input class="inp" value="sales@deservoir.in"></div>
+        <div class="fld"><label class="f">WHATSAPP NUMBER</label><input class="inp n" value="+91 98250 41200"></div>
+        <div class="fld" style="margin:0"><label class="f">LANDLINE</label><input class="inp n" value="+91 79 4004 1200"></div>
+      </div></div>
+      <div class="card"><div class="ch"><h3>Bank</h3></div><div class="cb">
+        <div class="fld"><label class="f">BANK &amp; BRANCH</label><input class="inp" value="HDFC Bank — Vatva, Ahmedabad"></div>
+        <div class="two"><div class="fld" style="margin:0"><label class="f">A/C NUMBER</label><input class="inp n" value="50200034567891"></div>
+        <div class="fld" style="margin:0"><label class="f">IFSC</label><input class="inp n" value="HDFC0000123"></div></div>
+      </div></div>
+      <div class="card"><div class="ch"><h3>Numbering</h3></div><div class="cb">
+        <div class="two"><div class="fld" style="margin:0"><label class="f">PREFIX</label><input class="inp n" id="setPrefix" value="QT/2026-27/"></div>
+        <div class="fld" style="margin:0"><label class="f">NEXT NO</label><input class="inp n" id="setNext" value="0042"></div></div>
+        <div class="fld" style="margin:13px 0 0"><label class="f">VALIDITY (DAYS)</label><input class="inp n" id="setValid" value="15"></div>
+      </div></div>
+    </section>
+  </main>
+
+  <!-- TOTAL BAR -->
+  <div class="totbar" id="totbar">
+    <div style="flex:1;min-width:0">
+      <div class="l">GRAND TOTAL</div>
+      <div class="v n" id="barTotal">₹0</div>
+      <div class="sub" id="barSub">—</div>
+    </div>
+    <button class="btn btn-wa btn-sm" style="padding:12px 15px" onclick="openSheet('share')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2z"/><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.7.1l-.9 1.2c-.2.2-.3.2-.6.1-1.4-.6-2.4-1.5-3.4-3-.2-.3 0-.5.1-.6l.5-.6c.1-.2.1-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-1 1-1 2.4-.8 3.3.4 1.6 2.3 4.6 5.7 6 2 .8 2.9.7 3.6.4.7-.3 1.3-1 1.5-1.6.1-.4.1-.7 0-.8z"/></svg>
+      Share
+    </button>
+  </div>
+
+  <!-- TAB BAR -->
+  <nav class="tabbar">
+    <a href="#" data-go="home" class="on"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20z"/></svg>Home</a>
+    <a href="#" data-go="quotes"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Quotes</a>
+    <a href="#" class="fab" onclick="newQuote()"><div class="circ"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><path d="M12 5v14M5 12h14"/></svg></div><span>New</span></a>
+    <a href="#" data-go="items"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg>Items</a>
+    <a href="#" data-go="more"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More</a>
+  </nav>
+
+  <!-- SHEETS -->
+  <div class="ov" id="ov" onclick="if(event.target===this)closeSheet()">
+    <div class="sheet" id="sheet">
+      <div class="grab"></div>
+      <div class="sh-h"><div style="flex:1;min-width:0"><h3 id="shTitle">—</h3><p id="shSub"></p></div>
+        <button class="x" onclick="closeSheet()">✕</button></div>
+      <div class="sh-b" id="shBody"></div>
+      <div class="sh-f" id="shFoot" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><span class="tk">✓</span><span id="toastMsg"></span></div>
+</div></div>
+<script>
+/* ============ DATA (prototype only) ============ */
+const CO = {
+  name:"Deservoir Industries Pvt. Ltd.", brand:"Deservoir",
+  gstin:"24AABCD1234E1Z5", state:"Gujarat",
+  addr:"Plot 42, GIDC Phase II, Vatva\nAhmedabad, Gujarat 382445",
+  em1:"sales@deservoir.in", ph1:"+91 98250 41200", rep:"Ravi Patel"
+};
+const DEFAULT_TERMS =
+`1. Prices are ex-works Ahmedabad.
+2. Payment: 50% advance, balance before dispatch.
+3. Delivery: 3–4 weeks from confirmed order.
+4. Warranty: 12 months against manufacturing defects.`;
+
+const WA_TPL =
+`Namaste {contact},
+
+Please find the quotation from *{company}*.
+
+*Quote no:*  {no}
+*Date:*  {date}
+*Valid until:*  {valid}
+*Items:*  {items}
+*Total (incl. GST):*  {total}
+
+PDF attached. Happy to revise if anything needs a change.
+
+— {rep}, {company}
+{phone}`;
+
+let ITEMS = [
+  {id:1, name:"SS 304 Storage Tank — 5000 L",     hsn:"7309",   unit:"Nos",  rate:145000, gst:18, type:"Goods"},
+  {id:2, name:"MS Water Storage Tank — 2000 L",   hsn:"7309",   unit:"Nos",  rate:62000,  gst:18, type:"Goods"},
+  {id:3, name:"Centrifugal Pump — 3 HP",          hsn:"8413",   unit:"Nos",  rate:24500,  gst:18, type:"Goods"},
+  {id:4, name:"Submersible Borewell Pump — 5 HP", hsn:"8413",   unit:"Nos",  rate:41200,  gst:18, type:"Goods"},
+  {id:5, name:"Solar Water Heater — 200 LPD",     hsn:"8419",   unit:"Nos",  rate:28900,  gst:12, type:"Goods"},
+  {id:6, name:"Drip Irrigation Kit — 1 acre",     hsn:"8424",   unit:"Set",  rate:18400,  gst:12, type:"Goods"},
+  {id:7, name:"PVC Pipe 110 mm — 6 m",            hsn:"3917",   unit:"Nos",  rate:1180,   gst:18, type:"Goods"},
+  {id:8, name:"Water Testing Kit — field grade",  hsn:"9027",   unit:"Nos",  rate:3250,   gst:5,  type:"Goods"},
+  {id:9, name:"Split AC 1.5 Ton — site office",   hsn:"8415",   unit:"Nos",  rate:42000,  gst:28, type:"Goods"},
+  {id:10,name:"Installation & commissioning",     hsn:"995461", unit:"Job",  rate:6500,   gst:18, type:"Service"},
+  {id:11,name:"Annual maintenance contract",      hsn:"998719", unit:"Year", rate:12000,  gst:18, type:"Service"},
+  {id:12,name:"Freight & transportation",         hsn:"996511", unit:"Trip", rate:4500,   gst:5,  type:"Service"}
+];
+
+let CLIENTS = [
+  {id:1,name:"Shakti Agro Industries",  gstin:"24AAECS4567P1ZQ",state:"Gujarat",    addr:"Gondal Road, Rajkot 360004",  email:"purchase@shaktiagro.in",phone:"+91 98240 11223",person:"Bhavesh Ramani"},
+  {id:2,name:"Sunrise Textiles Pvt Ltd",gstin:"27AABCS7654L1ZX",state:"Maharashtra",addr:"MIDC Andheri East, Mumbai 400093",email:"stores@sunrisetex.com",phone:"+91 98200 55771",person:"Neha Kulkarni"},
+  {id:3,name:"Patel Farm Equipments",   gstin:"24AACFP1122M1ZK",state:"Gujarat",    addr:"Mendarda, Junagadh 362260",   email:"info@patelfarm.co.in", phone:"+91 99099 34512",person:"Kiran Patel"},
+  {id:4,name:"Deccan Infra Projects",   gstin:"29AAGCD9988R1ZP",state:"Karnataka",  addr:"Peenya, Bengaluru 560058",    email:"procure@deccaninfra.in",phone:"+91 80471 22900",person:"S. Raghavan"}
+];
+
+let QUOTES = [
+  {no:"QT/2026-27/0041",date:"2026-08-21",client:1,taxable:412500,gst:74250,status:"Sent",    valid:"2026-09-05"},
+  {no:"QT/2026-27/0040",date:"2026-08-19",client:2,taxable:186000,gst:33480,status:"Viewed",  valid:"2026-09-03"},
+  {no:"QT/2026-27/0039",date:"2026-08-17",client:3,taxable:96400, gst:13208,status:"Accepted",valid:"2026-09-01"},
+  {no:"QT/2026-27/0038",date:"2026-08-14",client:4,taxable:531000,gst:95580,status:"Sent",    valid:"2026-08-29"},
+  {no:"QT/2026-27/0037",date:"2026-08-11",client:1,taxable:74800, gst:8976, status:"Accepted",valid:"2026-08-26"},
+  {no:"QT/2026-27/0036",date:"2026-08-08",client:3,taxable:28900, gst:3468, status:"Draft",   valid:"2026-08-23"},
+  {no:"QT/2026-27/0035",date:"2026-08-05",client:2,taxable:249000,gst:44820,status:"Expired", valid:"2026-08-20"}
+];
+
+let LINES = [
+  {desc:"SS 304 Storage Tank — 5000 L", hsn:"7309", qty:2, unit:"Nos", rate:145000, disc:5, gst:18},
+  {desc:"Solar Water Heater — 200 LPD", hsn:"8419", qty:4, unit:"Nos", rate:28900,  disc:0, gst:12},
+  {desc:"Installation & commissioning", hsn:"995461",qty:1,unit:"Job", rate:6500,   disc:0, gst:18}
+];
+let CUR_CLIENT = 1, QNO = "QT/2026-27/0042", WA_TEXT = WA_TPL, EDIT_IDX = -1, BACK_TO = "more", QFILTER = "all";
+
+/* ============ HELPERS ============ */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const money  = n => "₹"+(Math.round(n*100)/100).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+const money0 = n => "₹"+Math.round(n).toLocaleString("en-IN");
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const dmy = s => { const d=new Date(s+"T00:00:00"); return isNaN(d)?"—":
+  String(d.getDate()).padStart(2,"0")+" "+MON[d.getMonth()]+" "+d.getFullYear(); };
+const iso = d => d.toISOString().slice(0,10);
+
+const ONES=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+const TENS=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+const two = n => n<20?ONES[n]:TENS[Math.floor(n/10)]+(n%10?" "+ONES[n%10]:"");
+function words(n){
+  n=Math.round(n); if(!n) return "Zero Rupees Only";
+  let o=""; const cr=Math.floor(n/10000000); n%=10000000;
+  const lk=Math.floor(n/100000); n%=100000;
+  const th=Math.floor(n/1000);   n%=1000;
+  const hd=Math.floor(n/100);    n%=100;
+  if(cr)o+=two(cr)+" Crore "; if(lk)o+=two(lk)+" Lakh ";
+  if(th)o+=two(th)+" Thousand "; if(hd)o+=ONES[hd]+" Hundred ";
+  if(n)o+=(o?"and ":"")+two(n)+" ";
+  return o.trim()+" Rupees Only";
+}
+function toast(m){ const t=$("#toast"); $("#toastMsg").textContent=m; t.classList.add("on");
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("on"),2600); }
+const byId = id => CLIENTS.find(c=>c.id===+id)||CLIENTS[0];
+const norm = s => String(s||"").trim().toLowerCase();
+const intraFor = c => norm(c.state)===norm(CO.state);
+const hasGst = c => !!(c.gstin && c.gstin!=="URP");
+const showGst = c => hasGst(c) ? "GSTIN "+c.gstin : "UNREGISTERED · URP";
+
+const STATE_CODES={"24":"Gujarat","27":"Maharashtra","08":"Rajasthan","29":"Karnataka","23":"Madhya Pradesh",
+  "07":"Delhi","33":"Tamil Nadu","09":"Uttar Pradesh","19":"West Bengal","03":"Punjab","06":"Haryana","36":"Telangana"};
+const GSTIN_RE=/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+const validGstin = g => GSTIN_RE.test(String(g||"").toUpperCase());
+
+/* ============ CALC ============ */
+function calc(){
+  const cl=byId(CUR_CLIENT), intra=intraFor(cl);
+  let gross=0,disc=0,taxable=0; const bySlab={};
+  LINES.forEach(l=>{
+    const g=(+l.qty||0)*(+l.rate||0), d=g*((+l.disc||0)/100), t=g-d, tax=t*((+l.gst||0)/100);
+    gross+=g; disc+=d; taxable+=t; bySlab[l.gst]=(bySlab[l.gst]||0)+tax;
+    l._amt=t; l._tax=tax;
+  });
+  const totalTax=Object.values(bySlab).reduce((a,b)=>a+b,0);
+  const pre=taxable+totalTax, total=Math.round(pre);
+  return {intra,gross,disc,taxable,bySlab,totalTax,round:total-pre,total,client:cl};
+}
+
+/* ============ BUILD SCREEN ============ */
+function renderLineCards(c){
+  c = c || calc();
+  $("#lineCards").innerHTML = LINES.map((l,i)=>`
+    <div class="line" onclick="editLine(${i})">
+      <div class="sr"></div>
+      <div class="top">
+        <div class="nm">${esc(l.desc)||"<span style='color:var(--mut)'>Untitled item</span>"}</div>
+        <div><div class="aa">${money(l._amt||0)}</div><div class="gg">+ ${money(l._tax||0)} GST</div></div>
+      </div>
+      <div class="mid">
+        <span class="tag t-hsn">HSN ${esc(l.hsn)||"—"}</span>
+        <span class="tag t-gst">${l.gst}% GST</span>
+        ${l.disc?`<span class="tag t-hsn">${l.disc}% off</span>`:""}
+      </div>
+      <div class="calcline">${l.qty} ${esc(l.unit)} × ${money0(l.rate)}${l.disc?` − ${l.disc}%`:""}</div>
+    </div>`).join("")
+    || `<div class="card"><div class="empty"><div class="e1">No items yet</div><div class="e2">Tap “Add item” to pick from your master — HSN and GST rate come along automatically.</div></div></div>`;
+}
+
+function renderBuild(c){
+  c = c || calc();
+  const cl = c.client;
+  $("#bNo").textContent = QNO;
+  $("#clName").textContent = cl.name;
+  $("#clMeta").innerHTML = esc(cl.addr)+"<br>"+esc(cl.person)+" · "+esc(cl.phone);
+  $("#clGst").textContent = showGst(cl);
+  $("#rcName").textContent = cl.name;
+  $("#rcSupply").textContent = cl.state.toUpperCase()+" · "+(c.intra?"INTRA-STATE":"INTER-STATE");
+  $("#tGross").textContent   = money(c.gross);
+  $("#tDisc").textContent    = "− "+money(c.disc);
+  $("#tTaxable").textContent = money(c.taxable);
+  $("#tRound").textContent   = (c.round<0?"− ":"+ ")+money(Math.abs(c.round));
+  $("#tWords").textContent   = words(c.total);
+
+  const slabs = Object.keys(c.bySlab).map(Number).sort((a,b)=>a-b).filter(r=>c.bySlab[r]>0);
+  $("#taxLines").innerHTML = slabs.map(r=>c.intra
+    ? `<div class="tx tax"><span class="l">CGST @ ${r/2}%</span><span class="v">${money(c.bySlab[r]/2)}</span></div>
+       <div class="tx tax"><span class="l">SGST @ ${r/2}%</span><span class="v">${money(c.bySlab[r]/2)}</span></div>`
+    : `<div class="tx tax"><span class="l">IGST @ ${r}%</span><span class="v">${money(c.bySlab[r])}</span></div>`).join("")
+    || `<div class="tx"><span class="l">No tax yet</span><span class="v">₹0.00</span></div>`;
+
+  $("#logicNote").innerHTML = c.intra
+    ? `Client is in <b>${esc(cl.state)}</b> — the same state you are registered in — so this is an <b>intra-state</b> supply and GST splits into <b>CGST + SGST</b>.`
+    : `Client is in <b>${esc(cl.state)}</b>, you are registered in <b>${esc(CO.state)}</b> — an <b>inter-state</b> supply, so the full rate is charged as <b>IGST</b>.`;
+
+  $("#barTotal").textContent = money0(c.total);
+  $("#barSub").textContent = LINES.length+" item"+(LINES.length===1?"":"s")+" · "+money0(c.totalTax)+" GST";
+}
+function paint(){ const c = calc(); renderLineCards(c); renderBuild(c); }
+
+/* ============ LISTS ============ */
+function renderHome(){
+  const tot = QUOTES.reduce((a,q)=>a+q.taxable+q.gst,0);
+  $("#hBig").textContent = money0(tot);
+  $("#hSm").textContent  = QUOTES.length+" quotations · ▲ 18.4% vs July";
+  $("#hA").textContent   = QUOTES.filter(q=>q.status==="Sent"||q.status==="Viewed").length;
+  $("#hB").textContent   = money0(QUOTES.filter(q=>q.status==="Accepted").reduce((a,q)=>a+q.taxable+q.gst,0));
+  $("#hC").textContent   = "3";
+  $("#hD").textContent   = CLIENTS.length;
+  $("#homeRows").innerHTML = QUOTES.slice(0,4).map(q=>{
+    const cl=byId(q.client);
+    return `<div class="row" onclick="openQuote(${q.client},'${q.no}')">
+      <div class="mn"><div class="t1">${esc(cl.name)}</div><div class="t2 n">${q.no} · ${dmy(q.date)}</div></div>
+      <div class="rt"><div class="amt">${money0(q.taxable+q.gst)}</div>
+        <div style="margin-top:4px"><span class="pill p-${q.status.toLowerCase()}">${q.status}</span></div></div>
+    </div>`;
+  }).join("");
+
+  const slab={5:0,12:0,18:0,28:0};
+  QUOTES.forEach(q=>{const r=q.gst/q.taxable*100;
+    const k=[5,12,18,28].reduce((p,c)=>Math.abs(c-r)<Math.abs(p-r)?c:p,18); slab[k]+=q.gst;});
+  const max=Math.max(...Object.values(slab),1);
+  $("#slabBox").innerHTML=[5,12,18,28].map(r=>`
+    <div style="margin-bottom:13px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+        <span style="font-weight:600">${r}% slab</span><span class="n" style="color:var(--sec)">${money0(slab[r])}</span></div>
+      <div style="height:7px;background:var(--paper);border-radius:99px;overflow:hidden">
+        <div style="height:100%;width:${Math.max(5,slab[r]/max*100)}%;background:linear-gradient(90deg,var(--tl),#5FD4D4);border-radius:99px"></div></div>
+    </div>`).join("");
+}
+
+function renderQuotes(){
+  const F=["all","Draft","Sent","Viewed","Accepted","Expired"];
+  $("#qChips").innerHTML = F.map(f=>`<button class="chip ${f===QFILTER?"on":""}" onclick="setFilter('${f}')">${f==="all"?"All":f}</button>`).join("");
+  const rows = QUOTES.filter(q=>QFILTER==="all"||q.status===QFILTER);
+  $("#quoteRows").innerHTML = rows.map(q=>{
+    const cl=byId(q.client);
+    return `<div class="card" style="margin-bottom:10px" onclick="openQuote(${q.client},'${q.no}')">
+      <div style="padding:14px 15px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14.5px;font-weight:700;letter-spacing:-.015em">${esc(cl.name)}</div>
+            <div class="n" style="font-size:11.5px;color:var(--mut);margin-top:3px">${q.no}</div>
+          </div>
+          <span class="pill p-${q.status.toLowerCase()}">${q.status}</span>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid #F1F3F8">
+          <div style="flex:1">
+            <div style="font-size:9px;font-weight:800;letter-spacing:.13em;color:var(--mut)">TOTAL</div>
+            <div class="n" style="font-size:17px;font-weight:700;letter-spacing:-.04em;margin-top:2px">${money0(q.taxable+q.gst)}</div>
+            <div class="n" style="font-size:10.5px;color:#0A8686;margin-top:2px">incl. ${money0(q.gst)} ${intraFor(cl)?"CGST+SGST":"IGST"}</div>
+          </div>
+          <button class="btn btn-wa btn-sm" onclick="event.stopPropagation();quickShare(${q.client},'${q.no}')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2z"/><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.7.1l-.9 1.2c-.2.2-.3.2-.6.1-1.4-.6-2.4-1.5-3.4-3-.2-.3 0-.5.1-.6l.5-.6c.1-.2.1-.4 0-.6l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-1 1-1 2.4-.8 3.3.4 1.6 2.3 4.6 5.7 6 2 .8 2.9.7 3.6.4.7-.3 1.3-1 1.5-1.6.1-.4.1-.7 0-.8z"/></svg>Share</button>
+        </div>
+      </div></div>`;
+  }).join("") || `<div class="card"><div class="empty"><div class="e1">Nothing here</div><div class="e2">No quotations with this status.</div></div></div>`;
+}
+function setFilter(f){ QFILTER=f; renderQuotes(); }
+
+function renderItems(){
+  $("#itemRows").innerHTML = ITEMS.map(i=>`
+    <div class="row">
+      <div class="mn"><div class="t1">${esc(i.name)}</div>
+        <div class="t2"><span class="n">HSN ${esc(i.hsn)}</span> · per ${esc(i.unit)}</div></div>
+      <div class="rt"><div class="amt">${money0(i.rate)}</div>
+        <div style="margin-top:4px"><span class="tag t-gst">${i.gst}%</span></div></div>
+    </div>`).join("");
+  $("#mItems").textContent = ITEMS.length+" items · 4 GST slabs";
+}
+
+function renderClients(){
+  $("#clientRows").innerHTML = CLIENTS.map(c=>`
+    <div class="row" onclick="useClient(${c.id})">
+      <div class="mn"><div class="t1">${esc(c.name)}</div>
+        <div class="t2">${esc(c.state)} · <span class="n">${hasGst(c)?esc(c.gstin):"URP"}</span></div></div>
+      <div class="rt"><span class="pill ${intraFor(c)?"p-accepted":"p-sent"}">${intraFor(c)?"CGST+SGST":"IGST"}</span></div>
+    </div>`).join("");
+  $("#mClients").textContent = CLIENTS.length+" clients on record";
+}
+
+/* ============ SHEETS ============ */
+function openSheet(kind, arg){
+  const B=$("#shBody"), F=$("#shFoot");
+  F.style.display="none"; F.innerHTML=""; B.className="sh-b";
+
+  if(kind==="client"){
+    $("#shTitle").textContent="Bill to"; $("#shSub").textContent="Tap a client to switch";
+    B.className="sh-b flush";
+    B.innerHTML = CLIENTS.map(c=>`
+      <div class="pickrow ${c.id===CUR_CLIENT?"sel":""}" onclick="pickClient(${c.id})">
+        <div class="tick">✓</div>
+        <div style="flex:1;min-width:0"><div class="t1" style="font-size:14px;font-weight:600">${esc(c.name)}</div>
+          <div class="t2" style="font-size:11.5px;color:var(--mut)">${esc(c.state)} · ${intraFor(c)?"CGST+SGST":"IGST"}</div></div>
+      </div>`).join("");
+  }
+
+  else if(kind==="item"){
+    $("#shTitle").textContent="Add item"; $("#shSub").textContent="From your item master";
+    B.className="sh-b flush";
+    B.innerHTML = `<div class="srch"><input id="itemSearch" placeholder="Search name or HSN…" oninput="filterPick()"></div>
+      <div id="pickList"></div>`;
+    filterPick();
+  }
+
+  else if(kind==="line"){
+    const l=LINES[EDIT_IDX];
+    $("#shTitle").textContent="Edit item"; $("#shSub").textContent=l.desc||"New line";
+    B.innerHTML = `
+      <div class="fld"><label class="f">DESCRIPTION</label><input class="inp" id="eDesc" value="${esc(l.desc)}"></div>
+      <div class="two"><div class="fld"><label class="f">HSN / SAC</label><input class="inp n" id="eHsn" value="${esc(l.hsn)}"></div>
+      <div class="fld"><label class="f">UNIT</label><input class="inp" id="eUnit" value="${esc(l.unit)}"></div></div>
+      <div class="fld"><label class="f">QUANTITY</label>
+        <div class="step"><button onclick="bump(-1)">−</button>
+          <input class="n" id="eQty" type="number" min="0" value="${l.qty}" oninput="livePreview()">
+          <button onclick="bump(1)">＋</button></div></div>
+      <div class="two"><div class="fld"><label class="f">UNIT PRICE (₹)</label><input class="inp n" id="eRate" type="number" min="0" value="${l.rate}" oninput="livePreview()"></div>
+      <div class="fld"><label class="f">DISCOUNT %</label><input class="inp n" id="eDisc" type="number" min="0" max="100" step="0.5" value="${l.disc}" oninput="livePreview()"></div></div>
+      <div class="fld"><label class="f">GST RATE</label>
+        <div class="gstrow">${[0,5,12,18,28].map(r=>`<button class="gstopt ${r==l.gst?"on":""}" data-g="${r}" onclick="pickGst(${r})">${r}%</button>`).join("")}</div></div>
+      <div class="card" style="box-shadow:none;background:var(--subtle);margin:0">
+        <div class="cb" style="padding:13px 15px">
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0">
+            <span style="color:var(--sec)">Taxable</span><b class="n" id="pvT">₹0.00</b></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0">
+            <span style="color:#0A8686">GST</span><b class="n" style="color:#0A8686" id="pvG">₹0.00</b></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0 0;margin-top:5px;border-top:1px solid var(--bd)">
+            <b>Line total</b><b class="n" id="pvL">₹0.00</b></div>
+        </div></div>`;
+    F.style.display="flex";
+    F.innerHTML = `<button class="btn btn-s" style="flex:0 0 46px;padding:13px 0;color:var(--rd)" onclick="removeLine()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+      <button class="btn btn-p" onclick="saveLine()">Save item</button>`;
+    livePreview();
+  }
+
+  else if(kind==="share"){
+    const c=calc(), cl=c.client;
+    $("#shTitle").textContent="Share quotation"; $("#shSub").textContent=QNO+" · "+money0(c.total);
+    B.innerHTML = shareBody(cl,c);
+    F.style.display="flex";
+    F.innerHTML = `<button class="btn btn-s" style="flex:1" onclick="closeSheet();toast('PDF downloaded (demo)')">PDF</button>
+      <button class="btn btn-wa" style="flex:2" onclick="sendWa()">Send on WhatsApp</button>`;
+  }
+
+  else if(kind==="watpl"){
+    $("#shTitle").textContent="WhatsApp message"; $("#shSub").textContent="Template used when sharing";
+    B.innerHTML = `<div class="fld"><label class="f">MESSAGE TEMPLATE</label>
+        <textarea class="inp" id="tplEdit" style="min-height:210px;font-size:13px">${esc(WA_TEXT)}</textarea></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${["{contact}","{company}","{no}","{date}","{valid}","{items}","{total}","{rep}","{phone}"].map(t=>`<button class="chip" style="font-family:var(--m);font-size:11px;padding:5px 10px" onclick="insTag('${t}')">${t}</button>`).join("")}</div>
+      <div class="hint">Text between *asterisks* shows as bold in WhatsApp.</div>`;
+    F.style.display="flex";
+    F.innerHTML = `<button class="btn btn-p" onclick="WA_TEXT=$('#tplEdit').value;closeSheet();toast('Template updated')">Save template</button>`;
+  }
+
+  else if(kind==="newitem"){
+    $("#shTitle").textContent="Add item"; $("#shSub").textContent="Set its own GST rate";
+    B.innerHTML = `
+      <div class="fld"><label class="f">ITEM NAME <i>*</i></label><input class="inp" id="niName" placeholder="SS 304 Storage Tank — 5000 L"></div>
+      <div class="two"><div class="fld"><label class="f">HSN / SAC <i>*</i></label><input class="inp n" id="niHsn" placeholder="7309"></div>
+      <div class="fld"><label class="f">UNIT</label><select class="inp" id="niUnit"><option>Nos</option><option>Set</option><option>Kg</option><option>Mtr</option><option>Job</option><option>Year</option><option>Trip</option></select></div></div>
+      <div class="fld"><label class="f">UNIT PRICE (₹) <i>*</i></label><input class="inp n" id="niRate" type="number" placeholder="145000"></div>
+      <div class="fld"><label class="f">GST RATE</label>
+        <div class="gstrow" id="niGstRow">${[0,5,12,18,28].map(r=>`<button class="gstopt ${r===18?"on":""}" data-g="${r}" onclick="pickNewGst(${r})">${r}%</button>`).join("")}</div></div>`;
+    F.style.display="flex";
+    F.innerHTML = `<button class="btn btn-p" onclick="saveNewItem()">Save item</button>`;
+    NEW_GST = 18;
+  }
+
+  else if(kind==="newclient"){
+    $("#shTitle").textContent="Add client"; $("#shSub").textContent="State decides the tax split";
+    B.innerHTML = `
+      <div class="fld"><label class="f">CLIENT NAME <i>*</i></label><input class="inp" id="ncName" placeholder="Shakti Agro Industries"></div>
+      <div class="fld"><label class="f">GSTIN</label><input class="inp n" id="ncGst" maxlength="15" placeholder="24AAECS4567P1ZQ" oninput="checkGstin()">
+        <div class="hint" id="ncHint">Leave blank for an unregistered buyer</div><div class="warn" id="ncWarn">Not a valid 15-character GSTIN</div></div>
+      <div class="fld"><label class="f">STATE <i>*</i></label><select class="inp" id="ncState">
+        ${Object.values(STATE_CODES).map(s=>`<option>${s}</option>`).join("")}</select></div>
+      <div class="fld"><label class="f">ADDRESS</label><input class="inp" id="ncAddr" placeholder="City, PIN"></div>
+      <div class="fld"><label class="f">CONTACT PERSON</label><input class="inp" id="ncPerson" placeholder="Name"></div>
+      <div class="fld"><label class="f">EMAIL <i>*</i></label><input class="inp" id="ncEmail" placeholder="purchase@client.in"></div>
+      <div class="fld"><label class="f">WHATSAPP NUMBER <i>*</i></label><input class="inp n" id="ncPhone" placeholder="+91 98XXXXXXXX"></div>`;
+    F.style.display="flex";
+    F.innerHTML = `<button class="btn btn-p" onclick="saveNewClient()">Save client</button>`;
+  }
+
+  $("#ov").classList.add("on");
+}
+function closeSheet(){ $("#ov").classList.remove("on"); }
+
+/* ---- item picker ---- */
+function filterPick(){
+  const q = ($("#itemSearch")?.value||"").toLowerCase();
+  const list = ITEMS.filter(i=>i.name.toLowerCase().includes(q)||i.hsn.includes(q));
+  $("#pickList").innerHTML = list.map(i=>`
+    <div class="pickrow" onclick="addFromMaster(${i.id})">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:600">${esc(i.name)}</div>
+        <div style="font-size:11.5px;color:var(--mut);margin-top:3px" class="n">HSN ${esc(i.hsn)} · ${i.gst}% GST · ${money0(i.rate)}/${esc(i.unit)}</div>
+      </div>
+      <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+    </div>`).join("")
+    || `<div class="empty"><div class="e1">No match</div><div class="e2">Try a different name or HSN code.</div></div>`;
+}
+function addFromMaster(id){
+  const it=ITEMS.find(x=>x.id===id); if(!it) return;
+  const dup=LINES.find(l=>l.desc===it.name && +l.rate===it.rate && +l.gst===it.gst);
+  if(dup){ dup.qty=(+dup.qty||0)+1; paint(); closeSheet(); toast(it.name+" — qty now "+dup.qty); return; }
+  LINES.push({desc:it.name,hsn:it.hsn,qty:1,unit:it.unit,rate:it.rate,disc:0,gst:it.gst});
+  paint(); closeSheet(); toast(it.name+" added at "+it.gst+"% GST");
+}
+
+/* ---- line editor ---- */
+function editLine(i){ EDIT_IDX=i; openSheet("line"); }
+function bump(d){
+  const el=$("#eQty"); el.value=Math.max(0,(parseFloat(el.value)||0)+d); livePreview();
+}
+let PICK_GST=null, NEW_GST=18;
+function pickGst(r){
+  PICK_GST=r;
+  $$("#shBody .gstopt").forEach(b=>b.classList.toggle("on", +b.dataset.g===r));
+  livePreview();
+}
+function pickNewGst(r){
+  NEW_GST=r;
+  $$("#niGstRow .gstopt").forEach(b=>b.classList.toggle("on", +b.dataset.g===r));
+}
+function livePreview(){
+  const q=parseFloat($("#eQty").value)||0, r=parseFloat($("#eRate").value)||0, d=parseFloat($("#eDisc").value)||0;
+  const g=PICK_GST!==null?PICK_GST:(LINES[EDIT_IDX]?.gst||0);
+  const t=q*r*(1-d/100), tax=t*g/100;
+  $("#pvT").textContent=money(t); $("#pvG").textContent=money(tax); $("#pvL").textContent=money(t+tax);
+}
+function saveLine(){
+  const l=LINES[EDIT_IDX];
+  l.desc=$("#eDesc").value; l.hsn=$("#eHsn").value; l.unit=$("#eUnit").value;
+  l.qty=parseFloat($("#eQty").value)||0; l.rate=parseFloat($("#eRate").value)||0;
+  l.disc=parseFloat($("#eDisc").value)||0;
+  if(PICK_GST!==null) l.gst=PICK_GST;
+  PICK_GST=null; paint(); closeSheet(); toast("Item updated");
+}
+function removeLine(){ LINES.splice(EDIT_IDX,1); PICK_GST=null; paint(); closeSheet(); toast("Item removed"); }
+
+/* ---- masters ---- */
+function saveNewItem(){
+  const n=$("#niName").value.trim(), h=$("#niHsn").value.trim(), r=parseFloat($("#niRate").value);
+  if(!n||!h||!r) return toast("Name, HSN and unit price are required");
+  ITEMS.unshift({id:Date.now(),name:n,hsn:h,unit:$("#niUnit").value,rate:r,gst:NEW_GST,type:"Goods"});
+  renderItems(); closeSheet(); toast(n+" saved at "+NEW_GST+"% GST");
+}
+function checkGstin(){
+  const el=$("#ncGst");
+  el.value=el.value.toUpperCase().replace(/[^0-9A-Z]/g,"");
+  const v=el.value, ok=validGstin(v);
+  el.classList.toggle("bad", !!v && !ok);
+  $("#ncWarn").classList.toggle("on", !!v && !ok && v.length>=15);
+  const st=STATE_CODES[v.slice(0,2)];
+  if(st){ $("#ncState").value=st; $("#ncHint").textContent="State set from GSTIN code "+v.slice(0,2); }
+}
+function saveNewClient(){
+  const n=$("#ncName").value.trim(), e=$("#ncEmail").value.trim(), p=$("#ncPhone").value.trim();
+  const g=$("#ncGst").value.trim().toUpperCase();
+  if(!n||!e||!p) return toast("Name, email and WhatsApp number are required");
+  if(g && !validGstin(g)) return toast("GSTIN must be 15 characters");
+  CLIENTS.unshift({id:Date.now(),name:n,gstin:g||"URP",state:$("#ncState").value,
+    addr:$("#ncAddr").value||"—",email:e,phone:p,person:$("#ncPerson").value||n});
+  renderClients(); closeSheet(); toast(n+" added");
+}
+function pickClient(id){ CUR_CLIENT=id; paint(); closeSheet(); toast("Quoting to "+byId(id).name); }
+function useClient(id){ CUR_CLIENT=id; paint(); go("build"); toast("Quoting to "+byId(id).name); }
+
+/* ---- share ---- */
+function waText(){
+  const c=calc(), cl=c.client;
+  return WA_TEXT
+    .replace(/{contact}/g,cl.person).replace(/{company}/g,CO.brand)
+    .replace(/{no}/g,QNO).replace(/{date}/g,dmy($("#qDate").value))
+    .replace(/{valid}/g,dmy($("#qValid").value)).replace(/{items}/g,LINES.length)
+    .replace(/{total}/g,money0(c.total)).replace(/{rep}/g,CO.rep).replace(/{phone}/g,CO.ph1);
+}
+const waMarkup = t => esc(t).replace(/\*(.+?)\*/g,"<b>$1</b>");
+function shareBody(cl,c){
+  const now=new Date(), hh=((now.getHours()+11)%12+1), mm=String(now.getMinutes()).padStart(2,"0");
+  const time=hh+":"+mm+" "+(now.getHours()<12?"am":"pm");
+  return `<div style="border-radius:14px;overflow:hidden;box-shadow:var(--sh);margin-bottom:14px">
+    <div class="wa-h"><div class="wa-av">${esc(cl.person.split(" ").map(w=>w[0]).join("").slice(0,2))}</div>
+      <div><b>${esc(cl.person)}</b><span>${esc(cl.phone)}</span></div></div>
+    <div class="wa-body">
+      <div class="wa-day"><span>TODAY</span></div>
+      <div class="bub">
+        <div class="pdfc"><div class="pi">PDF</div><div><b>${esc(QNO.replace(/\//g,"-"))}.pdf</b><span>1 page · 148 KB</span></div></div>
+        <div class="tx2">${waMarkup(waText())}</div>
+        <div class="tm">${time}<svg width="14" height="9" viewBox="0 0 16 11" fill="none"><path d="M1 5.5 4 8.5 9.5 2" stroke="#4FC3F7" stroke-width="1.6" stroke-linecap="round"/><path d="M6.5 5.5 9.5 8.5 15 2" stroke="#4FC3F7" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      </div>
+    </div></div>
+    <div class="card" style="box-shadow:none;background:var(--subtle);margin-bottom:12px"><div class="cb" style="padding:13px 15px">
+      ${[["Contact",cl.person],["Number",cl.phone],["Attachment",QNO.replace(/\//g,"-")+".pdf"],["Total",money0(c.total)]]
+        .map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px">
+          <span style="color:var(--sec)">${k}</span><b class="n">${esc(v)}</b></div>`).join("")}
+    </div></div>
+    <button class="btn btn-s" onclick="openSheet('watpl')">Edit message template</button>
+    <div class="note" style="margin-top:12px">Preview only — no message is actually sent.</div>`;
+}
+function sendWa(){ const c=calc(); closeSheet(); toast("Sent on WhatsApp to "+c.client.phone+" (demo)"); }
+function quickShare(cid,no){ CUR_CLIENT=cid; QNO=no; paint(); go("build"); openSheet("share"); }
+function openQuote(cid,no){ CUR_CLIENT=cid; QNO=no; paint(); go("build"); }
+
+/* ============ NAV ============ */
+const NAVMAP = {
+  home:    {t:"Hello, Ravi",       s:"Deservoir · FY 2026–27", tab:"home",   act:"search"},
+  quotes:  {t:"Quotations",        s:"FY 2026–27",             tab:"quotes", act:"search"},
+  build:   {t:"New quotation",     s:"Draft · not yet sent",   tab:null,     act:"share", tot:true},
+  items:   {t:"Items & GST rates", s:"Item master",            tab:"items",  act:"add"},
+  more:    {t:"More",              s:"Masters & setup",        tab:"more",   act:null},
+  clients: {t:"Clients",           s:"Client master",          tab:null,     act:"add", back:"more"},
+  settings:{t:"Company profile",   s:"Setup",                  tab:null,     act:null,  back:"more"}
+};
+let CUR_VIEW="home";
+function go(v){
+  const m=NAVMAP[v]; if(!m) return;
+  CUR_VIEW=v;
+  $$(".view").forEach(s=>s.classList.remove("on"));
+  $("#v-"+v).classList.add("on");
+  $("#abTitle").textContent=m.t; $("#abSub").textContent=m.s;
+  $$(".tabbar a[data-go]").forEach(a=>a.classList.toggle("on", a.dataset.go===m.tab));
+  $("#backBtn").style.display = m.back ? "grid" : "none";
+  if(m.back) BACK_TO=m.back;
+  $("#abAction").style.display = m.act ? "grid" : "none";
+  $("#totbar").classList.toggle("on", !!m.tot);
+  $("#scroll").classList.toggle("hastot", !!m.tot);
+  $("#scroll").scrollTop=0;
+  if(v==="quotes") renderQuotes();
+  if(v==="items") renderItems();
+  if(v==="clients") renderClients();
+  if(v==="home") renderHome();
+}
+function abAct(){
+  const a=NAVMAP[CUR_VIEW].act;
+  if(a==="share") openSheet("share");
+  else if(a==="add") openSheet(CUR_VIEW==="items"?"newitem":"newclient");
+  else toast("Search — prototype only");
+}
+function newQuote(){
+  const nxt = ($("#setPrefix").value||"QT/2026-27/") + String(parseInt($("#setNext").value||42)).padStart(4,"0");
+  QNO = nxt;
+  go("build"); paint();
+}
+document.addEventListener("click", e=>{
+  const t=e.target.closest(".tabbar a[data-go]");
+  if(t){ e.preventDefault(); go(t.dataset.go); }
+});
+
+/* ============ BOOT ============ */
+(function(){
+  $("#qDate").value  = iso(new Date());
+  $("#qValid").value = iso(new Date(Date.now()+15*864e5));
+  $("#qTerms").value = DEFAULT_TERMS;
+  $("#qDate").addEventListener("change", e=>{
+    const d=new Date(e.target.value); d.setDate(d.getDate()+(parseInt($("#setValid").value)||15));
+    $("#qValid").value=iso(d);
+  });
+  const now=new Date();
+  $("#clock").textContent = ((now.getHours()+11)%12+1)+":"+String(now.getMinutes()).padStart(2,"0");
+  renderHome(); renderItems(); renderClients(); renderQuotes(); paint();
+})();
+
+</script>
+<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(255,138,30,.45);border-radius:999px;background:rgba(11,16,32,.94);color:#fff;font:600 12px/1.2 'Inter Tight',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.3);">← Back to portfolios</a>
+</body>
+</html>

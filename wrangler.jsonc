@@ -1,0 +1,9 @@
+{
+  // Sangam InfoAnalytics — Industry Prototypes
+  // Static site only: no Worker script, no build step.
+  "name": "industry-prototypes",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./public"
+  }
+}

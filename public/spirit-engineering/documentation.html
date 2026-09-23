@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12161b">
+<title>Spirit Engineering — Business Suite · Solution Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161b; --ink-soft:#3a434e; --muted:#6b7480;
+    --paper:#f6f2ea; --card:#ffffff; --line:#e4ddd0; --line-2:#efe9dd;
+    --amber:#e8912a; --amber-2:#c9761a; --amber-wash:#fbf1e0;
+    --green:#2f7d54; --red:#b5482f; --blue:#2f5d9e;
+    --wrap:1180px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Public Sans",system-ui,-apple-system,sans-serif;font-size:15.5px;line-height:1.62;
+    -webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:"Archivo",sans-serif;letter-spacing:-.01em;line-height:1.18;margin:0}
+  p{margin:0 0 12px}
+  a{color:var(--amber-2);text-decoration:none}
+  strong{font-weight:600}
+
+  /* ---------- header band ---------- */
+  .band{background:linear-gradient(160deg,#171d24,#12161b 60%);color:#eef1f4;
+    border-bottom:3px solid var(--amber)}
+  .band .in{max-width:var(--wrap);margin:0 auto;padding:34px 26px 30px;
+    display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap}
+  .mark{width:52px;height:52px;flex:none;border-radius:13px;
+    background:linear-gradient(135deg,var(--amber),var(--amber-2));color:#12161b;
+    font-family:"Archivo";font-weight:800;font-size:22px;letter-spacing:-1px;
+    display:grid;place-items:center;box-shadow:0 3px 0 rgba(0,0,0,.35)}
+  .band h1{font-size:27px;font-weight:800;color:#fff}
+  .band .kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);
+    font-weight:600;margin-bottom:7px}
+  .band .lede{color:#b8c1cc;font-size:15px;max-width:60ch;margin-top:9px}
+  .band .meta{margin-top:16px;display:flex;gap:22px;flex-wrap:wrap;font-size:12.5px;color:#8b95a1}
+  .band .meta b{color:#cdd4dc;font-weight:600}
+  .actions{margin-left:auto;display:flex;gap:10px}
+  .btn{font-family:"Public Sans";font-weight:600;font-size:13.5px;border-radius:10px;
+    padding:10px 15px;cursor:pointer;border:1px solid transparent;transition:.15s}
+  .btn.primary{background:var(--amber);color:#12161b}
+  .btn.primary:hover{background:#f19a34}
+  .btn.ghost{background:transparent;color:#cdd4dc;border-color:#333d48}
+  .btn.ghost:hover{border-color:var(--amber);color:#fff}
+
+  /* ---------- layout ---------- */
+  .shell{max-width:var(--wrap);margin:0 auto;padding:26px;display:grid;
+    grid-template-columns:236px 1fr;gap:34px;align-items:start}
+  nav.toc{position:sticky;top:20px;font-size:13.5px}
+  nav.toc .lbl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+    font-weight:600;margin:0 0 10px 12px}
+  nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:s}
+  nav.toc li{counter-increment:s}
+  nav.toc a{display:flex;gap:9px;color:var(--ink-soft);padding:7px 12px;border-radius:8px;
+    border-left:2px solid transparent;font-weight:500;transition:.14s}
+  nav.toc a::before{content:counter(s,decimal-leading-zero);font-family:"DM Mono",monospace;
+    font-size:11px;color:var(--muted);padding-top:2px}
+  nav.toc a:hover{background:#efe9dd;color:var(--ink)}
+  nav.toc a.on{background:var(--amber-wash);border-left-color:var(--amber);color:var(--amber-2);font-weight:600}
+
+  main{min-width:0}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:26px 28px;margin-bottom:20px}
+  section > .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:"DM Mono",monospace;
+    font-size:11px;color:var(--amber-2);font-weight:500;margin-bottom:10px;
+    background:var(--amber-wash);padding:4px 10px;border-radius:99px}
+  section h2{font-size:21px;font-weight:700;margin-bottom:6px}
+  section h3{font-size:16px;font-weight:700;margin:22px 0 8px}
+  section h4{font-size:14px;font-weight:700;margin:16px 0 6px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:14px}
+
+  ul.clean{margin:6px 0 14px;padding:0;list-style:none}
+  ul.clean li{position:relative;padding:4px 0 4px 22px}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:12px;width:7px;height:7px;
+    border-radius:2px;background:var(--amber);transform:rotate(45deg)}
+  ul.plain{margin:6px 0 14px;padding-left:20px}
+  ul.plain li{margin:3px 0}
+
+  table{width:100%;border-collapse:collapse;margin:10px 0 16px;font-size:14px}
+  th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--line-2);vertical-align:top}
+  thead th{background:#faf7f1;font-family:"Archivo";font-weight:700;font-size:12.5px;
+    color:var(--ink-soft);border-bottom:1px solid var(--line)}
+  tbody tr:last-child td{border-bottom:0}
+  td .m{font-weight:600}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .callout{border:1px solid var(--line);border-left:3px solid var(--amber);background:#fdfbf7;
+    border-radius:10px;padding:14px 16px;margin:12px 0}
+  .callout.green{border-left-color:var(--green)}
+  .callout.blue{border-left-color:var(--blue)}
+  .callout .t{font-weight:700;font-size:13.5px;margin-bottom:3px;font-family:"Archivo"}
+
+  .flow{display:grid;grid-template-columns:1fr;gap:0;counter-reset:f;margin:8px 0 8px}
+  .flow .step{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .flow .step:last-child{border-bottom:0}
+  .flow .n{counter-increment:f;flex:none;width:30px;height:30px;border-radius:9px;
+    background:var(--ink);color:var(--amber);font-family:"Archivo";font-weight:800;font-size:14px;
+    display:grid;place-items:center}
+  .flow .n::before{content:counter(f)}
+  .flow .b .h{font-weight:700;font-family:"Archivo";font-size:14.5px}
+  .flow .b .d{color:var(--ink-soft);font-size:14px}
+
+  .pill{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;
+    background:#eef2f6;color:var(--ink-soft);margin:3px 5px 3px 0}
+  .pill.ops{background:#fdeacf;color:#8a5410}
+  .pill.sales{background:#e5eefb;color:#274d84}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .split > div{padding:16px 18px}
+  .split .a{background:#fdfbf7}
+  .split .b{background:#f4f8f5;border-left:1px solid var(--line)}
+  .split h4{margin-top:0}
+
+  .qgroup{margin:12px 0}
+  .qgroup .qh{font-family:"Archivo";font-weight:700;font-size:14px;color:var(--amber-2);margin-bottom:5px}
+
+  footer{max-width:var(--wrap);margin:0 auto;padding:22px 26px 46px;color:var(--muted);font-size:13px;
+    border-top:1px solid var(--line);margin-top:8px}
+  footer b{color:var(--ink-soft)}
+
+  .mtoggle{display:none}
+
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr;gap:0}
+    nav.toc{position:static;border:1px solid var(--line);background:var(--card);border-radius:12px;
+      padding:12px;margin-bottom:16px}
+    nav.toc ol{display:none}
+    nav.toc.open ol{display:block}
+    .mtoggle{display:flex;align-items:center;justify-content:space-between;width:100%;
+      font-family:"Archivo";font-weight:700;font-size:14px;color:var(--ink)}
+    .grid2,.split{grid-template-columns:1fr}
+    .actions{width:100%;margin-left:0}
+    .band h1{font-size:23px}
+  }
+
+  @media print{
+    :root{--paper:#fff}
+    body{font-size:11.5px}
+    .band{border-bottom-color:#000}
+    .actions,nav.toc,.mtoggle{display:none!important}
+    .shell{display:block;max-width:none;padding:0}
+    section{border:1px solid #ccc;break-inside:avoid;box-shadow:none;margin:0 0 10px;
+      padding:16px 18px;border-radius:8px}
+    a{color:inherit}
+  }
+</style>
+</head>
+<body>
+
+<div class="band">
+  <div class="in">
+    <div class="mark">SE</div>
+    <div style="min-width:0">
+      <div class="kicker">Solution Documentation</div>
+      <h1>Spirit Engineering — Business Suite</h1>
+      <p class="lede">One application that runs both sides of a manufacturing business: internal
+        workforce &amp; accounts on one side, and customer-facing catalogue, enquiries &amp; sales
+        on the other.</p>
+      <div class="meta">
+        <span><b>Prepared by</b> Sangam InfoAnalytics</span>
+        <span><b>Document</b> Product &amp; solution overview</span>
+        <span><b>Audience</b> Business owners &amp; decision-makers</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+  <nav class="toc" id="toc">
+    <div class="mtoggle" onclick="document.getElementById('toc').classList.toggle('open')">
+      Contents <span>☰</span>
+    </div>
+    <div class="lbl">Contents</div>
+    <ol>
+      <li><a href="#overview" class="on">Objective &amp; purpose</a></li>
+      <li><a href="#problems">Problems it solves</a></li>
+      <li><a href="#modules-ops">Operations / HRMS modules</a></li>
+      <li><a href="#modules-sales">Catalogue &amp; Sales modules</a></li>
+      <li><a href="#gst">GST &amp; compliance</a></li>
+      <li><a href="#workflow">End-to-end workflow</a></li>
+      <li><a href="#clients">Who it is for</a></li>
+      <li><a href="#industries">Industries &amp; use cases</a></li>
+      <li><a href="#benefits">Business benefits</a></li>
+      <li><a href="#proto-prod">Prototype vs production</a></li>
+      <li><a href="#future">Future &amp; custom features</a></li>
+      <li><a href="#discovery">Discovery questions</a></li>
+      <li><a href="#positioning">Positioning &amp; pitch</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- 1 -->
+    <section id="overview">
+      <span class="eyebrow">01 · Overview</span>
+      <h2>Main objective &amp; why this system is used</h2>
+      <p class="sub">What Spirit Engineering is, in one line, and the reason a business runs it.</p>
+
+      <p><strong>Main objective.</strong> Give a small or mid-sized manufacturing business a single
+        place to run its complete operation — managing its people and money internally, and its
+        machines, enquiries and sales externally — replacing the scattered mix of Excel sheets,
+        WhatsApp chats, paper registers and memory that most such businesses run on today.</p>
+
+      <p><strong>Why it is used.</strong> Most owner-run manufacturing units keep attendance in one
+        Excel file, salary in another, cash notes in a diary, bills in a billing tool, machine
+        videos in a phone gallery, and customer enquiries in their head or in chat history. Nothing
+        talks to anything else, only the owner knows where things are, and time leaks out of every
+        day. Spirit Engineering brings all of that under one roof so the business runs on a system
+        instead of on the owner's memory.</p>
+
+      <div class="callout">
+        <div class="t">The suite has two connected sides</div>
+        <p style="margin:0"><strong>Operations (HRMS &amp; Accounts)</strong> — the internal engine:
+          workforce, attendance, payroll, cashbook, bills and reports, admin-controlled.
+          &nbsp;·&nbsp; <strong>Catalogue &amp; Sales</strong> — the outward face: machine
+          catalogue, customer enquiries, quotations with GST, sales and customer records.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="problems">
+      <span class="eyebrow">02 · The problem</span>
+      <h2>Business problems it solves</h2>
+      <p class="sub">Real pains these businesses feel every week.</p>
+      <table>
+        <thead><tr><th style="width:42%">The everyday problem</th><th>How the suite removes it</th></tr></thead>
+        <tbody>
+          <tr><td class="m">Attendance lives in an Excel sheet only one person maintains</td><td>A daily muster anyone authorised can mark; it feeds payroll automatically.</td></tr>
+          <tr><td class="m">Payroll mixes monthly staff and day-wise labour on different rates</td><td>Both handled together — monthly salaries and day-rate wages, with statutory deductions.</td></tr>
+          <tr><td class="m">Cash in and out is tracked in a diary; balance is never certain</td><td>A running cashbook that always shows the true closing balance.</td></tr>
+          <tr><td class="m">Bills are made in a separate tool with no link to the accounts</td><td>Bills raised inside the system, GST calculated, posted straight to the books.</td></tr>
+          <tr><td class="m">Machine videos and photos clog up several phones and mailboxes</td><td>A catalogue where each machine is sent as a link in two taps — nothing sits on the phone.</td></tr>
+          <tr><td class="m">Enquiries from calls and shares are forgotten or lost</td><td>An enquiry register that logs every lead and tracks it to won or lost.</td></tr>
+          <tr><td class="m">Quotations are retyped each time and GST is done by hand</td><td>A quotation builder with automatic CGST/SGST and amount-in-words.</td></tr>
+          <tr><td class="m">No single view of a customer's history</td><td>Customer records tie together their enquiries, quotations and business value.</td></tr>
+          <tr><td class="m">Owner has no clean numbers to see how the month went</td><td>Reports summarise money in/out, sales vs purchase and GST for any period.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 3 -->
+    <section id="modules-ops">
+      <span class="eyebrow">03 · Operations</span>
+      <h2>Operations / HRMS modules</h2>
+      <p class="sub">The internal engine — workforce and accounts, controlled by the admin.</p>
+      <table>
+        <thead><tr><th style="width:20%">Module</th><th style="width:44%">What it does</th><th>Business value</th></tr></thead>
+        <tbody>
+          <tr><td class="m">Workforce</td><td>Add and manage employees and labourers, their role, pay type and pay rate; terminate with records kept.</td><td>One clean staff master instead of scattered lists.</td></tr>
+          <tr><td class="m">Attendance / Muster</td><td>Mark present/absent for a day across the whole team; drives day-wise wage calculation.</td><td>Replaces the Excel attendance sheet; no double entry.</td></tr>
+          <tr><td class="m">Payroll</td><td>Calculates pay for monthly employees and day-wise labour on their own rates, applies statutory deductions, shows net payable.</td><td>Correct, fast salary runs with far less manual work.</td></tr>
+          <tr><td class="m">Cashbook</td><td>Records every cash-in and cash-out entry with a live running balance and recent-transaction view.</td><td>The true cash position, always, without a diary.</td></tr>
+          <tr><td class="m">Bills</td><td>Raises customer bills with line items and GST, in a clean printable format with the firm's logo and details.</td><td>Professional billing that flows into the accounts.</td></tr>
+          <tr><td class="m">Reports</td><td>Summarises the numbers — cash, salary, receivables and more — for review.</td><td>Owner sees the health of the business at a glance.</td></tr>
+          <tr><td class="m">Settings</td><td>Company details, pay rates, statutory rates, logo and language (English / Gujarati).</td><td>The business tunes the system to itself.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <div class="t">Bilingual by design</div>
+        <p style="margin:0">The Operations side runs in <strong>English and Gujarati</strong>, so the
+          people who actually key in attendance and cash can work in the language they are comfortable in.</p>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section id="modules-sales">
+      <span class="eyebrow">04 · Catalogue &amp; Sales</span>
+      <h2>Catalogue &amp; Sales modules</h2>
+      <p class="sub">The outward face — how the business shows its products and wins orders.</p>
+      <table>
+        <thead><tr><th style="width:22%">Module</th><th style="width:44%">What it does</th><th>Business value</th></tr></thead>
+        <tbody>
+          <tr><td class="m">Product / Machine catalogue</td><td>Each machine has its video, photos and spec/catalogue PDF; shared to a customer as a link in two taps, including on WhatsApp.</td><td>Send machines instantly without filling up phones or mailboxes.</td></tr>
+          <tr><td class="m">Enquiry register</td><td>Logs every enquiry that comes back, with follow-up and won/lost tracking.</td><td>No lead is forgotten; the owner sees the live pipeline.</td></tr>
+          <tr><td class="m">Customer management</td><td>A record per customer with their enquiries, bills and total business value; quick actions to send a machine or remove them.</td><td>One clear history for every buyer.</td></tr>
+          <tr><td class="m">Quotation &amp; GST</td><td>Builds a quotation — machines, freight/installation, GST rate — with automatic CGST/SGST split, totals, GSTIN, HSN and delivery terms.</td><td>Accurate, professional quotes in minutes, ready to send on WhatsApp.</td></tr>
+          <tr><td class="m">Sales / Money book</td><td>Records sales, purchases, other income and expenses; shows money in/out, net profit and a GST summary for the period.</td><td>The commercial picture of the business in one book.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout blue">
+        <div class="t">The "shrink the video, keep nothing on the phone" idea</div>
+        <p style="margin:0">A machine video is picked from the phone, made small so it opens fast on the
+          customer's mobile, and shared as a link — solving the two problems these owners feel most:
+          full phones and slow, heavy sends.</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section id="gst">
+      <span class="eyebrow">05 · Compliance</span>
+      <h2>GST &amp; compliance</h2>
+      <p class="sub">GST is built into the places it belongs — billing and quotations — not bolted on.</p>
+      <ul class="clean">
+        <li><strong>Automatic CGST/SGST split</strong> on quotations and bills at the chosen GST rate (e.g. 18% → 9% + 9%).</li>
+        <li><strong>Firm identity on every document</strong> — GSTIN, HSN code, delivery and payment terms carried onto quotes and bills.</li>
+        <li><strong>Amount in words</strong> and clean totals, so documents look professional and are ready to send.</li>
+        <li><strong>Period GST summary</strong> — taxable value, CGST, SGST and tax collected, ready to hand to the accountant/CA.</li>
+      </ul>
+      <div class="callout">
+        <div class="t">Note</div>
+        <p style="margin:0">Spirit Engineering handles GST at the document and reporting level for the
+          business owner. It is not a return-filing portal — the GST summary is designed to make the
+          CA's job easier, and can be extended toward filing in a production build if a client needs it.</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="workflow">
+      <span class="eyebrow">06 · Workflow</span>
+      <h2>Complete business workflow</h2>
+      <p class="sub">How a normal working day flows through the two sides of the suite.</p>
+      <div class="flow">
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Mark the muster</div><div class="d">Staff and labour attendance is entered for the day — this feeds payroll later.</div></div></div>
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Send a machine</div><div class="d">A customer calls asking for a machine; the owner shares its video and catalogue as a link in two taps.</div></div></div>
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Log the enquiry</div><div class="d">The interest that comes back is recorded in the enquiry register and set for follow-up.</div></div></div>
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Make the quotation</div><div class="d">A GST quotation is built — machine, freight, tax — and sent to the customer on WhatsApp.</div></div></div>
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Close the sale &amp; bill</div><div class="d">On confirmation, a bill is raised with GST and the sale is recorded; the customer's history updates.</div></div></div>
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Record money movement</div><div class="d">Cash in and out, purchases and expenses are entered in the cashbook / money book.</div></div></div>
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Run payroll &amp; review reports</div><div class="d">At month-end, payroll is calculated from attendance, and reports show money in/out, sales vs purchase and GST.</div></div></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section id="clients">
+      <span class="eyebrow">07 · Fit</span>
+      <h2>What type of clients &amp; businesses can use this</h2>
+      <p class="sub">The suite fits owner-run businesses that both employ people and sell products.</p>
+      <div class="grid2">
+        <div>
+          <h4>Best fit</h4>
+          <ul class="clean">
+            <li>Small &amp; mid-sized manufacturing units and engineering workshops</li>
+            <li>Machine and equipment makers who sell on enquiry and quotation</li>
+            <li>Businesses with a mix of monthly staff and day-wise labour</li>
+            <li>Owner-driven firms still running on Excel, diary and WhatsApp</li>
+            <li>Units that share product videos/photos with customers regularly</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Also usable by</h4>
+          <ul class="clean">
+            <li>Fabrication, machining, casting and forging shops</li>
+            <li>Traders/dealers of machinery who manage a catalogue and quotes</li>
+            <li>Job-work units that bill customers and manage labour</li>
+            <li>Any product business needing catalogue + enquiry + GST quoting in one place</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout green">
+        <div class="t">The signal to look for</div>
+        <p style="margin:0">If the owner keeps <strong>attendance in Excel, cash in a diary, and machine
+          videos across several phones</strong> — this suite was built for exactly that business.</p>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section id="industries">
+      <span class="eyebrow">08 · Use cases</span>
+      <h2>Potential industries &amp; use cases</h2>
+      <p class="sub">The two-sided design adapts across product-and-labour businesses.</p>
+      <div style="margin:6px 0 14px">
+        <span class="pill">CNC &amp; precision engineering</span>
+        <span class="pill">Packaging machinery</span>
+        <span class="pill">Farm &amp; agri machinery</span>
+        <span class="pill">Pipes &amp; hardware</span>
+        <span class="pill">Forged / machined components</span>
+        <span class="pill">Powder coating &amp; finishing</span>
+        <span class="pill">Fabrication &amp; sheet metal</span>
+        <span class="pill">Industrial equipment dealers</span>
+        <span class="pill">Job-work workshops</span>
+      </div>
+      <table>
+        <thead><tr><th style="width:32%">Business type</th><th>How they use it</th></tr></thead>
+        <tbody>
+          <tr><td class="m">Machine manufacturer</td><td>Catalogue to share machine videos; enquiries to track buyers; GST quotations; payroll for staff and labour.</td></tr>
+          <tr><td class="m">Engineering / job-work shop</td><td>Attendance and day-wise wages for workers; cashbook and job billing; reports for the owner.</td></tr>
+          <tr><td class="m">Component maker</td><td>Customer records and quotations for repeat buyers; cash and purchase tracking; monthly payroll.</td></tr>
+          <tr><td class="m">Equipment dealer/trader</td><td>Product catalogue and enquiry pipeline; quotations with GST; sales and customer history.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 9 -->
+    <section id="benefits">
+      <span class="eyebrow">09 · Value</span>
+      <h2>Business benefits</h2>
+      <div class="grid2">
+        <div>
+          <h4>For the owner</h4>
+          <ul class="clean">
+            <li>The business stops depending on one person's memory</li>
+            <li>True cash position and month-end numbers, on demand</li>
+            <li>No lead lost — every enquiry is tracked to a result</li>
+            <li>Professional, GST-ready quotes and bills that build trust</li>
+          </ul>
+        </div>
+        <div>
+          <h4>For the day-to-day</h4>
+          <ul class="clean">
+            <li>Less double entry — attendance flows into payroll</li>
+            <li>Machines shared in seconds without clogging phones</li>
+            <li>Staff work in English or Gujarati</li>
+            <li>One system to learn instead of five disconnected tools</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section id="proto-prod">
+      <span class="eyebrow">10 · Scope</span>
+      <h2>Prototype vs actual production application</h2>
+      <p class="sub">This document accompanies a working prototype. Here is what that means.</p>
+      <div class="split">
+        <div class="a">
+          <h4>This prototype</h4>
+          <ul class="plain">
+            <li>Fully clickable, runs on phone and desktop</li>
+            <li>Loaded with realistic sample data</li>
+            <li>Shows every module and the full workflow</li>
+            <li>Nothing is saved — refreshing resets it to the sample data</li>
+            <li>Built to demonstrate the idea and agree the scope</li>
+          </ul>
+        </div>
+        <div class="b">
+          <h4>A production application adds</h4>
+          <ul class="plain">
+            <li>A real database — data is saved permanently and securely</li>
+            <li>Login and roles (owner, staff, accountant)</li>
+            <li>Real video/file upload and hosting for the catalogue</li>
+            <li>Live WhatsApp / share links to customers</li>
+            <li>Backups, audit trail and the client's own branding</li>
+            <li>Hosting, support and future enhancements</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">
+        <div class="t">In short</div>
+        <p style="margin:0">The prototype proves <em>what</em> the business gets. Production is where it
+          becomes the client's own live, saved, secured system.</p>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section id="future">
+      <span class="eyebrow">11 · Roadmap</span>
+      <h2>Possible future &amp; custom features</h2>
+      <p class="sub">Directions the suite can grow, tailored to a client's needs.</p>
+      <div class="grid2">
+        <div>
+          <ul class="clean">
+            <li>Advances, loans and salary slips (PDF) for workers</li>
+            <li>Biometric / QR / facial attendance capture</li>
+            <li>Inventory &amp; raw-material stock with low-stock alerts</li>
+            <li>Purchase orders and supplier ledgers</li>
+            <li>Production / job-work and WIP tracking</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="clean">
+            <li>Customer-facing catalogue microsite with enquiry form</li>
+            <li>GST return-ready exports and CA hand-off</li>
+            <li>Payment reminders and receivables follow-up</li>
+            <li>Dashboards and owner analytics</li>
+            <li>Multi-branch / multi-user access</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:6px;color:var(--muted);font-size:13.5px">Timelines for any custom build are
+        quoted in working days (Monday–Saturday, Sundays excluded).</p>
+    </section>
+
+    <!-- 12 -->
+    <section id="discovery">
+      <span class="eyebrow">12 · Discovery</span>
+      <h2>Client requirement / discovery questions</h2>
+      <p class="sub">Ask these before scoping, to fit the suite to the client's real business.</p>
+
+      <div class="qgroup"><div class="qh">People &amp; payroll</div>
+        <ul class="plain">
+          <li>How many employees are monthly, and how many are day-wise labour?</li>
+          <li>How is attendance recorded today, and by whom?</li>
+          <li>Do you need statutory deductions (PF / ESI / PT) on payroll?</li>
+          <li>Do workers need salary slips, and do you give advances?</li>
+        </ul>
+      </div>
+      <div class="qgroup"><div class="qh">Money &amp; billing</div>
+        <ul class="plain">
+          <li>How do you track daily cash in and out right now?</li>
+          <li>Do you raise GST bills, and what GST rates apply?</li>
+          <li>Where is billing done today, and who does it?</li>
+          <li>Do you need purchase and expense tracking as well as sales?</li>
+        </ul>
+      </div>
+      <div class="qgroup"><div class="qh">Catalogue &amp; sales</div>
+        <ul class="plain">
+          <li>How do you share machine videos/photos with customers today?</li>
+          <li>Are your phones/mailboxes running out of storage?</li>
+          <li>How do you track enquiries and follow-ups?</li>
+          <li>Do you make quotations, and how long does each one take?</li>
+          <li>Do you keep any customer history today?</li>
+        </ul>
+      </div>
+      <div class="qgroup"><div class="qh">Setup &amp; access</div>
+        <ul class="plain">
+          <li>Should staff have their own logins, or admin-only?</li>
+          <li>Which language(s) do your people work in?</li>
+          <li>One location or multiple branches?</li>
+          <li>Do you have any existing data (Excel/lists) to bring in?</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section id="positioning">
+      <span class="eyebrow">13 · Sales</span>
+      <h2>How to position &amp; present this to clients</h2>
+      <p class="sub">A simple, repeatable way to show the value.</p>
+
+      <h3>The one-line pitch</h3>
+      <p class="callout" style="margin-top:4px"><em>"Right now your business runs on Excel, a diary,
+        and WhatsApp — and only in your head. This is one app that runs the whole thing: your people
+        and money on one side, your machines and customers on the other."</em></p>
+
+      <h3>Lead with their pain, not our features</h3>
+      <ul class="clean">
+        <li>Open with the storage problem — full phones, heavy video sends — because they feel it daily.</li>
+        <li>Then show the enquiry and quotation flow — money they are leaving on the table.</li>
+        <li>Only then show payroll, cashbook and reports — the "run my business properly" layer.</li>
+      </ul>
+
+      <h3>Suggested demo flow (5 minutes)</h3>
+      <div class="flow">
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Send a machine in two taps</div><div class="d">Show the catalogue share — the instant "wow".</div></div></div>
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Log the enquiry and quote it</div><div class="d">Show GST calculated automatically and sent on WhatsApp.</div></div></div>
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Show the money book &amp; report</div><div class="d">Net profit and GST for the period, in one screen.</div></div></div>
+        <div class="step"><div class="n"></div><div class="b"><div class="h">Switch to Operations</div><div class="d">Mark muster, run payroll, show the cashbook — in Gujarati if they prefer.</div></div></div>
+      </div>
+
+      <h3>Handling the common objections</h3>
+      <table>
+        <thead><tr><th style="width:38%">They say</th><th>You answer</th></tr></thead>
+        <tbody>
+          <tr><td class="m">"We already manage on Excel."</td><td>Excel works until it depends on one person and nothing connects. Here attendance feeds payroll and bills feed the accounts — automatically.</td></tr>
+          <tr><td class="m">"My staff aren't technical."</td><td>It works in Gujarati and is built for exactly this floor — marking attendance and cash is a few taps.</td></tr>
+          <tr><td class="m">"Is my data safe?"</td><td>The production build is a private, secured system with logins, backups and your own branding — this prototype is just the demonstration.</td></tr>
+          <tr><td class="m">"What does it cost?"</td><td>Scope it to what they need from the discovery questions, then quote a one-time build in working days — start with the side that hurts most.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout green">
+        <div class="t">Close on the next step, not the price</div>
+        <p style="margin:0">End the demo by agreeing the scope: "Let's start with the side that's costing
+          you the most, and I'll put together the exact plan." The discovery answers become the proposal.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <p><b>Spirit Engineering — Business Suite.</b> Solution documentation prepared by Sangam InfoAnalytics.
+     This document accompanies a working prototype loaded with sample data; production scope, data and
+     branding are agreed per client. Delivery timelines are quoted in working days (Monday–Saturday).</p>
+</footer>
+
+<script>
+  // TOC active-section highlight (progressive enhancement; page works without it)
+  (function(){
+    var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+    var map = {};
+    links.forEach(function(a){ var id=a.getAttribute('href').slice(1); map[id]=a; });
+    var sections = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+    if(!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(l){ l.classList.remove('on'); });
+          var a = map[e.target.id]; if(a) a.classList.add('on');
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px', threshold:0});
+    sections.forEach(function(s){ if(s) io.observe(s); });
+    // close mobile TOC after a jump
+    links.forEach(function(a){ a.addEventListener('click', function(){
+      document.getElementById('toc').classList.remove('open'); }); });
+  })();
+</script>
+</body>
+</html>

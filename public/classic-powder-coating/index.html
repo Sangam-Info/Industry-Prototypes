@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Classic Powder Coating — Production Control System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Public+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#EEF2F8;--card:#fff;--wash:#F6F9FD;--ink:#0B1F3A;--ink2:#2E4763;--muted:#6B7C93;--faint:#93A3B8;
+--line:#DEE6F0;--line2:#C6D3E4;--blue:#1546C0;--blue-lt:#2C6BE8;--blue-soft:#E7EEFC;--blue-tint:#F2F6FE;
+--saf:#E07C12;--saf-soft:#FDF0DE;--saf-line:#F3C88C;--green:#1B7A4F;--green-soft:#E3F3EA;--green-line:#A8D6BC;
+--red:#B3261E;--red-soft:#FCEBEA;
+--disp:'Archivo','Public Sans',sans-serif;--body:'Public Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;
+--sh1:0 1px 2px rgba(11,31,58,.05);--sh2:0 2px 4px rgba(11,31,58,.05),0 8px 20px rgba(11,31,58,.06);
+--sh3:0 12px 34px rgba(11,31,58,.16);--ease:cubic-bezier(.22,.9,.28,1)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;text-align:left}
+input,select,textarea{font:inherit}
+::-webkit-scrollbar{width:0;height:0}
+.shell{max-width:1120px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+header{position:sticky;top:0;z-index:50;background:rgba(238,242,248,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.hrow{display:flex;align-items:center;gap:10px;padding:11px 14px}
+.mark{font-family:var(--disp);font-weight:800;font-stretch:115%;font-size:16px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.mark em{font-style:normal;color:var(--faint);font-weight:600}
+.hgap{flex:1}
+.who{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:5px 12px 5px 5px;box-shadow:var(--sh1)}
+.av{width:30px;height:30px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:700;font-size:13px}
+.who b{display:block;font-size:12.5px;line-height:1.2}
+.who s{display:block;text-decoration:none;font-family:var(--mono);font-size:9.5px;color:var(--muted);text-transform:uppercase}
+.ghost-sm{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:8px 13px;font-size:12.5px;font-weight:600;box-shadow:var(--sh1)}
+main{flex:1;padding:16px 14px 104px}
+.view{animation:enter .3s var(--ease) both}
+@keyframes enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.stag>*{animation:enter .34s var(--ease) both}
+.stag>*:nth-child(2){animation-delay:.04s}.stag>*:nth-child(3){animation-delay:.08s}
+.stag>*:nth-child(4){animation-delay:.12s}.stag>*:nth-child(5){animation-delay:.16s}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.eyebrow:before{content:'';width:14px;height:2px;background:var(--saf);border-radius:2px}
+h1{font-family:var(--disp);font-weight:800;font-stretch:112%;font-size:29px;line-height:1.04;letter-spacing:-.026em}
+h2{font-family:var(--disp);font-weight:700;font-stretch:108%;font-size:20px;letter-spacing:-.02em}
+h3{font-family:var(--disp);font-weight:700;font-size:16px;letter-spacing:-.015em}
+.sub{color:var(--muted);font-size:13px;margin-top:7px;line-height:1.55}
+.hr{height:1px;background:var(--line);margin:20px 0}
+.note{font-size:11.5px;color:var(--faint);line-height:1.7;margin-top:12px}
+.back{font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--muted);padding:7px 0;display:inline-block;margin-bottom:6px}
+/* login */
+.loginwrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginbox{width:100%;max-width:400px}
+.brand{text-align:center;margin-bottom:22px}
+.brand .b1{font-family:var(--disp);font-weight:800;font-stretch:118%;font-size:26px;color:var(--blue);text-transform:uppercase}
+.brand .b1 em{font-style:normal;color:var(--faint)}
+.brand .b2{color:var(--muted);font-size:13px;margin-top:4px}
+.card{background:var(--card);border-radius:16px;padding:22px;box-shadow:var(--sh2)}
+.tabs{display:flex;background:var(--paper);border-radius:11px;padding:4px;margin-bottom:18px}
+.tabs button{flex:1;text-align:center;padding:11px;border-radius:8px;font-weight:600;font-size:14px;color:var(--muted)}
+.tabs button.on{background:var(--card);color:var(--blue);box-shadow:var(--sh1)}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.fld input,.fld select,.fld textarea{width:100%;background:var(--card);border:1px solid var(--line2);padding:13px;border-radius:10px;color:var(--ink);font-size:14px;box-shadow:var(--sh1)}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.act{display:block;width:100%;padding:15px;background:var(--blue);color:#fff;font-family:var(--disp);font-weight:700;font-size:16px;border-radius:11px;text-align:center;box-shadow:0 4px 14px rgba(21,70,192,.24);transition:.15s var(--ease);margin-top:12px}
+.act:active{transform:scale(.985)}
+.act.sf{background:var(--saf);box-shadow:0 4px 14px rgba(224,124,18,.28)}
+.act.ghost{background:var(--card);border:1px solid var(--line2);color:var(--ink);box-shadow:var(--sh1)}
+.act.gr{background:var(--green);box-shadow:0 4px 14px rgba(27,122,79,.24)}
+.act[disabled]{background:var(--line);color:var(--faint);box-shadow:none;cursor:not-allowed}
+.err{background:var(--red-soft);color:var(--red);border:1px solid #F0C4C1;padding:11px 13px;border-radius:9px;font-size:12.5px;margin-bottom:12px}
+/* pin */
+.pindots{display:flex;gap:14px;justify-content:center;margin:18px 0 8px}
+.pindots i{width:15px;height:15px;border-radius:50%;border:2px solid var(--line2);transition:.18s var(--ease)}
+.pindots i.f{background:var(--blue);border-color:var(--blue);transform:scale(1.12)}
+.pindots.err{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.key{height:58px;background:var(--card);border:1px solid var(--line);border-radius:12px;font-family:var(--disp);font-weight:700;font-size:23px;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh1);transition:.1s var(--ease)}
+.key:active{transform:scale(.94);background:var(--blue-soft);border-color:var(--blue)}
+.key.fn{font-family:var(--body);font-size:13px;font-weight:600;color:var(--muted);background:transparent;border-color:transparent;box-shadow:none}
+/* tiles */
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+@media(min-width:760px){.grid2{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;position:relative;overflow:hidden;box-shadow:var(--sh1);width:100%;transition:.18s var(--ease)}
+.stat:active{transform:scale(.99)}
+.stat .n{display:block;font-family:var(--disp);font-weight:800;font-stretch:112%;font-size:34px;line-height:.95;letter-spacing:-.035em;color:var(--blue)}
+.stat .l{display:block;font-size:11.5px;color:var(--muted);margin-top:5px;font-weight:500;line-height:1.35}
+.stat .rail{position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--blue)}
+.stat.saf .n{color:var(--saf)}.stat.saf .rail{background:var(--saf)}
+.stat.saf{border-color:var(--saf-line);background:var(--saf-soft)}
+.stat.gr .n{color:var(--green)}.stat.gr .rail{background:var(--green)}
+/* rows */
+.rows{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.row{display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--sh1);transition:.18s var(--ease)}
+.row:active{transform:scale(.99);background:var(--wash)}
+.row .no{font-family:var(--mono);font-size:16px;min-width:44px;color:var(--blue)}
+.row .mid{flex:1;min-width:0}
+.row .t1{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .t2{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg{display:flex;gap:3px;margin-top:8px}
+.seg i{height:4px;flex:1;max-width:34px;border-radius:2px;background:var(--line2)}
+.seg i.a{background:var(--saf)}.seg i.d{background:var(--green)}
+.chev{color:var(--faint);font-size:18px}
+.sd{width:26px;height:26px;flex:none;border-radius:8px;border:1px solid rgba(11,31,58,.13)}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--blue-soft);color:var(--blue)}
+.pill.saf{background:var(--saf-soft);color:#B85F0C}.pill.gr{background:var(--green-soft);color:var(--green)}
+.pill.gy{background:var(--line);color:var(--muted)}
+/* tally */
+.kbar{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--sh1)}
+.kbar .kn{font-family:var(--mono);font-size:16px;color:var(--blue)}
+.kbar .ks{font-size:11.5px;color:var(--muted);font-weight:500}
+.kbar .kc{margin-left:auto;font-family:var(--disp);font-weight:800;font-size:18px;color:var(--saf);white-space:nowrap}
+.kbar .kc.ok{color:var(--green)}
+.prog{width:100%;height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--saf);border-radius:3px;transition:width .55s var(--ease)}
+.prog i.ok{background:var(--green)}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+@media(min-width:700px){.tiles{grid-template-columns:repeat(4,1fr)}.tile .art{height:110px}}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:13px;position:relative;overflow:hidden;width:100%;box-shadow:var(--sh1);transition:transform .12s var(--ease),border-color .2s}
+.tile:active{transform:scale(.965)}
+.lvl{position:absolute;left:0;bottom:0;width:100%;background:var(--saf-soft);z-index:0;transition:height .55s var(--ease),background .3s}
+.tile.full .lvl{background:var(--green-soft)}
+.tile>*:not(.lvl){position:relative;z-index:1}
+.tile .art{display:flex;height:80px;align-items:center;justify-content:center;border-bottom:1px solid var(--line);position:relative;background:var(--wash)}
+.tile .art .ph{position:absolute;left:8px;top:8px;font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;
+ color:var(--faint);background:var(--card);border:1px solid var(--line);border-radius:5px;padding:2px 5px}
+.tile .art svg{width:70%;height:54%}
+.tile .meta{display:block;padding:10px 12px 12px}
+.tile .nm{display:block;font-size:11px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .ct{font-family:var(--disp);font-weight:800;font-size:26px;line-height:1;margin-top:6px;display:flex;align-items:baseline;gap:2px;letter-spacing:-.035em}
+.tile .ct s{text-decoration:none;color:var(--faint);font-size:16px;font-weight:600}
+.tile .badge{position:absolute;right:10px;bottom:12px;font-family:var(--mono);font-size:9.5px;padding:5px 8px;border-radius:999px;text-transform:uppercase;background:var(--line);color:var(--ink2)}
+.tile.short{border-color:var(--saf-line);box-shadow:0 2px 12px rgba(224,124,18,.16)}
+.tile.short .badge{background:var(--saf);color:#fff}
+.tile.full{border-color:var(--green-line)}
+.tile.full .badge{background:var(--green);color:#fff}.tile.full .ct{color:var(--green)}
+.minus{position:absolute;left:9px;top:9px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--card);box-shadow:var(--sh1);border:1px solid var(--line);z-index:2}
+.pop{animation:pop .4s var(--ease)}
+@keyframes pop{0%{transform:scale(1)}28%{transform:scale(1.2)}60%{transform:scale(.97)}100%{transform:scale(1)}}
+/* panels */
+.pn{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:4px 14px;margin-top:12px;box-shadow:var(--sh1)}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.kv:last-child{border-bottom:none}
+.kv dt{font-size:11.5px;color:var(--muted);font-weight:500;white-space:nowrap;padding-top:2px}
+.kv dd{text-align:right;font-weight:600}
+.masked{font-family:var(--mono);font-size:10.5px;color:var(--muted);background:var(--paper);border:1px dashed var(--line2);padding:4px 9px;border-radius:6px}
+.tl{margin-top:6px;position:relative}
+.tl:before{content:'';position:absolute;left:6px;top:18px;bottom:22px;width:2px;background:var(--line)}
+.tl .st{display:flex;gap:14px;padding:12px 0}
+.tl .st>span:last-child{flex:1}
+.tl .bulb{width:14px;height:14px;flex:none;margin-top:3px;border-radius:50%;border:2px solid var(--line2);background:var(--card);position:relative;z-index:1}
+.tl .st.d .bulb{background:var(--green);border-color:var(--green)}
+.tl .st.a .bulb{background:var(--saf);border-color:var(--saf);box-shadow:0 0 0 5px var(--saf-soft)}
+.tl .st.x{opacity:.45}
+.tl .nmm{display:block;font-family:var(--disp);font-weight:700;font-size:15.5px}
+.tl .dt{display:block;font-size:11.5px;color:var(--muted);margin-top:3px}
+/* shades */
+.shades{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(min-width:620px){.shades{grid-template-columns:repeat(6,1fr)}}
+.sh{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;width:100%;box-shadow:var(--sh1);transition:.18s var(--ease)}
+.sh:active{transform:scale(.97)}
+.sh.on{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue-soft)}
+.sh .sw{display:block;height:50px;position:relative}
+.sh .cnt{position:absolute;right:6px;top:6px;background:var(--card);color:var(--blue);font-family:var(--mono);font-size:11px;padding:3px 7px;border-radius:999px;box-shadow:var(--sh1)}
+.sh .cnt.z{color:var(--faint)}
+.sh .lb{display:block;padding:8px 10px 10px}
+.sh .cd{display:block;font-family:var(--mono);font-size:13.5px}
+.sh .nmz{display:block;font-size:10.5px;color:var(--muted);margin-top:2px}
+/* table */
+.tb{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--sh1)}
+.tb th{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;padding:11px 12px;background:var(--wash);border-bottom:1px solid var(--line);font-weight:600}
+.tb td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.tb tr:last-child td{border-bottom:none}
+.tb td.m{font-family:var(--mono);font-size:12px}
+.tb .cop{color:var(--saf);font-weight:600}.tb .stl{color:var(--muted)}.tb .bl{color:var(--blue);font-weight:600}
+/* nav */
+nav{position:fixed;bottom:0;left:0;right:0;z-index:55;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);max-width:1120px;margin:0 auto}
+nav button{flex:1;padding:10px 3px 12px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:9.5px;color:var(--faint);font-weight:500;position:relative}
+nav button.on{color:var(--blue)}
+nav button.on:before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:3px;border-radius:0 0 3px 3px;background:var(--blue)}
+nav svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7}
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(11,31,58,.44);backdrop-filter:blur(2px);z-index:70;opacity:0;pointer-events:none;transition:opacity .24s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:71;background:var(--card);border-radius:20px 20px 0 0;padding:14px 16px calc(20px + env(safe-area-inset-bottom));transform:translateY(102%);transition:transform .32s var(--ease);max-height:88vh;overflow-y:auto;max-width:1120px;margin:0 auto;box-shadow:var(--sh3)}
+.sheet.on{transform:translateY(0)}
+.grip{width:40px;height:4px;background:var(--line2);border-radius:3px;margin:0 auto 16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{font-size:12.5px;padding:9px 13px;border:1px solid var(--line2);border-radius:999px;color:var(--ink2);background:var(--card);font-weight:500}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.miss{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;font-size:13.5px;background:var(--saf-soft);border:1px solid var(--saf-line);border-radius:10px;margin-top:8px}
+.miss b{font-family:var(--mono);color:var(--saf)}
+.mlist{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.mrow{display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;background:var(--card);border:1px solid var(--line);border-radius:11px;font-size:13.5px}
+.mrow:active{background:var(--wash)}
+.mrow.on{border-color:var(--blue);background:var(--blue-tint)}
+.mrow .mk{font-family:var(--mono);font-size:11px;color:var(--blue);min-width:46px}
+/* misc */
+#toast{position:fixed;left:50%;bottom:88px;transform:translate(-50%,16px);z-index:90;background:var(--ink);color:#fff;font-size:12.5px;padding:13px 17px;border-radius:11px;max-width:88vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .26s var(--ease);box-shadow:var(--sh3)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast.bad{background:var(--red)}
+#stamp{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;background:rgba(238,242,248,.85);backdrop-filter:blur(3px)}
+#stamp.on{display:flex}
+#stamp .s{text-align:center;animation:stampin .55s var(--ease) both}
+#stamp .ring{width:104px;height:104px;border-radius:50%;border:4px solid var(--green);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;background:var(--card);box-shadow:var(--sh3)}
+#stamp svg{width:48px;height:48px;stroke:var(--green);fill:none;stroke-width:3.4;stroke-dasharray:44;stroke-dashoffset:44;animation:draw .45s .16s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes stampin{0%{transform:scale(1.45) rotate(-6deg);opacity:0}55%{transform:scale(.97);opacity:1}100%{transform:scale(1);opacity:1}}
+#stamp .t{font-family:var(--disp);font-weight:800;font-size:24px;letter-spacing:-.025em}
+#stamp .u{font-size:13px;color:var(--muted);margin-top:6px}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.shot{aspect-ratio:1;background:var(--card);border:1.5px dashed var(--line2);border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--faint);font-size:10px;font-weight:600;transition:.2s var(--ease)}
+.shot.set{border-style:solid;border-color:var(--blue);color:var(--blue);background:var(--blue-tint);animation:pop .38s var(--ease)}
+.shot svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6}
+.tog{display:flex;align-items:center;gap:12px;padding:14px;background:var(--card);border:1px solid var(--line2);border-radius:11px;width:100%;box-shadow:var(--sh1);font-size:13.5px;font-weight:500;margin-top:12px}
+.tog i{width:46px;height:26px;border-radius:999px;background:var(--line2);flex:none;position:relative;transition:background .24s var(--ease)}
+.tog i:after{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:var(--sh1);transition:transform .24s var(--ease)}
+.tog.on i{background:var(--blue)}.tog.on i:after{transform:translateX(20px)}
+.ilist{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.itm{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:11px;box-shadow:var(--sh1);animation:enter .28s var(--ease) both}
+.itm .in{flex:1;font-size:13.5px;font-weight:600}
+.itm .iq{font-family:var(--mono);font-size:13px;color:var(--blue)}
+.itm .rm{color:var(--faint);font-size:17px;padding:0 4px}
+.stp{display:flex;align-items:center;border:1px solid var(--line2);border-radius:10px;overflow:hidden;background:var(--card)}
+.stp button{width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--blue)}
+.stp b{width:50px;text-align:center;font-family:var(--mono);font-size:15px}
+.callout{background:var(--saf-soft);border:1px solid var(--saf-line);border-radius:11px;padding:13px 15px;margin-top:14px;font-size:12.5px;color:#8A4A08;line-height:1.55}
+.callout.b{background:var(--blue-tint);border-color:#C9DAFA;color:var(--blue)}
+.hero{text-align:center;padding:32px 16px 22px}
+.hero .big{font-family:var(--disp);font-weight:900;font-stretch:120%;font-size:58px;line-height:.9;color:var(--blue);letter-spacing:-.045em;animation:stampin .5s var(--ease) both}
+.hero .cap{font-size:12.5px;color:var(--muted);margin-top:14px;line-height:1.8}
+.empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div id="app"><div class="loginwrap"><div class="loginbox"><div class="brand">
+  <div class="b1">Classic <em>/ CPC</em></div><div class="b2">Starting up…</div></div></div></div></div>
+<div class="scrim" id="scrim" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"></div>
+<div id="toast"></div>
+<div id="stamp"><div class="s"><div class="ring"><svg viewBox="0 0 24 24"><path d="M4 12.5l5.2 5.2L20 7"/></svg></div>
+<div class="t" id="stampT"></div><div class="u" id="stampU"></div></div></div>
+
+<script type="module">
+/* ═══════════════════════════════════════════════════════════════════
+   DATA LAYER — Firebase Authentication + Cloud Firestore
+
+   Everything below reads and writes real, shared data. Two people on
+   two phones see the same thing, and a change made by one appears on
+   the other's screen within a second.
+
+   The rules in firestore.rules are what actually enforce roles. This
+   file is the convenient path; the rules are the locked door.
+   ═══════════════════════════════════════════════════════════════════ */
+
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, signOut as fbSignOut,
+         onAuthStateChanged, createUserWithEmailAndPassword, updatePassword,
+         EmailAuthProvider, reauthenticateWithCredential }
+  from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import { getStorage, ref as sref, uploadBytes, getDownloadURL }
+  from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js';
+import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc,
+         onSnapshot, query, orderBy, limit, runTransaction, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+/* ── Firebase settings, built in ──────────────────────────────────
+   These are already YOUR project's settings. Nothing to edit, ever. */
+const firebaseConfig = {
+  apiKey: "AIzaSyA-8P4tlF0GPtt-rKTonzSQTPh2bbgRfgs",
+  authDomain: "sangaminfoanalytics-1bb30.firebaseapp.com",
+  projectId: "sangaminfoanalytics-1bb30",
+  storageBucket: "sangaminfoanalytics-1bb30.firebasestorage.app",
+  messagingSenderId: "99674442822",
+  appId: "1:99674442822:web:7832d04d773281f32a0e47"
+};
+/* This Firebase project contains more than one database. The app must name
+   the one it belongs to, otherwise it silently talks to (default) — which
+   belongs to a different app. */
+/* If you ever move to a different Firestore database, change this one line.
+   Find the name at Firebase -> Firestore Database, top of the page. */
+const FIRESTORE_DB_ID = "cpcdb";
+const DRIVER_EMAIL_DOMAIN = "drivers.cpc.local";
+const DRIVER_PIN_SUFFIX   = "-CpcDriver";
+const BUILD = "2026-08-26 · build 13";
+/* ── constants and view state ─────────────────────────────────── */
+const STAGE_NAME={wash:'Washing & Cleaning',powder:'Powder Coating',wood:'Wooden Coating',out:'Ready to dispatch'};
+const FEET=[8,10,12,14,15,16,18,20,22,24];
+const INCHES=[0,3,6,9];
+const REASONS=['Not received','Damaged','Held back','Other'];
+const SHAPES={track:'<svg viewBox="0 0 100 40"><g fill="none" stroke="#6B7C93" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="7" width="92" height="26" rx="1.5"/><path d="M22 7v20M42 7v20M62 7v20"/></g></svg>',
+shutter:'<svg viewBox="0 0 100 40"><g fill="none" stroke="#6B7C93" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="7" width="92" height="26" rx="1.5"/><path d="M4 15.5h92M4 24.5h92"/></g></svg>',
+clip:'<svg viewBox="0 0 100 40"><g fill="none" stroke="#6B7C93" stroke-width="1.7"><circle cx="26" cy="20" r="10.5"/><circle cx="50" cy="20" r="10.5"/><circle cx="74" cy="20" r="10.5"/></g></svg>',
+sect:'<svg viewBox="0 0 100 40"><g fill="none" stroke="#6B7C93" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="7" width="92" height="26" rx="1.5"/><rect x="16" y="14" width="68" height="12" rx="1"/></g></svg>',
+angle:'<svg viewBox="0 0 100 40"><g fill="none" stroke="#6B7C93" stroke-width="1.7" stroke-linejoin="round"><path d="M8 7h14v19h70v7H8Z"/></g></svg>',
+tube:'<svg viewBox="0 0 100 40"><g fill="none" stroke="#6B7C93" stroke-width="1.7"><circle cx="50" cy="20" r="14"/><circle cx="50" cy="20" r="7.5"/></g></svg>',
+tee:'<svg viewBox="0 0 100 40"><g fill="none" stroke="#6B7C93" stroke-width="1.7" stroke-linejoin="round"><path d="M14 7h72v8H58v18H42V15H14Z"/></g></svg>',
+ushape:'<svg viewBox="0 0 100 40"><g fill="none" stroke="#6B7C93" stroke-width="1.7" stroke-linejoin="round"><path d="M10 7v26h80V7M22 7v19h56V7"/></g></svg>'};
+
+let S={view:'home',pin:'',pinDriver:null,pinErr:false,tab:'staff',lot:null,stage:null,arr:null,trip:null,
+       series:'s1',bumped:null,reason:'Not received',draft:null,people:'drivers',shade:null,err:''};
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+function toast(msg,bad){const t=$('toast');t.textContent=msg;t.className='on'+(bad?' bad':'');
+ clearTimeout(t._t);t._t=setTimeout(()=>t.className='',2800);}
+function stamp(title,sub,cb){const s=$('stamp');$('stampT').textContent=title;$('stampU').textContent=sub||'';
+ s.classList.add('on');setTimeout(()=>{s.classList.remove('on');cb&&cb();},1150);}
+function openSheet(html){$('sheet').innerHTML='<div class="grip"></div>'+html;$('sheet').classList.add('on');$('scrim').classList.add('on');}
+function closeSheet(){$('sheet').classList.remove('on');$('scrim').classList.remove('on');}
+function go(v,o={}){closeSheet();S.view=v;Object.assign(S,o);S.err='';window.scrollTo(0,0);render();}
+
+/* ── login screen ─────────────────────────────────────────────── */
+function vLogin(){
+ return `<div class="loginwrap"><div class="loginbox">
+  <div class="brand"><div class="b1">Classic <em>/ CPC</em></div><div class="b2">Production Control System</div>
+   <div style="font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:6px">${BUILD}</div></div>
+  <div class="card">
+   <div class="tabs"><button class="${S.tab==='staff'?'on':''}" onclick="S.tab='staff';S.err='';render()">Staff</button>
+    <button class="${S.tab==='driver'?'on':''}" onclick="S.tab='driver';S.err='';render()">Driver</button></div>
+   ${S.err?`<div class="err">${esc(S.err)}</div>`:''}
+   ${S.tab==='staff'?`
+    <div class="fld"><label>Username</label><input id="lu" placeholder="owner" autocomplete="username"></div>
+    <div class="fld"><label>Password</label><input id="lp" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+      autocomplete="current-password" onkeydown="if(event.key==='Enter')staffLogin()"></div>
+    <button class="act" onclick="staffLogin()">Sign in</button>`
+   :S.pinDriver?`
+    <div style="text-align:center"><h2>${esc(driver(S.pinDriver).name)}</h2>
+    <p class="sub">Enter your 4-digit PIN</p>
+    <div class="pindots ${S.pinErr?'err':''}">${[0,1,2,3].map(i=>`<i class="${S.pin.length>i?'f':''}"></i>`).join('')}</div>
+    <div class="keys">${[1,2,3,4,5,6,7,8,9].map(k=>`<button class="key" onclick="pinTap('${k}')">${k}</button>`).join('')}
+     <button class="key fn" onclick="S.pinDriver=null;S.pin='';render()">Change</button>
+     <button class="key" onclick="pinTap('0')">0</button>
+     <button class="key fn" onclick="S.pin=S.pin.slice(0,-1);S.pinErr=false;render()">Delete</button></div></div>`
+   :`<p class="sub" style="margin-top:0">Choose your name</p>
+    <div class="mlist">${DB.drivers.map(d=>`<button class="mrow" onclick="S.pinDriver='${d.id||d.uid}';S.pin='';render()">
+     <span class="mk">DRV</span><span><b>${esc(d.name)}</b>
+     <span style="display:block;font-family:var(--mono);font-size:11.5px;color:var(--muted)">${esc(d.phone||'')}</span></span>
+     <span class="chev" style="margin-left:auto">&rsaquo;</span></button>`).join('')
+     ||'<div class="empty">Driver list is loading…</div>'}</div>`}
+  </div></div></div>`;
+}
+
+
+
+
+const fbApp = initializeApp(firebaseConfig);
+const auth  = getAuth(fbApp);
+const fs    = getFirestore(fbApp, FIRESTORE_DB_ID);
+const storage = getStorage(fbApp);
+
+/* A second connection, used only when the owner creates a new login.
+   Without this, creating a user would sign the owner out and sign them
+   in as the person they just created. */
+const seedApp  = initializeApp(firebaseConfig, 'secondary');
+const seedAuth = getAuth(seedApp);
+
+/* ── the local cache every screen reads from ─────────────────────── */
+const DB = { users:[], drivers:[], parties:[], series:[], items:[], shades:[],
+             pickups:[], arrivals:[], lots:[], log:[], counter:0, session:null };
+
+const SERIES_ORDER = ['15mm','25mm','35mm','Others'];
+let ME = null;              // { uid, name, role, phone }
+let unsubs = [];
+let ready = false;
+
+/* ── helpers the screens use ─────────────────────────────────────── */
+const me = () => ME;
+const rid = () => Math.random().toString(16).slice(2,9);
+const clock = () => new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+const today = () => new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+const party  = id => DB.parties.find(p => p.id === id) || { name:'Unknown', address:'' };
+const driver = id => DB.drivers.find(d => d.id === id) || { name:'Unknown' };
+const shade  = c  => DB.shades.find(s => s.code === c) || { code:c, name:'', hex:'#999' };
+
+const MATRIX = {
+  owner:      ['party.view','inward.create','lot.view','tally.write','stage.lock','driver.assign','master.write','report.view','export','delete','admin'],
+  supervisor: ['inward.create','lot.view','tally.write','stage.lock','master.write','report.view'],
+  operator:   ['lot.view','tally.write'],
+  viewer:     ['lot.view','report.view'],
+  driver:     ['trip.record']
+};
+const can = a => !!(ME && (MATRIX[ME.role] || []).includes(a));
+
+/* BR3 — customer names: owner always, a driver only on his own open trip */
+function seeParty(lot){
+  if (!ME) return false;
+  if (ME.role === 'owner') return true;
+  if (ME.role === 'driver' && lot && lot.delivery && lot.delivery.driverUid === ME.uid && !lot.delivery.receiver) return true;
+  return false;
+}
+const partyName = lot => seeParty(lot) ? party(lot.party).name : 'Party masked';
+
+const stagesOf = l => l.wooden ? ['wash','powder','wood'] : ['wash','powder'];
+const nextStage = l => { const a = stagesOf(l), i = a.indexOf(l.stage); return (i>=0 && i+1<a.length) ? a[i+1] : 'out'; };
+const countsFor = l => (l.counts && l.counts[l.stage]) || {};
+const doneOf  = l => { const c = countsFor(l); return l.items.reduce((s,i)=>s+(c[i.id]||0),0); };
+const totalOf = l => l.items.reduce((s,i)=>s+i.qty,0);
+
+/* ── audit trail (BR9) ───────────────────────────────────────────── */
+async function logIt(action, detail){
+  try{
+    await addDoc(collection(fs,'activity'), {
+      who: ME ? ME.name : 'system', uid: ME ? ME.uid : null,
+      action, detail: detail || '', createdAt: serverTimestamp(),
+      at: new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})
+    });
+  }catch(e){ console.warn('activity log:', e.message); }
+}
+
+/* ── live subscriptions ──────────────────────────────────────────── */
+function listen(){
+  stopListening();
+  const sub = (name, q, map) => unsubs.push(onSnapshot(q,
+    snap => { DB[name] = snap.docs.map(map); if (ready) render(); },
+    err  => console.warn(name + ':', err.code)));
+
+  sub('shades',   collection(fs,'shades'),    d => ({ code:d.id, ...d.data() }));
+  sub('items',    collection(fs,'materials'), d => ({ id:d.id, ...d.data() }));
+  sub('lots',     query(collection(fs,'lots'), orderBy('inwardNo','desc')),
+      d => ({ id:d.id, no:d.data().inwardNo, ...d.data() }));
+  sub('arrivals', collection(fs,'arrivals'),  d => ({ id:d.id, ...d.data() }));
+  sub('pickups',  collection(fs,'pickups'),   d => ({ id:d.id, ...d.data() }));
+
+  if (can('party.view'))
+    sub('parties', collection(fs,'parties'), d => ({ id:d.id, ...d.data() }));
+
+  if (can('admin')){
+    unsubs.push(onSnapshot(collection(fs,'users'), snap => {
+      const all = snap.docs.map(d => ({ id:d.id, uid:d.id, ...d.data() }));
+      DB.users   = all.filter(u => u.role !== 'driver');
+      DB.drivers = all.filter(u => u.role === 'driver').map(u => ({ ...u, id:u.uid }));
+      if (ready) render();
+    }, e => console.warn('users:', e.code)));
+    sub('log', query(collection(fs,'activity'), orderBy('createdAt','desc'), limit(60)),
+        d => ({ id:d.id, ...d.data() }));
+  } else {
+    /* Non-owners still need driver names on screen, so a slim public
+       list is kept in meta/drivers. It carries names only — no PINs. */
+    unsubs.push(onSnapshot(doc(fs,'meta','drivers'), s => {
+      DB.drivers = (s.exists() ? s.data().list : []) || [];
+      if (ready) render();
+    }, e => console.warn('driver list:', e.code)));
+  }
+
+  unsubs.push(onSnapshot(doc(fs,'meta','counter'),
+    s => { DB.counter = s.exists() ? s.data().inwardNo : 0; },
+    e => console.warn('counter:', e.code)));
+
+  DB.series = SERIES_ORDER.map((n,i) => ({ id:'s'+(i+1), name:n }));
+}
+function stopListening(){ unsubs.forEach(u => { try{u();}catch{} }); unsubs = []; }
+
+/* ── sign in / out ───────────────────────────────────────────────── */
+const driverEmail = phone => String(phone).replace(/\D/g,'') + '@' + DRIVER_EMAIL_DOMAIN;
+const driverPass  = pin   => String(pin) + DRIVER_PIN_SUFFIX;
+
+async function staffLogin(){
+  const raw = ($('lu').value || '');
+  const u = raw.replace(/\s+/g,'').toLowerCase();
+  const p = $('lp').value || '';
+  if (!u){ S.err = 'Type your username in the box — "owner" is only a hint, not a value'; render(); return; }
+  if (!p){ S.err = 'Enter your password'; render(); return; }
+  const email = u.includes('@') ? u : u + '@cpc.local';
+  try{
+    await signInWithEmailAndPassword(auth, email, p);
+  }catch(e){
+    S.err = (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found')
+      ? 'Wrong username or password'
+      : 'Could not sign in — ' + e.code + '  (tried: ' + email + ')';
+    render();
+  }
+}
+async function pinTap(k){
+  if (S.pin.length >= 4) return;
+  S.pin += k; S.pinErr = false;
+  if (S.pin.length === 4){
+    const d = driver(S.pinDriver);
+    try{
+      await signInWithEmailAndPassword(auth, driverEmail(d.phone), driverPass(S.pin));
+      S.pin = '';
+    }catch{
+      S.pinErr = true;
+      setTimeout(() => { S.pin=''; S.pinErr=false; render(); }, 650);
+    }
+  }
+  render();
+}
+async function signOut(){ LAST_ISSUED = null; stopListening(); ME = null; S.pin=''; S.pinDriver=null; S.tab='staff'; await fbSignOut(auth); }
+
+onAuthStateChanged(auth, async user => {
+  if (!user){ ME = null; ready = true; render(); return; }
+  try{
+    const snap = await getDoc(doc(fs,'users',user.uid));
+    if (!snap.exists()){ S.err = 'This login has no role assigned. Ask the owner to set it up.'; await fbSignOut(auth); return; }
+    const d = snap.data();
+    if (d.active === false){ S.err = 'This login has been disabled.'; await fbSignOut(auth); return; }
+    ME = { uid:user.uid, name:d.name, role:d.role, phone:d.phone||'' };
+    listen(); ready = true; S.view='home'; render();
+    setTimeout(render, 900);   // second paint once the first data lands
+  }catch(e){
+    S.err = 'Could not load your profile — ' + e.code; await fbSignOut(auth);
+  }
+});
+
+/* ── writes ──────────────────────────────────────────────────────── */
+
+async function doCollect(){
+  const p = DB.pickups.find(x => x.id === S.trip), d = S.draft;
+  try{
+    /* Reserve the id first, so the photos have a folder to live in. */
+    const ref = doc(collection(fs,'arrivals'));
+    toast('Sending photos…');
+    const photos = await uploadShots('arrivals/' + ref.id, d.shots);
+    await setDoc(ref, {
+      party: p.party, partyName: party(p.party).name, driverUid: ME.uid, driverName: ME.name,
+      vehicle: d.vehicle.trim(), challan: d.challan.trim(), photos,
+      note: d.note.trim(), status: 'pending', at: clock(), recordedAt: serverTimestamp()
+    });
+    await updateDoc(doc(fs,'pickups',p.id), { status:'collected' });
+    await logIt('Recorded a collection', party(p.party).name);
+    S.draft = null;
+    stamp('Collection recorded', party(p.party).name + ' — awaiting plant verification', () => go('home'));
+  }catch(e){
+    S.err = e.message || ('Could not save — ' + e.code);
+    toast(S.err, true);
+    alert('NOT SAVED\n\n' + S.err + '\n\nYour photos are still on this screen. Fix the problem and press Record collection again.');
+  }
+}
+
+/* BR1 + BR2 — the only place an inward number is created */
+async function verifyLoad(){
+  if (!can('inward.create')){ toast('Only a supervisor or the owner can do this', true); return; }
+  const a = DB.arrivals.find(x => x.id === S.arr), d = S.draft;
+  try{
+    const no = await runTransaction(fs, async tx => {
+      const ref  = doc(fs,'meta','counter');
+      const snap = await tx.get(ref);
+      const next = (snap.exists() ? snap.data().inwardNo : 546) + 1;
+      tx.update(ref, { inwardNo: next });
+      tx.set(doc(fs,'lots',String(next)), {
+        inwardNo: next, party: a.party, vehicle: a.vehicle, challan: a.challan,
+        photos: a.photos || [],
+        shadeCode: d.shade, shade: d.shade, wooden: d.wooden ? 1 : 0, stage: 'wash',
+        verifiedBy: ME.name, verifiedByUid: ME.uid, arrivalId: a.id,
+        items: d.items.map(i => ({ ...i })), counts: {}, locks: {},
+        shortfalls: [], delivery: null, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+      });
+      return next;
+    });
+    await updateDoc(doc(fs,'arrivals',a.id), { status:'verified', inwardNo:no });
+    await logIt('Generated inward number', 'Lot ' + INW(no) + ' · ' + d.items.length + ' items');
+    S.draft = null; go('created', { lot:no });
+  }catch(e){ toast('Could not create the inward — ' + e.code, true); }
+}
+
+async function doWalkin(){
+  const d = S.draft;
+  try{
+    const ref = doc(collection(fs,'arrivals'));
+    toast('Sending photos…');
+    const photos = await uploadShots('arrivals/' + ref.id, d.shots);
+    await setDoc(ref, {
+      party: d.party, partyName: party(d.party).name, driverUid: null, driverName: '—',
+      vehicle: d.vehicle.trim(), challan: d.challan.trim(), photos,
+      note: 'Delivered by the customer', status:'pending', at: clock(), recordedAt: serverTimestamp()
+    });
+    await logIt('Recorded walk-in material', party(d.party).name);
+    S.draft = null; go('gate'); toast('Added to the gate queue');
+  }catch(e){ toast(e.message || ('Could not save — ' + e.code), true); }
+}
+
+/* BR6 — counts are per stage */
+async function bump(itemId, dir){
+  if (!can('tally.write')){ toast('Your role does not allow this', true); return; }
+  const l = DB.lots.find(x => x.no === S.lot);
+  const item = l.items.find(i => i.id === itemId);
+  const cur = (l.counts && l.counts[l.stage] && l.counts[l.stage][itemId]) || 0;
+  const val = Math.max(0, Math.min(item.qty, cur + dir));
+  l.counts = l.counts || {}; l.counts[l.stage] = l.counts[l.stage] || {};
+  l.counts[l.stage][itemId] = val;                     // paint immediately
+  S.bumped = dir > 0 ? itemId : null; render(); S.bumped = null;
+  try{
+    await updateDoc(doc(fs,'lots',String(l.no)), {
+      ['counts.' + l.stage + '.' + itemId]: val, updatedAt: serverTimestamp()
+    });
+  }catch(e){ toast('Not saved — ' + e.code, true); }
+}
+
+/* BR4, BR5, BR7, BR9 */
+async function doLock(){
+  if (!can('stage.lock')){ toast('Only a supervisor can lock a stage', true); return; }
+  const l = DB.lots.find(x => x.no === S.lot), st = l.stage, c = countsFor(l);
+  if (l.locks && l.locks[st]){ toast('That stage is already locked', true); return; }   // BR5
+  const shortfalls = (l.shortfalls || []).concat(
+    l.items.filter(i => (c[i.id]||0) < i.qty).map(i => ({
+      stage: st, item: i.name + ' · ' + i.len, qty: i.qty - (c[i.id]||0),
+      reason: S.reason, by: ME.name, date: today()
+    })));
+  const nxt = nextStage(l);
+  const counts = { ...(l.counts||{}) };
+  if (nxt !== 'out') counts[nxt] = {};                                                  // BR6
+  try{
+    await updateDoc(doc(fs,'lots',String(l.no)), {
+      ['locks.' + st]: { by: ME.name, uid: ME.uid, at: clock() },                        // BR9
+      stage: nxt, counts, shortfalls, updatedAt: serverTimestamp()
+    });
+    await logIt('Locked a stage', 'Lot ' + INW(l.no) + ' · ' + STAGE_NAME[st]);
+    closeSheet();
+    stamp(nxt === 'out' ? 'Lot complete' : STAGE_NAME[st] + ' locked',
+          nxt === 'out' ? `Lot ${INW(l.no)} is ready to dispatch` : `Lot ${INW(l.no)} moved to ${STAGE_NAME[nxt]}`,
+          () => go(ME.role === 'operator' ? 'home' : 'lot', { lot:l.no }));
+  }catch(e){ toast('Could not lock — ' + e.code, true); }
+}
+
+async function assignTo(no, did){
+  if (!can('driver.assign')){ toast('Only the owner can assign a driver', true); return; }
+  try{
+    await updateDoc(doc(fs,'lots',String(no)), {
+      delivery: { driverUid: did, driverName: driver(did).name, assignedBy: ME.name, receiver:'', at:'' },
+      updatedAt: serverTimestamp()
+    });
+    await logIt('Assigned a driver', 'Lot ' + INW(no) + ' to ' + driver(did).name);
+    closeSheet(); render(); toast('Assigned to ' + driver(did).name + ' for delivery');
+  }catch(e){ toast('Could not assign — ' + e.code, true); }
+}
+
+async function doDeliver(){
+  const l = DB.lots.find(x => x.no === S.lot);
+  try{
+    toast('Sending the photo…');
+    const shots = await uploadShots('deliveries/' + l.no, S.draft.shots);
+    await updateDoc(doc(fs,'lots',String(l.no)), {
+      delivery: { ...l.delivery, receiver: S.draft.receiver.trim(), at: clock(),
+                  pod: shots[0] || null },
+      updatedAt: serverTimestamp()
+    });
+    await logIt('Completed a delivery', 'Lot ' + INW(l.no) + ' to ' + S.draft.receiver.trim());
+    const name = S.draft.receiver.trim(); S.draft = null;
+    stamp('Delivery complete', `Lot ${INW(l.no)} received by ${name}`, () => go('home'));
+  }catch(e){ toast(e.message || ('Could not save — ' + e.code), true); }
+}
+
+async function addItem(){
+  if (!can('master.write')){ toast('Your role does not allow this', true); return; }
+  const code = ($('ni_c').value||'').trim().toUpperCase(), name = ($('ni_n').value||'').trim();
+  if (!code || !name){ toast('Enter a code and a name', true); return; }
+  if (DB.items.some(i => i.code === code)){ toast('That item code is already used', true); return; }
+  const seriesName = (DB.series.find(s => s.id === $('ni_s').value) || {}).name;
+  try{
+    await addDoc(collection(fs,'materials'), { s:$('ni_s').value, series:seriesName, code, name, shape:'sect' });
+    await logIt('Added a material item', code + ' ' + name);
+    closeSheet(); toast(name + ' added');
+  }catch(e){ toast('Could not save — ' + e.code, true); }
+}
+
+async function addParty(){
+  const n = ($('np_n').value||'').trim();
+  if (!n){ toast('Enter a name', true); return; }
+  if (DB.parties.some(p => p.name.toLowerCase() === n.toLowerCase())){ toast('That customer already exists', true); return; }
+  try{
+    await addDoc(collection(fs,'parties'), {
+      name:n, address:($('np_a').value||'').trim(), phone:($('np_p').value||'').trim(), active:true });
+    await logIt('Added a customer', n);
+    closeSheet(); toast(n + ' added');
+  }catch(e){ toast('Could not save — ' + e.code, true); }
+}
+
+const weakPin = p => !/^\d{4}$/.test(p) || /^(\d)\1{3}$/.test(p)
+  || ['1234','2345','3456','4567','5678','6789','0123'].includes(p);
+
+async function addDriver(){
+  const n = ($('nd_n').value||'').trim(), p = ($('nd_p').value||'').replace(/\s/g,''), pin = ($('nd_pin').value||'').trim();
+  if (!n){ toast('Enter a name', true); return; }
+  if (!/^\d{10}$/.test(p)){ toast('Mobile number must be 10 digits', true); return; }
+  if (DB.drivers.some(d => d.phone === p)){ toast('That number is already used', true); return; }
+  if (weakPin(pin)){ toast('Choose a stronger 4-digit PIN', true); return; }
+  try{
+    const cred = await createUserWithEmailAndPassword(seedAuth, driverEmail(p), driverPass(pin));
+    await setDoc(doc(fs,'users',cred.user.uid), {
+      name:n, role:'driver', phone:p, vehicle:($('nd_v').value||'').trim(), active:true });
+    await refreshDriverList();
+    await fbSignOut(seedAuth);
+    await logIt('Added a driver', n);
+    credCard(n, p, pin, 'pin');
+  }catch(e){ toast('Could not add — ' + (e.code||e.message), true); }
+}
+
+async function addUser(){
+  const n = ($('nu_n').value||'').trim(), u = ($('nu_u').value||'').trim().toLowerCase(), pw = $('nu_p').value||'';
+  if (!n || !u){ toast('Enter a name and username', true); return; }
+  if (pw.length < 8){ toast('Password must be at least 8 characters', true); return; }
+  try{
+    const cred = await createUserWithEmailAndPassword(seedAuth, u + '@cpc.local', pw);
+    await setDoc(doc(fs,'users',cred.user.uid), { name:n, role:$('nu_r').value, username:u, active:true });
+    await fbSignOut(seedAuth);
+    await logIt('Added a staff login', u + ' (' + $('nu_r').value + ')');
+    credCard(n, u, pw, 'password');
+  }catch(e){ toast('Could not add — ' + (e.code||e.message), true); }
+}
+
+/* A driver's PIN is their Firebase password, so only they can change it
+   while signed in. The owner instead issues a reset link by email. */
+function savePin(id){
+  toast('A driver changes his own PIN from his login. Ask him to sign in and use Change PIN.', true);
+  closeSheet();
+}
+async function refreshDriverList(){
+  const list = DB.drivers.map(d => ({ id:d.uid||d.id, uid:d.uid||d.id, name:d.name, phone:d.phone, vehicle:d.vehicle||'' }));
+  try{ await setDoc(doc(fs,'meta','drivers'), { list }); }catch(e){ console.warn('driver list:', e.code); }
+}
+
+function exportCsv(){
+  if (!can('export')){ toast('Only the owner can export', true); return; }
+  let csv = 'Inward,Customer,Vehicle,Challan,Shade,Wooden,Stage,Items,Pieces,Verified by,Driver,Received by\n';
+  DB.lots.forEach(l => { csv += [l.no, party(l.party).name, l.vehicle, l.challan,
+    l.shade + ' ' + shade(l.shade).name, l.wooden ? 'Yes':'No', STAGE_NAME[l.stage],
+    l.items.length, totalOf(l), l.verifiedBy,
+    l.delivery ? l.delivery.driverName : '', l.delivery ? l.delivery.receiver : '']
+    .map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',') + '\n'; });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' }));
+  a.download = 'cpc-inward-register-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  logIt('Exported the register'); toast('Downloaded');
+}
+
+/* ══ PHOTOS ═══════════════════════════════════════════════════════
+   The whole point of the system: the challan and the material are
+   photographed once, tied to the inward number, and never touch a
+   chat group again.
+
+   Every image is shrunk to roughly 150 KB before it is uploaded, so
+   about 60,000 photos fit inside the free 10 GB — two to three years
+   for a unit this size. */
+
+function pickFile(){
+  return new Promise(resolve => {
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*'; inp.capture = 'environment';
+    inp.onchange = () => resolve(inp.files && inp.files[0] ? inp.files[0] : null);
+    inp.click();
+  });
+}
+
+async function shrink(file, maxPx = 1400, targetKB = 150){
+  const img = await createImageBitmap(file);
+  let w = img.width, h = img.height;
+  if (Math.max(w,h) > maxPx){ const r = maxPx / Math.max(w,h); w = Math.round(w*r); h = Math.round(h*r); }
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  c.getContext('2d').drawImage(img, 0, 0, w, h);
+  let q = 0.82, blob = null;
+  for (let i = 0; i < 6; i++){
+    blob = await new Promise(r => c.toBlob(r, 'image/jpeg', q));
+    if (blob && blob.size / 1024 <= targetKB) break;
+    q -= 0.12;
+  }
+  return blob;
+}
+
+async function capturePhoto(kind){
+  const f = await pickFile();
+  if (!f) return;
+  toast('Preparing the photo…');
+  try{
+    const blob = await shrink(f);
+    S.draft = S.draft || {};
+    S.draft.shots = S.draft.shots || {};
+    S.draft.shots[kind] = { blob, url: URL.createObjectURL(blob), kb: Math.round(blob.size/1024) };
+    render();
+    toast(kind + ' photo ready · ' + S.draft.shots[kind].kb + ' KB');
+  }catch(e){ toast('Could not read that photo', true); }
+}
+
+const shotCount = d => d && d.shots ? Object.keys(d.shots).length : 0;
+
+/* Inward numbers read as three digits — 001, 047, 552 — as on the
+   client's paper register. The stored value stays a plain number so
+   it can still be compared and stepped up. */
+const INW = n => String(n ?? '').padStart(3, '0');
+
+async function uploadShots(basePath, shots){
+  const out = [];
+  for (const kind of Object.keys(shots || {})){
+    const s = shots[kind];
+    if (!s || !s.blob) continue;
+    const path = basePath + '/' + kind + '.jpg';
+    try{
+      const r = sref(storage, path);
+      await uploadBytes(r, s.blob, { contentType: 'image/jpeg' });
+      out.push({ kind, path, url: await getDownloadURL(r), kb: s.kb });
+    }catch(e){
+      /* A photo that does not arrive is the whole point of the system
+         failing, so say so loudly rather than saving an empty record. */
+      const why = (e.code === 'storage/unauthorized')
+        ? 'Firebase Storage is refusing the upload. The owner must switch Storage on and publish storage.rules.'
+        : (e.code === 'storage/unknown' || /retry-limit|network/i.test(e.code||''))
+          ? 'The photo could not be sent — check the signal and try again.'
+          : 'Photo upload failed (' + (e.code || e.message) + ')';
+      throw new Error(why);
+    }
+  }
+  return out;
+}
+
+/* A tile that captures, then shows what was captured. */
+function shotTile(kind, label){
+  const s = S.draft && S.draft.shots ? S.draft.shots[kind] : null;
+  return s
+    ? `<button class="shot set" style="padding:0;overflow:hidden;position:relative" onclick="capturePhoto('${kind}')">
+        <img src="${s.url}" style="width:100%;height:100%;object-fit:cover">
+        <span style="position:absolute;left:0;right:0;bottom:0;background:rgba(11,31,58,.72);color:#fff;
+          font-size:9.5px;padding:4px 5px;font-family:var(--mono)">${label} · ${s.kb} KB</span></button>`
+    : `<button class="shot" onclick="capturePhoto('${kind}')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>${label}</button>`;
+}
+
+/* Stored photos, on the job card and the verification screen. */
+function shotStrip(photos){
+  if (typeof photos === 'number')
+    return '<div class="note">This record was made before photos were switched on.</div>';
+  if (!Array.isArray(photos) || !photos.length)
+    return '<div class="note">No photos on this record.</div>';
+  return `<div class="shots">${photos.map(p => `<button class="shot set" style="padding:0;overflow:hidden;position:relative"
+    onclick="openPhoto('${p.url}','${esc(p.kind)}')">
+    <img src="${p.url}" style="width:100%;height:100%;object-fit:cover">
+    <span style="position:absolute;left:0;right:0;bottom:0;background:rgba(11,31,58,.72);color:#fff;
+      font-size:9.5px;padding:4px 5px;font-family:var(--mono)">${esc(p.kind)}</span></button>`).join('')}</div>`;
+}
+function openPhoto(url, kind){
+  openSheet(`<div class="eyebrow">${esc(kind)}</div>
+   <img src="${url}" style="width:100%;border-radius:12px;margin-top:8px">
+   <a class="act ghost" style="display:block;text-decoration:none" href="${url}" target="_blank" rel="noopener">Open full size</a>`);
+}
+
+/* ══ SHARED PIECES ══ */
+function header(){const m=me();
+ return `<header><div class="hrow">
+  <div class="mark">Classic <em>/ CPC</em></div><div class="hgap"></div>
+  <button class="who" onclick="go('settings')"><span class="av">${esc(m.name[0])}</span>
+   <span><b>${esc(m.name)}</b><s>${esc(m.role)} · settings</s></span></button>
+  <button class="ghost-sm" onclick="signOut()">Sign out</button></div></header>`;
+}
+function lotRow(l,onclick){
+ const s=shade(l.shade),d=doneOf(l),t=totalOf(l);
+ const segs=stagesOf(l).map(st=>`<i class="${l.locks[st]?'d':l.stage===st?'a':''}"></i>`).join('');
+ return `<button class="row" onclick="${onclick||`go('lot',{lot:${l.no}})`}">
+  <span class="sd" style="background:${s.hex}"></span><span class="no">${INW(l.no)}</span>
+  <span class="mid"><span class="t1">${esc(partyName(l))}</span>
+  <span class="t2">${STAGE_NAME[l.stage]} · ${d}/${t} pcs · ${l.shade} ${esc(s.name)}</span>
+  <span class="seg">${segs}</span></span><span class="chev">›</span></button>`;
+}
+
+/* ══ OWNER DASHBOARD ══ */
+function vOwnerHome(){
+ const at=k=>DB.lots.filter(l=>l.stage===k).length;
+ const gate=DB.arrivals.filter(a=>a.status==='pending').length;
+ const delivered=DB.lots.filter(l=>l.delivery&&l.delivery.receiver).length;
+ const awaiting=DB.lots.filter(l=>l.stage==='out'&&(!l.delivery||!l.delivery.receiver)).length;
+ return `<div class="eyebrow">Owner dashboard</div><h1>What is where,<br>right now</h1>
+ ${gate?`<button class="stat saf" style="margin-top:14px" onclick="go('gate')"><span class="rail"></span>
+   <span class="n">${gate}</span><span class="l">Loads at the gate awaiting verification</span></button>`:''}
+ <div class="grid2 stag">
+  <button class="stat" onclick="go('lots')"><span class="rail"></span><span class="n">${at('wash')}</span><span class="l">Washing &amp; cleaning</span></button>
+  <button class="stat" onclick="go('lots')"><span class="rail"></span><span class="n">${at('powder')}</span><span class="l">Powder coating</span></button>
+  <button class="stat" onclick="go('lots')"><span class="rail"></span><span class="n">${at('wood')}</span><span class="l">Wooden coating</span></button>
+  <button class="stat gr" onclick="go('reports')"><span class="rail"></span><span class="n">${awaiting}</span><span class="l">Ready to dispatch</span></button>
+ </div>
+ <div class="hr"></div>
+ <div class="eyebrow">On the floor today</div>
+ <div class="rows stag">${DB.lots.filter(l=>l.stage!=='out').map(l=>lotRow(l)).join('')||'<div class="empty">Nothing in production.</div>'}</div>
+ <div class="hr"></div>
+ <div class="grid2">
+  <button class="stat" onclick="go('colours')"><span class="rail"></span><span class="n">${DB.shades.length}</span><span class="l">Shades on the colour board</span></button>
+  <button class="stat" onclick="go('reports')"><span class="rail"></span><span class="n">${delivered}</span><span class="l">Delivered and closed</span></button>
+ </div>
+ <div class="hr"></div>
+ <div class="eyebrow">Your team</div>
+ <div class="pn" style="padding:14px">
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+   <button class="ghost-sm" onclick="addUserSheet('supervisor')">+ Supervisor</button>
+   <button class="ghost-sm" onclick="addUserSheet('operator')">+ Operator</button>
+   <button class="ghost-sm" onclick="addUserSheet('viewer')">+ Viewer</button>
+   <button class="ghost-sm" onclick="addDriverSheet()">+ Driver</button>
+  </div>
+  <div style="font-size:12px;color:var(--muted);margin-top:11px;line-height:1.55">
+   ${DB.users.length} staff logins &middot; ${DB.drivers.length} drivers.
+   Manage them all under <b>People</b>.</div>
+ </div>
+ <div class="eyebrow" style="margin-top:20px">Collections</div>
+ <button class="act ghost" onclick="pickupSheet()">+ Send a driver to collect</button>
+ <div class="note">Give a driver a customer to collect from. It appears on his phone straight away.</div>`;
+}
+
+/* ══ SUPERVISOR DASHBOARD ══ */
+function vSupHome(){
+ const gate=DB.arrivals.filter(a=>a.status==='pending');
+ const mine=DB.lots.filter(l=>l.stage!=='out');
+ const short=mine.filter(l=>doneOf(l)>0&&doneOf(l)<totalOf(l)).length;
+ return `<div class="eyebrow">Supervisor dashboard</div><h1>Verify, count,<br>and lock</h1>
+ <p class="sub">Customer names are hidden from your login. Work is identified by the inward number.</p>
+ <div class="grid2 stag">
+  <button class="stat saf" onclick="go('gate')"><span class="rail"></span><span class="n">${gate.length}</span><span class="l">Loads at the gate to verify</span></button>
+  <button class="stat" onclick="go('lots')"><span class="rail"></span><span class="n">${mine.length}</span><span class="l">Lots in production</span></button>
+  <button class="stat" onclick="go('lots')"><span class="rail"></span><span class="n">${short}</span><span class="l">Part counted, not yet locked</span></button>
+  <button class="stat" onclick="go('colours')"><span class="rail"></span><span class="n">${DB.shades.filter(s=>DB.lots.some(l=>l.shade===s.code&&l.stage!=='out')).length}</span><span class="l">Shades with work waiting</span></button>
+ </div>
+ ${gate.length?`<div class="hr"></div><div class="eyebrow">Waiting at the gate</div>
+  <div class="rows stag">${gate.map(arrivalRow).join('')}</div>`:''}
+ <div class="hr"></div><div class="eyebrow">Lots in production</div>
+ <div class="rows stag">${mine.map(l=>lotRow(l)).join('')||'<div class="empty">Nothing in production.</div>'}</div>`;
+}
+
+/* ══ OPERATOR DASHBOARD ══ */
+function vOpHome(){
+ const active=DB.lots.filter(l=>l.stage!=='out');
+ return `<div class="eyebrow">Operator</div><h1>Count the<br>pieces</h1>
+ <p class="sub">Tap a lot to open its tally screen. You cannot see customer names and you cannot lock a stage — a supervisor does that.</p>
+ <div class="rows stag" style="margin-top:16px">${active.map(l=>{
+   const d=doneOf(l),t=totalOf(l),s=shade(l.shade);
+   return `<button class="row" onclick="go('tally',{lot:${l.no},stage:'${l.stage}'})">
+    <span class="sd" style="background:${s.hex}"></span><span class="no">${INW(l.no)}</span>
+    <span class="mid"><span class="t1">${STAGE_NAME[l.stage]}</span>
+    <span class="t2">${d} of ${t} pieces done · shade ${l.shade}</span>
+    <span class="seg">${stagesOf(l).map(st=>`<i class="${l.locks[st]?'d':l.stage===st?'a':''}"></i>`).join('')}</span></span>
+    <span class="chev">›</span></button>`}).join('')||'<div class="empty">Nothing to count right now.</div>'}</div>
+ <div class="callout">Your screen never shows a customer name. Every lot is identified by its inward number only.</div>`;
+}
+
+/* ══ DRIVER DASHBOARD ══ */
+function vDrvHome(){
+ const m=me();
+ const picks=DB.pickups.filter(p=>p.driver===m.id);
+ const drops=DB.lots.filter(l=>l.delivery&&l.delivery.driver===m.id&&l.stage==='out');
+ const open=picks.filter(p=>p.status==='open').length+drops.filter(l=>!l.delivery.receiver).length;
+ return `<div class="eyebrow">My trips</div><h1>Good ${new Date().getHours()<12?'morning':'afternoon'},<br>${esc(m.name.split(' ')[0])}</h1>
+ <p class="sub">${m.vehicle||''} · ${open} open ${open===1?'trip':'trips'} today</p>
+ <div class="rows stag" style="margin-top:16px">
+ ${picks.map(p=>`<button class="row" style="border-left:4px solid var(--saf)"
+    onclick="${p.status==='open'?`go('collect',{trip:'${p.id}'})`:`toast('Already collected — waiting for the plant to verify')`}">
+   <span class="mid"><span class="pill ${p.status==='open'?'saf':'gr'}">${p.status==='open'?'Collection':'Collected'}</span>
+   <span class="t1" style="margin-top:8px">${esc(party(p.party).name)}</span>
+   <span class="t2">${esc(party(p.party).address)}</span>
+   ${p.note?`<span class="t2">${esc(p.note)}</span>`:''}</span><span class="chev">›</span></button>`).join('')}
+ ${drops.map(l=>`<button class="row" style="border-left:4px solid var(--blue)"
+    onclick="${l.delivery.receiver?`toast('Delivered to ${esc(l.delivery.receiver)}')`:`go('deliver',{lot:${l.no}})`}">
+   <span class="mid"><span class="pill ${l.delivery.receiver?'gr':''}">${l.delivery.receiver?'Delivered':'Delivery'}</span>
+   <span class="t1" style="margin-top:8px">Lot ${l.no} · ${esc(partyName(l))}</span>
+   <span class="t2">${l.items.length} items · ${totalOf(l)} pieces · shade ${l.shade}</span>
+   ${l.delivery.receiver?`<span class="t2">Received by ${esc(l.delivery.receiver)} at ${esc(l.delivery.at)}</span>`:''}</span>
+   <span class="chev">›</span></button>`).join('')}
+ ${!picks.length&&!drops.length?'<div class="empty">No trips assigned to you right now.</div>':''}
+ </div>
+ <div class="callout">You see a customer name and address only for the trips assigned to you, and only while the trip is open. Nothing about the shop floor is visible from this login.</div>`;
+}
+
+/* ══ DRIVER · RECORD COLLECTION ══ */
+function vCollect(){
+ const p=DB.pickups.find(x=>x.id===S.trip);
+ S.draft=S.draft||{vehicle:me().vehicle||'',challan:'',shots:{},note:''};
+ const d=S.draft;
+ return `<button class="back" onclick="go('home')">‹ My trips</button>
+ <div class="eyebrow">Collection</div><h1 style="font-size:25px">${esc(party(p.party).name)}</h1>
+ <p class="sub">${esc(party(p.party).address)}</p>
+ <div class="fld" style="margin-top:18px"><label>Vehicle number</label>
+  <input value="${esc(d.vehicle)}" oninput="S.draft.vehicle=this.value"></div>
+ <div class="fld"><label>Challan number given by the party</label>
+  <input value="${esc(d.challan)}" placeholder="CH-0000" oninput="S.draft.challan=this.value"></div>
+ <div class="fld"><label>Photos — tap to take them at site</label>
+  <div class="shots">${shotTile('challan','Challan')}${shotTile('material','Material')}${shotTile('vehicle','Vehicle')}</div>
+  <div class="note">Take the challan and the material at least. Each photo is shrunk before sending, so it works on a weak signal.</div></div>
+ <div class="fld"><label>Note for the plant <span style="font-weight:400;color:var(--faint)">optional</span></label>
+  <input value="${esc(d.note)}" placeholder="e.g. three bundles, one shutter loose" oninput="S.draft.note=this.value"></div>
+ <button class="act" ${shotCount(d)>=2&&d.vehicle.trim().length>5?'':'disabled'} onclick="doCollect()">
+  ${shotCount(d)>=2&&d.vehicle.trim().length>5?'Record collection':'Add vehicle number and at least 2 photos'}</button>
+ <div class="callout"><b>The inward number is not created here.</b> The load is counted and verified at the plant, and a supervisor generates the number once it tallies.</div>`;
+}
+
+/* ══ DRIVER · DELIVERY ══ */
+function vDeliver(){
+ const l=DB.lots.find(x=>x.no===S.lot);
+ S.draft=S.draft||{shots:{},receiver:''};
+ return `<button class="back" onclick="go('home')">‹ My trips</button>
+ <div class="eyebrow">Delivery</div><h1>Lot ${INW(l.no)}</h1>
+ <p class="sub">${esc(partyName(l))} · ${esc(party(l.party).address)}</p>
+ <div class="pn"><div class="kv"><dt>Items</dt><dd>${l.items.length} · ${totalOf(l)} pieces</dd></div>
+  <div class="kv"><dt>Shade</dt><dd>${l.shade} ${esc(shade(l.shade).name)}</dd></div>
+  <div class="kv"><dt>Challan</dt><dd style="font-family:var(--mono);font-weight:400">${esc(l.challan)}</dd></div></div>
+ <div class="fld" style="margin-top:16px"><label>Proof of delivery photo</label>
+  <div class="shots" style="grid-template-columns:1fr">${shotTile('pod','Photo at delivery')}</div></div>
+ <div class="fld"><label>Received by</label>
+  <input value="${esc(S.draft.receiver)}" placeholder="Name of the person receiving" oninput="S.draft.receiver=this.value"></div>
+ <button class="act" ${shotCount(S.draft)&&S.draft.receiver.trim()?'':'disabled'} onclick="doDeliver()">
+  ${shotCount(S.draft)&&S.draft.receiver.trim()?'Complete delivery':'Add photo and receiver name'}</button>`;
+}
+
+/* ══ GATE QUEUE + VERIFICATION (BR1) ══ */
+function arrivalRow(a){
+ const ph = Array.isArray(a.photos) ? a.photos : [];
+ return `<div class="row" style="border-left:4px solid var(--saf);display:block">
+  <button style="display:flex;gap:12px;width:100%;align-items:center" onclick="go('verify',{arr:'${a.id}'})">
+   <span class="mid"><span class="pill saf">Awaiting count</span>
+   <span class="t1" style="margin-top:8px">${can('party.view')?esc(party(a.party).name):'Collected load'}</span>
+   <span class="t2">${esc(driver(a.driverUid||a.driver).name)} · ${esc(a.vehicle)} · challan ${esc(a.challan||'—')} · ${esc(a.at)}</span>
+   ${a.note?`<span class="t2">Driver note: ${esc(a.note)}</span>`:''}</span><span class="chev">›</span></button>
+  ${ph.length ? `<div style="display:flex;gap:6px;margin-top:10px">${ph.map(p=>`
+     <button style="width:58px;height:58px;border-radius:9px;overflow:hidden;border:1px solid var(--line);padding:0"
+      onclick="event.stopPropagation();openPhoto('${p.url}','${esc(p.kind)}')">
+      <img src="${p.url}" style="width:100%;height:100%;object-fit:cover"></button>`).join('')}
+     <span style="align-self:center;font-size:11.5px;color:var(--muted);margin-left:4px">${ph.length} photo${ph.length>1?'s':''} from the driver</span></div>`
+   : `<div class="note" style="margin-top:8px">No photos on this load.</div>`}
+ </div>`;
+}
+function vGate(){
+ const q=DB.arrivals.filter(a=>a.status==='pending');
+ return `<div class="eyebrow">Awaiting verification</div><h1>Loads at<br>the gate</h1>
+ <p class="sub">Material collected by your drivers, not yet counted. An inward number is created only after a supervisor verifies the load.</p>
+ <div class="rows stag" style="margin-top:16px">${q.map(arrivalRow).join('')||'<div class="empty">No loads waiting. Everything collected has been counted in.</div>'}</div>
+ ${can('inward.create')?`<button class="act ghost" onclick="go('walkin')">+ Walk-in material (no driver)</button>`:''}`;
+}
+function vVerify(){
+ const a=DB.arrivals.find(x=>x.id===S.arr);
+ S.draft=S.draft||{items:[],shade:'506',wooden:0};
+ const d=S.draft;
+ return `<button class="back" onclick="S.draft=null;go('gate')">‹ Loads at the gate</button>
+ <div class="eyebrow">Verify the load</div>
+ <h1 style="font-size:25px">${can('party.view')?esc(party(a.party).name):'Collected load'}</h1>
+ <p class="sub">${can('party.view')?esc(party(a.party).address):'Party masked for your role — verify against the challan and the photos.'}</p>
+ <div class="pn">
+  <div class="kv"><dt>Collected by</dt><dd>${esc(driver(a.driver).name)}</dd></div>
+  <div class="kv"><dt>Vehicle</dt><dd style="font-family:var(--mono);font-weight:400">${esc(a.vehicle)}</dd></div>
+  <div class="kv"><dt>Party challan</dt><dd style="font-family:var(--mono);font-weight:400">${esc(a.challan||'—')}</dd></div>
+  <div class="kv"><dt>Recorded at</dt><dd>${esc(a.at)}</dd></div>
+  ${a.note?`<div class="kv"><dt>Driver note</dt><dd style="font-weight:400">${esc(a.note)}</dd></div>`:''}</div>
+ <div style="margin-top:12px">${shotStrip(a.photos)}</div>
+ <div class="note">Photos taken by the driver at the customer's premises. Tap one to see it full size, and check the material against it as you count.</div>
+ <div class="hr"></div>
+ <div class="eyebrow">Count the material in</div>
+ <div class="ilist">${d.items.map((i,n)=>`<div class="itm"><span class="in">${esc(i.name)}
+  <span style="display:block;font-size:11.5px;color:var(--muted);font-weight:400">${esc(i.len)}</span></span>
+  <span class="iq">${i.qty} pcs</span><button class="rm" onclick="S.draft.items.splice(${n},1);render()">×</button></div>`).join('')}</div>
+ <button class="act ghost" style="margin-top:0" onclick="pickItem()">+ Add from material master</button>
+ <div class="fld" style="margin-top:18px"><label>Shade confirmed with the party</label>
+  <div class="shades" style="margin-top:0">${DB.shades.slice(0,6).map(s=>`<button class="sh ${d.shade===s.code?'on':''}"
+   onclick="S.draft.shade='${s.code}';render()"><span class="sw" style="background:${s.hex};height:38px"></span>
+   <span class="lb" style="padding:7px 9px 9px"><span class="cd">${s.code}</span></span></button>`).join('')}</div></div>
+ <button class="tog ${d.wooden?'on':''}" onclick="S.draft.wooden=S.draft.wooden?0:1;render()"><i></i><span>Wooden coating required</span></button>
+ <button class="act" ${d.items.length?'':'disabled'} onclick="verifyLoad()">
+  ${d.items.length?'Confirm load and generate inward number':'Count at least one item'}</button>
+ <div class="callout b">The inward number is created at this moment, from the count you have just confirmed — not from what was recorded in the field.</div>`;
+}
+function pickItem(){
+ openSheet(`<div class="eyebrow">Material master</div><h2>Add an item</h2>
+ <p class="sub">Around 70% of your sections are already in the library.</p>
+ <div class="mlist" style="max-height:44vh;overflow-y:auto">${DB.items.map(i=>`<button class="mrow" onclick="pickQty('${i.id}')">
+  <span class="mk">${esc(i.code)}</span><span><b>${esc(i.name)}</b>
+  <span style="display:block;font-size:11.5px;color:var(--muted)">${esc((DB.series.find(s=>s.id===i.s)||{}).name)} series</span></span>
+  <span class="chev" style="margin-left:auto">›</span></button>`).join('')}</div>`);
+}
+function pickQty(id){
+ const it=DB.items.find(x=>x.id===id);window._q=5;window._ft=16;window._in=0;window._it=it;
+ openSheet(`<div class="eyebrow">${esc(it.code)}</div><h2>${esc(it.name)}</h2>
+ <div class="eyebrow" style="margin-top:18px">Length — feet and inches</div>
+ <div class="chips" id="ftch">${FEET.map(f=>`<button class="chip ${f===16?'on':''}" onclick="setFt(${f})">${f} ft</button>`).join('')}
+  <button class="chip" onclick="setFt(0)">std</button></div>
+ <div class="chips" id="inch" style="margin-top:8px">${INCHES.map(n=>`<button class="chip ${n===0?'on':''}" onclick="setIn(${n})">${n} in</button>`).join('')}</div>
+ <div class="note" id="lenPrev">Length: 16 ft</div>
+ <div class="eyebrow" style="margin-top:18px">Pieces counted in</div>
+ <div class="stp" style="margin-top:6px;width:fit-content"><button onclick="qStep(-1)">−</button><b id="qv">5</b><button onclick="qStep(1)">+</button></div>
+ <button class="act" onclick="addCounted()">Add to the count</button>`);
+}
+function lenLabel(){return window._ft===0?'std':window._ft+' ft'+(window._in?' '+window._in+' in':'');}
+function setFt(f){window._ft=f;document.querySelectorAll('#ftch .chip').forEach(c=>c.classList.toggle('on',c.textContent===(f===0?'std':f+' ft')));
+ $('lenPrev').textContent='Length: '+lenLabel();}
+function setIn(n){window._in=n;document.querySelectorAll('#inch .chip').forEach(c=>c.classList.toggle('on',c.textContent===n+' in'));
+ $('lenPrev').textContent='Length: '+lenLabel();}
+function qStep(n){window._q=Math.max(1,window._q+n);$('qv').textContent=window._q;}
+function addCounted(){
+ const it=window._it;
+ S.draft.items.push({id:rid(),name:it.name,shape:it.shape,len:lenLabel(),qty:window._q});
+ closeSheet();render();toast(`${it.name} — ${window._q} pieces added`);
+}
+/* BR1 + BR2 — the only place an inward number is created */
+function vCreated(){
+ const l=DB.lots.find(x=>x.no===S.lot);
+ return `<div class="hero"><div class="sub" style="margin:0">Inward created</div><div class="big">${INW(l.no)}</div>
+ <div class="cap">Verified and counted in by ${esc(l.verifiedBy)}<br>
+ ${l.items.length} items · ${totalOf(l)} pieces · shade ${l.shade}${l.wooden?' · wooden coating':''}<br>
+ This number now carries the lot to dispatch</div></div>
+ <button class="act sf" onclick="go('tally',{lot:${l.no},stage:'wash'})">Start washing</button>
+ <button class="act ghost" onclick="go('home')">Back to dashboard</button>`;
+}
+/* walk-in material — arrives without a driver */
+function vWalkin(){
+ S.draft=S.draft||{party:DB.parties[0].id,vehicle:'',challan:'',shots:{}};
+ const d=S.draft;
+ return `<button class="back" onclick="S.draft=null;go('gate')">‹ Back</button>
+ <div class="eyebrow">Walk-in material</div><h1>Gate entry</h1>
+ <p class="sub">For material the customer delivers themselves, with no driver collection.</p>
+ <div class="fld" style="margin-top:18px"><label>Customer</label>
+  <select onchange="S.draft.party=this.value">${DB.parties.map(p=>`<option value="${p.id}" ${d.party===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select></div>
+ <div class="fld"><label>Vehicle number</label><input value="${esc(d.vehicle)}" oninput="S.draft.vehicle=this.value"></div>
+ <div class="fld"><label>Party challan number</label><input value="${esc(d.challan)}" oninput="S.draft.challan=this.value"></div>
+ <div class="fld"><label>Photos</label>
+  <div class="shots">${shotTile('challan','Challan')}${shotTile('material','Material')}${shotTile('vehicle','Vehicle')}</div></div>
+ <button class="act" ${d.vehicle.trim().length>5?'':'disabled'} onclick="doWalkin()">Add to the gate queue</button>`;
+}
+
+/* ══ LOTS + JOB CARD ══ */
+function vLots(){
+ return `<div class="eyebrow">Inward register</div><h1>All lots</h1>
+ <p class="sub">${can('party.view')?'You are the owner, so customer names are visible.':'Party names are masked for your role. Only the number identifies the work.'}</p>
+ <div class="rows stag" style="margin-top:16px">${DB.lots.map(l=>lotRow(l)).join('')}</div>`;
+}
+function vLot(){
+ const l=DB.lots.find(x=>x.no===S.lot),s=shade(l.shade);
+ const d=doneOf(l),t=totalOf(l);
+ return `<button class="back" onclick="go('lots')">‹ Back</button>
+ <div class="eyebrow">Inward number</div>
+ <div style="font-family:var(--disp);font-weight:900;font-stretch:118%;font-size:48px;line-height:1;letter-spacing:-.045em;color:var(--blue)">${INW(l.no)}</div>
+ <div class="pn">
+  <div class="kv"><dt>Party</dt><dd>${seeParty(l)?esc(party(l.party).name):'<span class="masked">Masked</span>'}</dd></div>
+  <div class="kv"><dt>Vehicle</dt><dd style="font-family:var(--mono);font-weight:400">${esc(l.vehicle)}</dd></div>
+  <div class="kv"><dt>Challan</dt><dd style="font-family:var(--mono);font-weight:400">${esc(l.challan)}</dd></div>
+  <div class="kv"><dt>Shade</dt><dd><span class="sd" style="background:${s.hex};display:inline-block;vertical-align:-8px;margin-right:8px"></span>${l.shade} ${esc(s.name)}</dd></div>
+  <div class="kv"><dt>Wooden coating</dt><dd>${l.wooden?'Yes':'No'}</dd></div>
+  <div class="kv"><dt>Verified by</dt><dd>${esc(l.verifiedBy)}</dd></div></div>
+ <div class="eyebrow" style="margin-top:16px">Photos from the gate</div>
+ ${shotStrip(l.photos)}
+ ${l.delivery && l.delivery.pod ? `<div class="eyebrow" style="margin-top:16px">Proof of delivery</div>${shotStrip([l.delivery.pod])}` : ''}
+ <div class="hr"></div><div class="eyebrow">Items · ${d} of ${t} pieces this stage</div>
+ <table class="tb"><tr><th>Item</th><th>Length</th><th style="text-align:right">Qty</th></tr>
+ ${l.items.map(i=>`<tr><td style="font-weight:600">${esc(i.name)}</td><td class="m stl">${esc(i.len)}</td>
+  <td class="m" style="text-align:right">${countsFor(l)[i.id]||0}/${i.qty}</td></tr>`).join('')}</table>
+ ${l.shortfalls.length?`<div class="hr"></div><div class="eyebrow">Shortfalls recorded</div>
+  <table class="tb"><tr><th>Stage</th><th>Item</th><th>Reason</th><th style="text-align:right">Short</th></tr>
+  ${l.shortfalls.map(f=>`<tr><td class="stl">${STAGE_NAME[f.stage]}</td><td>${esc(f.item)}</td>
+   <td class="stl">${esc(f.reason)}</td><td class="m cop" style="text-align:right">${f.qty}</td></tr>`).join('')}</table>`:''}
+ <div class="hr"></div><div class="eyebrow">Stage timeline</div>
+ <div class="tl">${stagesOf(l).map(st=>{const lk=l.locks[st];const cls=lk?'d':l.stage===st?'a':'x';
+  return `<div class="st ${cls}"><span class="bulb"></span><span><span class="nmm">${STAGE_NAME[st]}</span>
+  <span class="dt">${lk?`Locked · ${esc(lk.by)} · ${esc(lk.at)}`:l.stage===st?'In progress':'Waiting'}</span></span></div>`}).join('')}
+  <div class="st ${l.stage==='out'?'d':'x'}"><span class="bulb"></span><span><span class="nmm">Ready to dispatch</span>
+  <span class="dt">${l.stage==='out'?(l.delivery&&l.delivery.receiver?'Delivered to '+esc(l.delivery.receiver)+' at '+esc(l.delivery.at):l.delivery?'Assigned to '+esc(driver(l.delivery.driver).name):'Awaiting a driver'):'Waiting'}</span></span></div></div>
+ ${l.stage!=='out'
+  ?`<button class="act sf" onclick="go('tally',{lot:${l.no},stage:'${l.stage}'})">Open tally screen — ${STAGE_NAME[l.stage]}</button>`
+  :l.delivery&&l.delivery.receiver
+   ?`<button class="act" disabled>Delivered · received by ${esc(l.delivery.receiver)}</button>`
+   :can('driver.assign')
+    ?`<button class="act ${l.delivery?'ghost':'sf'}" onclick="assignSheet(${l.no})">${l.delivery?'Assigned to '+esc(driver(l.delivery.driver).name)+' — change':'Assign a driver for delivery'}</button>`
+    :`<button class="act" disabled>${l.delivery?'Assigned to '+esc(driver(l.delivery.driver).name):'Awaiting the owner to assign a driver'}</button>`}`;
+}
+
+/* ══ TALLY (BR6) ══ */
+function vTally(){
+ const l=DB.lots.find(x=>x.no===S.lot);
+ if(l.stage==='out')return `<div class="empty">This lot is finished.</div><button class="act ghost" onclick="go('home')">Back</button>`;
+ const st=l.stage,c=l.counts[st]||(l.counts[st]={});
+ const d=doneOf(l),t=totalOf(l),full=d===t,s=shade(l.shade);
+ return `<button class="back" onclick="go(me().role==='operator'?'home':'lot',{lot:${l.no}})">‹ Back</button>
+ <div class="kbar"><span class="kn">${INW(l.no)}</span><span class="ks">${STAGE_NAME[st]}</span>
+  <span class="sd" style="background:${s.hex};width:22px;height:22px"></span><span class="ks">${l.shade}</span>
+  <span class="kc ${full?'ok':''}">${d} / ${t} done</span>
+  <span class="prog"><i class="${full?'ok':''}" style="width:${t?d/t*100:0}%"></i></span></div>
+ <div class="tiles">${l.items.map((i,n)=>{const done=c[i.id]||0;const cls=done>=i.qty?'full':done>0?'short':'';
+  return `<button class="tile ${cls}" onclick="bump('${i.id}',1)">
+   <span class="lvl" style="height:${i.qty?done/i.qty*100:0}%"></span>
+   ${done>0?`<span class="minus" onclick="event.stopPropagation();bump('${i.id}',-1)">−</span>`:''}
+   <span class="art"><span class="ph">PHOTO</span>${SHAPES[i.shape]||SHAPES.sect}</span>
+   <span class="meta"><span class="nm">${esc(i.name)} · ${esc(i.len)}</span>
+   <span class="ct ${S.bumped===i.id?'pop':''}">${done}<s>/${i.qty}</s></span></span>
+   <span class="badge">${done>=i.qty?'done':(i.qty-done)+' missing'}</span></button>`}).join('')}</div>
+ <div class="note">Tap a tile as each piece is finished. The tile fills as the count rises — press − to correct.<br>
+  <b style="color:var(--blue)">No party name. The operator sees the number and the count, nothing else.</b></div>
+ ${can('stage.lock')
+  ?`<button class="act" onclick="lockSheet()">Tally &amp; lock stage</button>`
+  :`<button class="act" disabled onclick="toast('Only a supervisor can lock a stage',true)">Tally &amp; lock — supervisor only</button>`}`;
+}
+
+/* ══ LOCK (BR4, BR5, BR7, BR9) ══ */
+function lockSheet(){
+ const l=DB.lots.find(x=>x.no===S.lot),c=countsFor(l);
+ const short=l.items.filter(i=>(c[i.id]||0)<i.qty);
+ const missing=short.reduce((s,i)=>s+(i.qty-(c[i.id]||0)),0);
+ openSheet(`<div class="eyebrow">${STAGE_NAME[l.stage]} · lot ${INW(l.no)}</div>
+ <h2>${short.length?'Short by '+missing+' pieces':'Full lot tallied'}</h2>
+ ${short.length?`<div style="margin-top:10px">${short.map(i=>`<div class="miss"><span style="font-weight:600">${esc(i.name)} · ${esc(i.len)}</span>
+   <b>${i.qty-(c[i.id]||0)} missing</b></div>`).join('')}</div>
+  <div class="eyebrow" style="margin-top:18px">Reason — required</div>
+  <div class="chips">${REASONS.map(r=>`<button class="chip ${S.reason===r?'on':''}" onclick="S.reason='${r}';lockSheet()">${r}</button>`).join('')}</div>`
+  :`<p class="sub">Every piece is accounted for. Locking moves this lot to the next stage.</p>`}
+ <button class="act" onclick="doLock()">Lock ${STAGE_NAME[l.stage]}</button>
+ <button class="act ghost" onclick="closeSheet()">Keep working</button>`);
+}
+
+/* ══ COLOUR BATCH BOARD ══ */
+function vColours(){
+ const pend=c=>DB.lots.filter(l=>l.shade===c&&l.stage!=='out').length;
+ return `<div class="eyebrow">Colour batch board</div><h1>One shade,<br>one pass</h1>
+ <p class="sub">Changing colour is the slowest thing on the line. Pick a shade to see every lot waiting on it, across all customers.</p>
+ <div class="shades stag">${DB.shades.map(s=>{const n=pend(s.code);
+  return `<button class="sh" onclick="${n?`go('batch',{shade:'${s.code}'})`:`toast('No lots pending in ${s.code} ${s.name}')`}">
+   <span class="sw" style="background:${s.hex}"><span class="cnt ${n?'':'z'}">${n}</span></span>
+   <span class="lb"><span class="cd">${s.code}</span><span class="nmz">${esc(s.name)}</span></span></button>`}).join('')}</div>
+ <div class="note">The number on each chip is how many lots are waiting in that shade.</div>`;
+}
+function vBatch(){
+ const s=shade(S.shade),L=DB.lots.filter(l=>l.shade===S.shade&&l.stage!=='out');
+ return `<button class="back" onclick="go('colours')">‹ Colour board</button>
+ <div style="display:flex;align-items:center;gap:16px;margin-top:6px">
+  <span style="width:60px;height:60px;border-radius:16px;background:${s.hex};flex:none;box-shadow:var(--sh2)"></span>
+  <span><h1 style="font-size:27px">${esc(s.name)} ${s.code}</h1>
+  <span class="sub" style="display:block;margin-top:4px">${L.length} lots waiting on this shade</span></span></div>
+ <div class="rows stag" style="margin-top:18px">${L.map(l=>lotRow(l,`go('tally',{lot:${l.no},stage:'${l.stage}'})`)).join('')}</div>
+ <div class="callout">One powder change instead of ${L.length}. Run every lot on this list in a single pass.</div>`;
+}
+
+/* ══ ASSIGN A DRIVER ══ */
+function assignSheet(no){
+ const l=DB.lots.find(x=>x.no===no);
+ openSheet(`<div class="eyebrow">Lot ${INW(l.no)} · ready to dispatch</div><h2>Assign a driver</h2>
+ <p class="sub">The driver will see this customer's name and address only until the delivery is completed.</p>
+ <div class="mlist">${DB.drivers.filter(d=>d.active).map(d=>`<button class="mrow ${l.delivery&&l.delivery.driver===d.id?'on':''}"
+  onclick="assignTo(${l.no},'${d.id}')"><span class="mk">${esc(d.id.toUpperCase())}</span>
+  <span><b>${esc(d.name)}</b><span style="display:block;font-family:var(--mono);font-size:11.5px;color:var(--muted)">${esc(d.phone)} · ${esc(d.vehicle||'')}</span></span>
+  <span class="chev" style="margin-left:auto">›</span></button>`).join('')}</div>`);
+}
+
+/* ══ REPORTS ══ */
+function vReports(){
+ const awaiting=DB.lots.filter(l=>l.stage==='out'&&(!l.delivery||!l.delivery.receiver));
+ const done=DB.lots.filter(l=>l.delivery&&l.delivery.receiver);
+ const shorts=[];DB.lots.forEach(l=>l.shortfalls.forEach(f=>shorts.push({...f,no:l.no})));
+ return `<div class="eyebrow">Reports</div><h1>Dispatch and<br>shortfall</h1>
+ <p class="sub">Two registers are included in this build. The others are listed as optional additions in the quotation.</p>
+ <div class="hr"></div><div class="eyebrow">Awaiting dispatch · ${awaiting.length}</div>
+ ${awaiting.length?`<div class="rows">${awaiting.map(l=>lotRow(l)).join('')}</div>`:'<div class="empty">Nothing waiting to go out.</div>'}
+ <div class="hr"></div><div class="eyebrow">Delivered · ${done.length}</div>
+ ${done.length?`<table class="tb"><tr><th>Lot</th><th>Customer</th><th>Driver</th><th>Received by</th></tr>
+  ${done.map(l=>`<tr><td class="m bl">${INW(l.no)}</td><td>${esc(partyName(l))}</td>
+   <td class="stl">${esc(driver(l.delivery.driver).name)}</td><td>${esc(l.delivery.receiver)}<br>
+   <span class="stl" style="font-size:11.5px">${esc(l.delivery.at)}</span></td></tr>`).join('')}</table>`
+  :'<div class="empty">No deliveries completed yet.</div>'}
+ <div class="hr"></div><div class="eyebrow">Shortfall register · ${shorts.length}</div>
+ ${shorts.length?`<table class="tb"><tr><th>Date</th><th>Lot</th><th>Item</th><th style="text-align:right">Short</th></tr>
+  ${shorts.map(f=>`<tr><td class="m stl">${esc(f.date)}</td><td class="m bl">${INW(f.no)}</td>
+   <td style="font-weight:600">${esc(f.item)}<br><span class="stl" style="font-size:11.5px;font-weight:400">${esc(f.reason)} · ${esc(f.by)}</span></td>
+   <td class="m cop" style="text-align:right">${f.qty}</td></tr>`).join('')}</table>`
+  :'<div class="empty">No shortfalls recorded. Every piece has tallied so far.</div>'}
+ ${can('export')?`<button class="act ghost" onclick="exportCsv()">Export to spreadsheet</button>`
+  :`<button class="act" disabled>Export — owner only</button>`}`;
+}
+
+/* ══ MATERIAL MASTER ══ */
+function vMaterials(){
+ const list=DB.items.filter(i=>i.s===S.series);
+ return `<div class="eyebrow">Material master</div><h1>Sections<br>by series</h1>
+ <p class="sub">Around 70% of your sections are loaded already. Your staff add the rest as they arrive.</p>
+ <div class="chips" style="margin-top:16px">${DB.series.map(s=>`<button class="chip ${S.series===s.id?'on':''}"
+  onclick="S.series='${s.id}';render()">${esc(s.name)} · ${DB.items.filter(i=>i.s===s.id).length}</button>`).join('')}</div>
+ <div class="mlist" style="margin-top:14px">${list.map(i=>`<div class="mrow"><span class="mk">${esc(i.code)}</span>
+  <span><b>${esc(i.name)}</b><span style="display:block;font-size:11.5px;color:var(--muted)">${esc((DB.series.find(s=>s.id===i.s)||{}).name)} series</span></span>
+  <span style="margin-left:auto;width:52px">${SHAPES[i.shape]||''}</span></div>`).join('')}</div>
+ ${can('master.write')?`<button class="act ghost" onclick="addItemSheet()">+ Add a section</button>`:''}
+ <div class="callout">Technical drawings from the printed catalog are not part of this build. They are listed as an optional addition in the quotation.</div>`;
+}
+function addItemSheet(){
+ openSheet(`<div class="eyebrow">Material master</div><h2>Add a section</h2>
+ <div class="fld" style="margin-top:16px"><label>Series</label><select id="ni_s">
+  ${DB.series.map(s=>`<option value="${s.id}" ${S.series===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></div>
+ <div class="fld"><label>Item code</label><input id="ni_c" placeholder="25-14"></div>
+ <div class="fld"><label>Item name</label><input id="ni_n" placeholder="Handle Profile"></div>
+ <button class="act" onclick="addItem()">Add to the master</button>`);
+}
+
+/* ══ CUSTOMERS ══ */
+function vParties(){
+ return `<div class="eyebrow">Customers</div><h1>Customer list</h1>
+ <p class="sub">Visible on the owner's login only. Nobody on the shop floor can open this screen.</p>
+ <div class="mlist" style="margin-top:16px">${DB.parties.map(p=>`<div class="mrow">
+  <span><b>${esc(p.name)}</b><span style="display:block;font-size:11.5px;color:var(--muted)">${esc(p.address)} · ${esc(p.phone)}</span>
+  <span style="display:block;font-size:11.5px;color:var(--muted);margin-top:2px">${DB.lots.filter(l=>l.party===p.id).length} lots</span></span></div>`).join('')}</div>
+ <button class="act ghost" onclick="addPartySheet()">+ Add a customer</button>`;
+}
+function addPartySheet(){
+ openSheet(`<div class="eyebrow">Customers</div><h2>Add a customer</h2>
+ <div class="fld" style="margin-top:16px"><label>Name</label><input id="np_n"></div>
+ <div class="fld"><label>Address</label><input id="np_a"></div>
+ <div class="fld"><label>Phone</label><input id="np_p"></div>
+ <button class="act" onclick="addParty()">Add customer</button>`);
+}
+
+/* ══ PEOPLE ══ */
+function vPeople(){
+ const tab=S.people;
+ return `<div class="eyebrow">People</div><h1>Drivers and<br>staff logins</h1>
+ <div class="chips" style="margin-top:16px">
+  <button class="chip ${tab==='drivers'?'on':''}" onclick="S.people='drivers';render()">Drivers · ${DB.drivers.length}</button>
+  <button class="chip ${tab==='staff'?'on':''}" onclick="S.people='staff';render()">Staff · ${DB.users.length}</button>
+  <button class="chip ${tab==='log'?'on':''}" onclick="S.people='log';render()">Activity</button></div>
+ ${tab==='drivers'?`<div class="mlist" style="margin-top:14px">${DB.drivers.map(d=>`<div class="mrow">
+   <span class="av" style="width:34px;height:34px">${esc(d.name[0])}</span>
+   <span><b>${esc(d.name)}</b><span style="display:block;font-family:var(--mono);font-size:11.5px;color:var(--muted)">${esc(d.phone)} · ${esc(d.vehicle||'')}</span></span>
+   <span style="margin-left:auto;display:flex;gap:6px">
+    <button class="ghost-sm" onclick="reissueSheet('${d.uid||d.id}')">Forgot PIN</button>
+    <button class="ghost-sm" onclick="setActive('${d.uid||d.id}',${d.active===false},'${esc(d.name)}')">${d.active===false?'Enable':'Disable'}</button>
+   </span></div>`).join('')}</div>
+  <button class="act ghost" onclick="addDriverSheet()">+ Add a driver</button>
+  <button class="act" onclick="pickupSheet()">Send a driver to collect</button>
+  <div class="callout">A driver sets his own PIN from his phone — Account &rarr; Change PIN. For security, nobody else can read or set it.</div>`
+ :tab==='staff'?`<div class="mlist" style="margin-top:14px">${DB.users.map(u=>`<button class="mrow" onclick="staffSheet('${u.uid||u.id}')">
+   <span class="av" style="width:34px;height:34px;${u.active===false?'background:var(--faint)':''}">${esc(u.name[0])}</span>
+   <span><b>${esc(u.name)}</b><span style="display:block;font-size:11.5px;color:var(--muted)">${esc(u.username||'')} · ${u.active===false?'signed out permanently':esc(u.role)}</span></span>
+   <span class="pill ${u.active===false?'gy':u.role==='owner'?'':'gy'}" style="margin-left:auto">${u.active===false?'disabled':esc(u.role)}</span></button>`).join('')}</div>
+  <button class="act ghost" onclick="addUserSheet()">+ Add a staff login</button>
+  <div class="note">Tap anyone to change their role or stop them signing in.</div>`
+ :`<div class="mlist" style="margin-top:14px">${DB.log.slice(0,40).map(e=>`<div class="mrow">
+   <span><b>${esc(e.action)}</b><span style="display:block;font-size:11.5px;color:var(--muted)">${esc(e.who)}${e.detail?' · '+esc(e.detail):''}</span></span>
+   <span style="margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--faint);white-space:nowrap">${esc(e.at)}</span></div>`).join('')||'<div class="empty">Nothing recorded yet.</div>'}</div>
+  <div class="callout b">Every stage lock and every inward number is recorded here permanently. Nothing in the system can edit or delete an entry.</div>`}`;
+}
+function pinSheet(id){
+ const d=driver(id);
+ openSheet(`<div class="eyebrow">${esc(d.name)}</div><h2>Reset PIN</h2>
+ <p class="sub">Four digits. Not 1234, 1111 or another obvious run.</p>
+ <div class="fld" style="margin-top:16px"><label>New PIN</label><input id="pinv" maxlength="4" inputmode="numeric"></div>
+ <button class="act" onclick="savePin('${id}')">Save PIN</button>`);
+}
+function addDriverSheet(){
+ openSheet(`<div class="eyebrow">Drivers</div><h2>Add a driver</h2>
+ <div class="fld" style="margin-top:16px"><label>Name</label><input id="nd_n"></div>
+ <div class="fld"><label>Mobile number</label><input id="nd_p" inputmode="numeric" maxlength="10"></div>
+ <div class="fld"><label>Vehicle number</label><input id="nd_v" placeholder="GJ 11 AB 0000"></div>
+ <div class="fld"><label>4-digit PIN</label><input id="nd_pin" maxlength="4" inputmode="numeric"></div>
+ <button class="act" onclick="addDriver()">Add driver</button>`);
+}
+function addUserSheet(preset){
+ const R=preset||'supervisor';
+ openSheet(`<div class="eyebrow">Staff</div><h2>Add a ${R==='viewer'?'viewer':R} login</h2>
+ <p class="sub" style="margin-top:0">They sign in with this username and password on the Staff tab.</p>
+ <div class="fld" style="margin-top:16px"><label>Name</label><input id="nu_n"></div>
+ <div class="fld"><label>Username</label><input id="nu_u"></div>
+ <div class="fld"><label>Role</label><select id="nu_r">
+  <option value="supervisor" ${R==='supervisor'?'selected':''}>Supervisor — verifies loads and locks stages</option>
+  <option value="operator" ${R==='operator'?'selected':''}>Operator — tally screens only</option>
+  <option value="viewer" ${R==='viewer'?'selected':''}>Viewer — read only</option>
+  <option value="owner" ${R==='owner'?'selected':''}>Owner — full access, sees customer names</option></select></div>
+ <div class="fld"><label>Password — at least 8 characters</label><input id="nu_p" type="password"></div>
+ <button class="act" onclick="addUser()">Add login</button>`);
+}
+
+/* ══ NAV ══ */
+const ICON={home:'M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z',
+ list:'M4 6h16M4 12h16M4 18h10',grid:'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+ chart:'M4 20V9M10 20V4M16 20v-7M22 20H2',people:'M9 8a3.3 3.3 0 100-6.6A3.3 3.3 0 009 8zM2 20c0-3.7 3-6 7-6s7 2.3 7 6M17 8.5a2.6 2.6 0 100-5.2M18 14c2.6.4 4 2.1 4 6',
+ gate:'M3 21V8l9-5 9 5v13M9 21v-7h6v7',truck:'M3 17h2m0 0a2 2 0 104 0m-4 0a2 2 0 114 0m6 0h2a1 1 0 001-1v-4l-3-4h-4m-8 0V7a1 1 0 011-1h7v10m0 0a2 2 0 104 0'};
+function navFor(){
+ const r=me().role;
+ if(r==='driver')return [['home','My trips','truck']];
+ if(r==='operator')return [['home','Lots','home'],['colours','Colours','grid']];
+ if(r==='supervisor')return [['home','Dashboard','home'],['gate','Gate','gate'],['lots','Lots','list'],['colours','Colours','grid'],['materials','Master','people']];
+ return [['home','Dashboard','home'],['lots','Lots','list'],['colours','Colours','grid'],['reports','Reports','chart'],['people','People','people']];
+}
+function nav(){
+ const items=navFor();
+ const active=v=>({lot:'lots',tally:'lots',batch:'colours',verify:'gate',created:'gate',walkin:'gate',
+  collect:'home',deliver:'home',parties:'people'}[v]||v);
+ return `<nav>${items.map(([v,label,ic])=>`<button class="${active(S.view)===v?'on':''}" onclick="go('${v}')">
+  <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="${ICON[ic]}"/></svg>${label}</button>`).join('')}
+  ${me().role==='owner'?`<button class="${S.view==='parties'?'on':''}" onclick="go('parties')">
+  <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M3 21V8l9-5 9 5v13M9 21v-7h6v7"/></svg>Customers</button>`:''}</nav>`;
+}
+
+
+/* ── Send a driver to collect ─────────────────────────────────────
+   Creates a pickup job. It appears on that driver's phone at once. */
+function pickupSheet(){
+  if (!can('party.view')){ toast('Only the owner can send a driver', true); return; }
+  if (!DB.parties.length){ toast('Add a customer first', true); return; }
+  if (!DB.drivers.length){ toast('Add a driver first', true); return; }
+  openSheet(`<div class="eyebrow">Collections</div><h2>Send a driver to collect</h2>
+  <p class="sub" style="margin-top:0">He will see the customer name and address until the collection is recorded.</p>
+  <div class="fld" style="margin-top:16px"><label>Customer</label><select id="pk_p">
+   ${DB.parties.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div>
+  <div class="fld"><label>Driver</label><select id="pk_d">
+   ${DB.drivers.map(d=>`<option value="${d.uid||d.id}">${esc(d.name)} · ${esc(d.phone||'')}</option>`).join('')}</select></div>
+  <div class="fld"><label>Note for the driver <span style="font-weight:400;color:var(--faint)">optional</span></label>
+   <input id="pk_n" placeholder="e.g. 3 track and shutters, ready after 11"></div>
+  <button class="act" onclick="createPickup()">Send the job</button>`);
+}
+async function createPickup(){
+  const pid = $('pk_p').value, did = $('pk_d').value, note = ($('pk_n').value||'').trim();
+  try{
+    await addDoc(collection(fs,'pickups'), {
+      party: pid, partyName: party(pid).name, driverUid: did,
+      note, status: 'open', createdAt: serverTimestamp() });
+    await logIt('Sent a driver to collect', driver(did).name + ' → ' + party(pid).name);
+    closeSheet(); toast(driver(did).name + ' has the job');
+  }catch(e){ toast('Could not send — ' + e.code, true); }
+}
+
+/* ── Turn a login on or off ───────────────────────────────────────
+   BR8 — nothing is deleted. A login is deactivated, and the record
+   of everything they did stays intact. */
+async function setActive(uid, active, label){
+  if (!can('admin')){ toast('Only the owner can do this', true); return; }
+  if (uid === me().uid){ toast('You cannot disable your own login', true); return; }
+  try{
+    await updateDoc(doc(fs,'users',uid), { active });
+    await logIt(active ? 'Re-enabled a login' : 'Disabled a login', label);
+    if (!active) await refreshDriverList();
+    toast(label + (active ? ' can sign in again' : ' can no longer sign in'));
+  }catch(e){ toast('Could not change — ' + e.code, true); }
+}
+async function setRole(uid, role, label){
+  if (!can('admin')){ toast('Only the owner can do this', true); return; }
+  if (uid === me().uid){ toast('You cannot change your own role', true); return; }
+  try{
+    await updateDoc(doc(fs,'users',uid), { role });
+    await logIt('Changed a role', label + ' → ' + role);
+    closeSheet(); toast(label + ' is now ' + role);
+  }catch(e){ toast('Could not change — ' + e.code, true); }
+}
+function staffSheet(uid){
+  const u = DB.users.find(x => (x.uid||x.id) === uid); if (!u) return;
+  openSheet(`<div class="eyebrow">${esc(u.username||'')}</div><h2>${esc(u.name)}</h2>
+  <div class="eyebrow" style="margin-top:18px">Role</div>
+  <div class="chips">${['supervisor','operator','viewer','owner'].map(r=>
+    `<button class="chip ${u.role===r?'on':''}" onclick="setRole('${uid}','${r}','${esc(u.name)}')">${r}</button>`).join('')}</div>
+  <div class="eyebrow" style="margin-top:20px">Access</div>
+  <button class="act ghost" onclick="reissueStaffSheet('${uid}')">They forgot the password</button>
+  <button class="act ${u.active===false?'gr':'ghost'}" onclick="setActive('${uid}',${u.active===false},'${esc(u.name)}');closeSheet()">
+   ${u.active===false ? 'Let them sign in again' : 'Stop them signing in'}</button>
+  <div class="note">Logins are never deleted. Everything they did stays on the record.</div>`);
+}
+
+/* ── A driver changes his own PIN ─────────────────────────────── */
+function changePinSheet(){
+  openSheet(`<div class="eyebrow">Your login</div><h2>Change your PIN</h2>
+  <p class="sub" style="margin-top:0">Four digits. Not 1234, 1111 or another obvious run.</p>
+  <div class="fld" style="margin-top:16px"><label>Current PIN</label>
+   <input id="cp_old" maxlength="4" inputmode="numeric" type="password"></div>
+  <div class="fld"><label>New PIN</label>
+   <input id="cp_new" maxlength="4" inputmode="numeric" type="password"></div>
+  <button class="act" onclick="doChangePin()">Save new PIN</button>`);
+}
+async function doChangePin(){
+  const oldPin = ($('cp_old').value||'').trim(), newPin = ($('cp_new').value||'').trim();
+  if (weakPin(newPin)){ toast('Choose a stronger 4-digit PIN', true); return; }
+  const m = me();
+  try{
+    await signInWithEmailAndPassword(auth, driverEmail(m.phone), driverPass(oldPin));
+    await updatePassword(auth.currentUser, driverPass(newPin));
+    await logIt('Changed own PIN');
+    closeSheet(); toast('PIN changed. Use the new one next time.');
+  }catch(e){
+    toast(e.code === 'auth/invalid-credential' ? 'Current PIN is wrong' : 'Could not change — ' + e.code, true);
+  }
+}
+
+
+
+/* Uploads a tiny image and reports exactly what happens. Run this once
+   after switching Storage on, rather than discovering it from a driver
+   standing at a customer's gate. */
+async function testStorage(){
+  toast('Testing…');
+  try{
+    const c = document.createElement('canvas'); c.width = 40; c.height = 40;
+    const x = c.getContext('2d'); x.fillStyle = '#1546C0'; x.fillRect(0,0,40,40);
+    const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.6));
+    const r = sref(storage, 'arrivals/_selftest/test.jpg');
+    await uploadBytes(r, blob, { contentType:'image/jpeg' });
+    const url = await getDownloadURL(r);
+    openSheet(`<div class="eyebrow">Photo storage</div><h2>Working</h2>
+     <p class="sub">The photo below was uploaded and read back just now. Drivers can send photos.</p>
+     <img src="${url}" style="width:120px;border-radius:10px;margin-top:12px">
+     <button class="act" onclick="closeSheet()">Good</button>`);
+  }catch(e){
+    const fix = e.code === 'storage/unauthorized'
+      ? 'Firebase console &rarr; Storage &rarr; Get started, then paste storage.rules into its Rules tab and Publish.'
+      : 'Error code: ' + (e.code || e.message);
+    openSheet(`<div class="eyebrow">Photo storage</div><h2>Not working</h2>
+     <div class="callout" style="margin-top:12px">${fix}</div>
+     <p class="sub">Until this passes, a driver's photos cannot be sent and his collection will be refused rather than saved empty.</p>
+     <button class="act" onclick="closeSheet()">Close</button>`);
+  }
+}
+
+
+/* ══ CREDENTIALS ══════════════════════════════════════════════════
+   Passwords and PINs are stored one-way hashed by Firebase. Nobody can
+   read them back — not the owner, not Sangam, not Google. That is what
+   makes the promise in the quotation true rather than decorative.
+
+   So instead of showing a password, the owner ISSUES a new one. The
+   card below is shown once, at the moment of issue, to write down or
+   hand over. */
+
+let LAST_ISSUED = null;   // held in memory only, cleared on sign out
+
+function credCard(name, who, secret, kind){
+  LAST_ISSUED = { name, who, secret, kind };
+  openSheet(`<div class="eyebrow">Write this down now</div><h2>${esc(name)}</h2>
+   <p class="sub" style="margin-top:0">This is the only time it can be shown. It is not stored anywhere, and nobody can read it back later — including you.</p>
+   <div class="pn" style="margin-top:14px">
+    <div class="kv"><dt>${kind === 'pin' ? 'Phone' : 'Username'}</dt>
+     <dd style="font-family:var(--mono);font-size:15px">${esc(who)}</dd></div>
+    <div class="kv"><dt>${kind === 'pin' ? 'PIN' : 'Password'}</dt>
+     <dd style="font-family:var(--mono);font-size:17px;color:var(--blue)">${esc(secret)}</dd></div>
+   </div>
+   <button class="act" onclick="copyCreds()">Copy to send on WhatsApp</button>
+   <button class="act ghost" onclick="closeSheet()">I have written it down</button>`);
+}
+function copyCreds(){
+  if (!LAST_ISSUED) return;
+  const c = LAST_ISSUED;
+  const text = `Classic Powder Coating — your login\n` +
+    (c.kind === 'pin' ? `Phone: ${c.who}\nPIN: ${c.secret}\nOpen the app, choose Driver, then your name.`
+                      : `Username: ${c.who}\nPassword: ${c.secret}\nOpen the app, Staff tab.`) +
+    `\n${location.origin}`;
+  navigator.clipboard.writeText(text).then(
+    () => toast('Copied — paste it into WhatsApp'),
+    () => toast('Could not copy. Write it down instead.', true));
+}
+
+/* Re-issue a staff login whose password has been forgotten. Same one
+   manual step as a driver: the old login is removed in the console,
+   then re-created here. */
+function reissueStaffSheet(uid){
+  const u = DB.users.find(x => (x.uid||x.id) === uid); if (!u) return;
+  openSheet(`<div class="eyebrow">${esc(u.username||'')}</div><h2>${esc(u.name)} forgot the password</h2>
+  <p class="sub" style="margin-top:0">Passwords cannot be read back by anyone. Issue a new one instead — it takes one step in the Firebase console.</p>
+  <div class="callout" style="margin-top:14px">
+   <b>Step 1.</b> Firebase console &rarr; Authentication &rarr; Users.<br>
+   Find <b>${esc(u.username||'')}@cpc.local</b> and delete it.<br><br>
+   <b>Step 2.</b> Come back here and press the button below.
+  </div>
+  <div class="fld" style="margin-top:16px"><label>New password — at least 8 characters</label>
+   <input id="rs_pw" value="Cpc-${esc((u.name||'x').split(' ')[0])}-${new Date().getFullYear()}"></div>
+  <button class="act" onclick="reissueStaff('${uid}')">Re-create the login</button>`);
+}
+async function reissueStaff(uid){
+  const u = DB.users.find(x => (x.uid||x.id) === uid);
+  const pw = ($('rs_pw').value||'').trim();
+  if (pw.length < 8){ toast('At least 8 characters', true); return; }
+  try{
+    const cred = await createUserWithEmailAndPassword(seedAuth, u.username + '@cpc.local', pw);
+    await setDoc(doc(fs,'users',cred.user.uid), {
+      name:u.name, role:u.role, username:u.username, active:true });
+    await updateDoc(doc(fs,'users',uid), { active:false });
+    await fbSignOut(seedAuth);
+    await logIt('Re-issued a staff login', u.name);
+    credCard(u.name, u.username, pw, 'password');
+  }catch(e){
+    toast(e.code === 'auth/email-already-in-use'
+      ? 'Delete the old login in Firebase first, then try again'
+      : 'Could not re-create — ' + (e.code||e.message), true);
+  }
+}
+
+/* ══ SETTINGS ═════════════════════════════════════════════════════ */
+
+function vSettings(){
+  const m = me();
+  return `<div class="eyebrow">Settings</div><h1>Your account<br>and the system</h1>
+  <div class="pn">
+   <div class="kv"><dt>Signed in as</dt><dd>${esc(m.name)}</dd></div>
+   <div class="kv"><dt>Role</dt><dd>${esc(m.role)}</dd></div>
+   <div class="kv"><dt>Version</dt><dd style="font-family:var(--mono);font-weight:400;font-size:12px">${BUILD}</dd></div>
+  </div>
+  <button class="act ghost" onclick="passwordSheet()">Change my password</button>
+  ${can('admin') ? `<button class="act ghost" onclick="testStorage()">Test photo storage</button>` : ''}
+
+  ${can('admin') ? `
+  <div class="hr"></div>
+  <div class="eyebrow">Inward numbering</div>
+  <div class="pn"><div class="kv"><dt>Next lot will be</dt>
+   <dd style="font-family:var(--mono);font-size:16px;color:var(--blue)">${INW(DB.counter + 1)}</dd></div></div>
+  <button class="act ghost" onclick="counterSheet()">Set the starting number</button>
+  <div class="note">Before real work begins, set this to continue from the numbers already used on paper. It can be raised, never lowered — a number can never be handed out twice.</div>
+
+  <div class="hr"></div>
+  <div class="eyebrow">Before the client uses it</div>
+  <div class="pn" style="padding:14px">
+   <div style="font-size:13px;line-height:1.9">
+    ${[['Change every demo password and PIN', DB.users.length > 1],
+       ['Set the inward number to continue from their records', DB.counter !== 546],
+       ['Add the real customers', DB.parties.length > 4],
+       ['Add the real drivers', DB.drivers.length > 4]]
+      .map(([t,done]) => `<div style="display:flex;gap:9px;align-items:flex-start">
+        <span style="color:${done?'var(--green)':'var(--faint)'};font-weight:700">${done?'✓':'○'}</span>
+        <span style="color:${done?'var(--muted)':'var(--ink)'}">${t}</span></div>`).join('')}
+   </div>
+  </div>` : ''}`;
+}
+
+function passwordSheet(){
+  if (me().role === 'driver'){ changePinSheet(); return; }
+  openSheet(`<div class="eyebrow">Your login</div><h2>Change your password</h2>
+  <p class="sub" style="margin-top:0">At least 8 characters. Use something that is not a date or a run of digits.</p>
+  <div class="fld" style="margin-top:16px"><label>Current password</label><input id="pw_old" type="password"></div>
+  <div class="fld"><label>New password</label><input id="pw_new" type="password"></div>
+  <button class="act" onclick="doChangePassword()">Save new password</button>`);
+}
+async function doChangePassword(){
+  const oldPw = $('pw_old').value || '', newPw = $('pw_new').value || '';
+  if (newPw.length < 8){ toast('At least 8 characters', true); return; }
+  if (/^\d+$/.test(newPw)){ toast('Digits alone are too easy to guess', true); return; }
+  try{
+    const cred = EmailAuthProvider.credential(auth.currentUser.email, oldPw);
+    await reauthenticateWithCredential(auth.currentUser, cred);
+    await updatePassword(auth.currentUser, newPw);
+    await logIt('Changed own password');
+    closeSheet(); toast('Password changed. Use the new one next time.');
+  }catch(e){
+    toast(e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password'
+      ? 'Current password is wrong' : 'Could not change — ' + e.code, true);
+  }
+}
+
+function counterSheet(){
+  openSheet(`<div class="eyebrow">Inward numbering</div><h2>Set the starting number</h2>
+  <p class="sub" style="margin-top:0">Ask the client the last inward number they wrote by hand. Enter that number here, and the next lot will be the one after it.</p>
+  <div class="fld" style="margin-top:16px"><label>Last number already used</label>
+   <input id="ct_v" inputmode="numeric" value="${DB.counter}"></div>
+  <div class="note">Currently the next lot would be ${INW(DB.counter + 1)}.</div>
+  <button class="act" onclick="saveCounter()">Save</button>`);
+}
+async function saveCounter(){
+  const v = parseInt(($('ct_v').value||'').replace(/\D/g,''), 10);
+  if (!v || v < DB.counter){
+    toast('Enter a number that is ' + DB.counter + ' or higher — it can never go down', true); return;
+  }
+  try{
+    await updateDoc(doc(fs,'meta','counter'), { inwardNo: v });
+    await logIt('Set the inward starting number', 'next lot will be ' + INW(v+1));
+    closeSheet(); toast('Next lot will be ' + INW(v+1));
+  }catch(e){ toast('Could not save — ' + e.code, true); }
+}
+
+/* ── A driver who has forgotten his PIN ───────────────────────────
+   A PIN is a real password, so no browser can overwrite someone
+   else's. This walks the owner through the one manual step. */
+function reissueSheet(uid){
+  const d = DB.drivers.find(x => (x.uid||x.id) === uid); if (!d) return;
+  openSheet(`<div class="eyebrow">${esc(d.phone||'')}</div><h2>${esc(d.name)} forgot his PIN</h2>
+  <p class="sub" style="margin-top:0">A PIN is a real password, so nobody — not even you — can read or overwrite it. Re-issuing takes one step in the Firebase console.</p>
+  <div class="callout" style="margin-top:14px">
+   <b>Step 1.</b> Firebase console &rarr; Authentication &rarr; Users.<br>
+   Find <b>${esc((d.phone||'').replace(/\D/g,''))}@drivers.cpc.local</b> and delete it.<br><br>
+   <b>Step 2.</b> Come back here and press the button below.
+  </div>
+  <div class="fld" style="margin-top:16px"><label>New 4-digit PIN</label>
+   <input id="ri_pin" maxlength="4" inputmode="numeric"></div>
+  <button class="act" onclick="reissueDriver('${uid}')">Re-create his login</button>`);
+}
+async function reissueDriver(uid){
+  const d = DB.drivers.find(x => (x.uid||x.id) === uid);
+  const pin = ($('ri_pin').value||'').trim();
+  if (weakPin(pin)){ toast('Choose a stronger 4-digit PIN', true); return; }
+  try{
+    const cred = await createUserWithEmailAndPassword(seedAuth, driverEmail(d.phone), driverPass(pin));
+    await setDoc(doc(fs,'users',cred.user.uid), {
+      name: d.name, role: 'driver', phone: d.phone, vehicle: d.vehicle || '', active: true });
+    await updateDoc(doc(fs,'users',uid), { active: false });   // BR8 — the old record stays
+    await fbSignOut(seedAuth);
+    await refreshDriverList();
+    await logIt('Re-issued a driver login', d.name);
+    credCard(d.name, d.phone, pin, 'pin');
+  }catch(e){
+    toast(e.code === 'auth/email-already-in-use'
+      ? 'Delete the old login in Firebase first, then try again'
+      : 'Could not re-create — ' + (e.code||e.message), true);
+  }
+}
+
+/* ══ ROUTER ══ */
+function homeFor(){const r=me().role;
+ return r==='driver'?vDrvHome():r==='operator'?vOpHome():r==='supervisor'?vSupHome():vOwnerHome();}
+const GUARD={gate:'inward.create',verify:'inward.create',walkin:'inward.create',lots:'lot.view',
+ lot:'lot.view',tally:'tally.write',colours:'lot.view',batch:'lot.view',reports:'report.view',
+ materials:'lot.view',parties:'party.view',people:'admin',settings:null};
+function body(){
+ const g=GUARD[S.view];
+ if(g&&!can(g))return `<div class="callout">Your role does not allow this.</div>
+  <button class="act ghost" onclick="go('home')">Back to my dashboard</button>`;
+ switch(S.view){
+  case 'home':return homeFor();
+  case 'gate':return vGate();
+  case 'verify':return vVerify();
+  case 'walkin':return vWalkin();
+  case 'created':return vCreated();
+  case 'lots':return vLots();
+  case 'lot':return vLot();
+  case 'tally':return vTally();
+  case 'colours':return vColours();
+  case 'batch':return vBatch();
+  case 'reports':return vReports();
+  case 'materials':return vMaterials();
+  case 'parties':return vParties();
+  case 'people':return vPeople();
+  case 'settings':return vSettings();
+  case 'collect':return vCollect();
+  case 'deliver':return vDeliver();
+  default:return homeFor();
+ }
+}
+function render(){
+ if(!ready){return;}
+ if(!me()){$('app').innerHTML=vLogin();return;}
+ $('app').innerHTML=`<div class="shell">${header()}<main><div class="view">${body()}</div></main>${nav()}</div>`;
+}
+
+/* the screens call these from inline onclick handlers */
+Object.assign(window,{S,DB,me,can,go,render,toast,stamp,openSheet,closeSheet,
+ pickupSheet,createPickup,setActive,setRole,staffSheet,changePinSheet,doChangePin,
+ addUserSheet,addDriverSheet,addPartySheet,pickItem,pickQty,setFt,setIn,addCounted,
+ lockSheet,assignSheet,addItemSheet,testStorage,INW,credCard,copyCreds,reissueStaffSheet,reissueStaff,vSettings,passwordSheet,doChangePassword,counterSheet,saveCounter,reissueSheet,reissueDriver,vCollect,vDeliver,vVerify,vGate,vLot,vCreated,capturePhoto,openPhoto,shotTile,shotStrip,shotCount,vOwnerHome,vSupHome,vOpHome,vDrvHome,vPeople,vLots,body,nav,header,
+ staffLogin,pinTap,signOut,party,driver,shade,seeParty,partyName,
+ stagesOf,nextStage,countsFor,doneOf,totalOf,STAGE_NAME,SHAPES,FEET,INCHES,REASONS,esc,$,
+ doCollect,verifyLoad,doWalkin,bump,doLock,assignTo,doDeliver,
+ addItem,addParty,addDriver,addUser,savePin,exportCsv,weakPin,logIt});
+
+console.log('%cCPC Production Control System','color:#1546C0;font-weight:bold;font-size:14px');
+</script>
+<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(11,31,58,.18);border-radius:999px;background:rgba(255,255,255,.94);color:#0B1F3A;font:600 12px/1.2 'Public Sans',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(11,31,58,.16);">← Back to portfolios</a>
+</body>
+</html>
