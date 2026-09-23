@@ -1,7 +1,0 @@
-name = "chawla-demo"
-compatibility_date = "2026-08-01"
-
-# Serves this folder itself — no subfolder, nothing to build.
-[assets]
-directory = "./"
-not_found_handling = "single-page-application"
