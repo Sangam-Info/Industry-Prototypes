@@ -6,7 +6,10 @@ Sangam InfoAnalytics client prototype showcase, deployed on Cloudflare Workers (
 
 - `public/` — everything served on the website
   - `index.html` — portfolio landing page
-  - `chawla-industries/`, `classic-powder-coating/`, `deservoir/`, `geeta-industries/`, `monocraft-traceline/`, `spirit-engineering/` — one prototype each (`index.html`)
+  - `chawla-industries/`, `classic-powder-coating/`, `deservoir/`, `geeta-industries/`, `monocraft-traceline/`, `spirit-engineering/`, `aum-industries/`, `gir-eco-enterprise/`, `shivam-salt/` — one prototype each (`index.html`)
+- `prototypes/` — source files for the three latest prototypes, kept separate from their published copies in `public/`
+  - `aum-industries/` — AUM source app, dependencies and deployment files
+  - `gir-eco-enterprise/`, `shivam-salt/` — original standalone prototype HTML files (`index.html`)
 - `project-docs/` — internal notes, READMEs, schema (not published)
 - `wrangler.jsonc` — Cloudflare config
 
@@ -26,7 +29,7 @@ Every push to `main` redeploys automatically.
 
 ## Adding a new prototype
 
-1. Create `public/<client-name>/index.html` (lowercase, hyphens, no spaces).
+1. Create `public/<client-name>/index.html` (lowercase, hyphens, no spaces), and include any local assets it references.
 2. Use `href="../index.html"` for the back link.
 3. Add a card linking to `<client-name>/index.html` in `public/index.html`.
 4. Commit and push.

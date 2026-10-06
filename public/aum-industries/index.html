@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1E2622">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Material tracking prototype for AUM Industries: purchase, inward, production, stock, orders and dispatch. Built by Sangam InfoAnalytics.">
+<meta property="og:title" content="AUM Industries — Material Tracking (Prototype)">
+<meta property="og:description" content="Live prototype by Sangam InfoAnalytics. Works on phone and PC, in English and ગુજરાતી.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>AUM Industries — Material Tracking (Prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Hind+Vadodara:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1E2622; --ink2:#2A3430; --ink3:#3A4640;
+  --bg:#F2F4F1; --panel:#FFFFFF; --line:#DDE2DC; --line2:#EBEEEA;
+  --text:#1A211D; --muted:#626D66; --faint:#8C968F;
+  --teak:#9A5A24; --teak-d:#7E481A; --teak-soft:#F6EBDF;
+  --moss:#2E6A47; --moss-soft:#E3F0E7;
+  --amber:#A86E08; --amber-soft:#FBF0D8;
+  --red:#AF3A33; --red-soft:#F9E4E2;
+  --blue:#2C5B86; --blue-soft:#E3ECF5;
+  --r:12px;
+  --font:"Manrope","Hind Vadodara","Noto Sans Gujarati","Shruti",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14.5px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+input,select,textarea{-webkit-user-select:text;user-select:text}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+:focus-visible{outline:2px solid var(--teak);outline-offset:2px}
+
+/* Watermark: prototype restriction */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='240'%3E%3Ctext x='20' y='130' transform='rotate(-24 210 120)' font-family='Arial' font-size='30' font-weight='700' fill='%231E2622'%3EPrototype  AUM Industries%3C/text%3E%3C/svg%3E")}
+
+/* ---------- Layout ---------- */
+.app{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
+.side{background:var(--ink);color:#CBD3CD;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;padding:20px 14px 16px}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px 22px}
+.mark{width:40px;height:40px;border-radius:9px;flex:none;position:relative;overflow:hidden;
+  background:repeating-linear-gradient(180deg,#E6C697 0 5px,#C8955C 5px 10px);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.mark span{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;color:#2B1808;font-size:17px;letter-spacing:-.02em;background:rgba(255,255,255,.18)}
+.brand b{display:block;color:#fff;font-size:15.5px;font-weight:750;letter-spacing:-.01em}
+.brand small{color:#8FA097;font-size:12.5px}
+.nav-group{margin:6px 0 4px;padding:14px 10px 6px;font-size:12px;color:#7D8C84;font-weight:600}
+.nav a{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:9px;color:#CBD3CD;text-decoration:none;font-weight:600;font-size:14px;cursor:pointer;margin-bottom:2px}
+.nav a:hover{background:var(--ink2);color:#fff}
+.nav a.on{background:#34403A;color:#fff;box-shadow:inset 3px 0 0 #D2A06A}
+.nav a .cnt{margin-left:auto;font-size:12px;background:#3C4943;color:#E9EEEA;border-radius:999px;padding:1px 8px;font-weight:700}
+.nav a.locked{color:#7F8C85}
+.nav a.locked .lk{margin-left:auto;width:16px;height:16px}
+.side-foot{margin-top:auto;padding:14px 10px 4px;border-top:1px solid #34403A;font-size:12.5px;color:#8FA097}
+.side-foot button{color:#E0C39C;font-weight:650;margin-top:4px;text-decoration:underline;text-underline-offset:3px}
+
+.main{min-width:0;display:flex;flex-direction:column}
+.ribbon{background:var(--ink2);color:#E9DCC8;font-size:13px;padding:8px 28px;display:flex;align-items:center;gap:10px}
+.ribbon svg{width:16px;height:16px;color:#E0B77E}
+.ribbon button{margin-left:auto;color:#fff;font-weight:650;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(242,244,241,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;gap:14px;padding:14px 28px;border-bottom:1px solid var(--line)}
+.search{flex:1;max-width:460px;display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:0 12px;height:42px;color:var(--muted)}
+.search input{border:0;outline:0;background:none;font:inherit;color:var(--text);flex:1;min-width:0}
+.topbar .who{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13.5px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--teak-soft);color:var(--teak-d);display:grid;place-items:center;font-weight:800;font-size:13px}
+.proto-chip{display:inline-flex;align-items:center;gap:6px;background:var(--amber-soft);color:#7A5205;border:1px solid #EFD9A8;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:700}
+.content{padding:28px;max-width:1280px;width:100%}
+
+.mtop,.bnav{display:none}
+
+/* ---------- Page head ---------- */
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.ph h1{margin:0;font-size:27px;line-height:1.15;font-weight:800;letter-spacing:-.025em}
+.ph p{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.ph .acts{display:flex;gap:10px;flex-wrap:wrap}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border-radius:10px;font-weight:700;font-size:14px;white-space:nowrap;transition:background .15s,border-color .15s}
+.btn svg.i{width:18px;height:18px}
+.btn.primary{background:var(--teak);color:#fff}
+.btn.primary:hover{background:var(--teak-d)}
+.btn.primary:disabled{background:#C9B9A8;cursor:not-allowed}
+.btn.ghost{background:var(--panel);border:1px solid var(--line);color:var(--text)}
+.btn.ghost:hover{border-color:#C3CBC4}
+.btn.sm{height:34px;padding:0 12px;font-size:13px;border-radius:8px}
+.btn.lock{background:var(--panel);border:1px dashed #C9D0CA;color:var(--muted)}
+.btn.lock svg.i{width:15px;height:15px}
+.btn.moss{background:var(--moss);color:#fff}
+.btn.moss:hover{background:#245a3b}
+
+/* ---------- Segmented filter ---------- */
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.seg{display:inline-flex;background:#E4E9E3;border-radius:10px;padding:3px;overflow-x:auto;max-width:100%;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{padding:7px 13px;border-radius:8px;font-weight:650;font-size:13px;color:var(--muted);white-space:nowrap}
+.seg button.on{background:var(--panel);color:var(--text);box-shadow:0 1px 2px rgba(20,30,25,.12)}
+.seg button em{font-style:normal;color:var(--faint);margin-left:4px}
+
+/* ---------- Lists (table on desktop, cards on mobile) ---------- */
+.list{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.row{display:grid;grid-template-columns:var(--cols);gap:16px;align-items:center;padding:14px 20px;border-top:1px solid var(--line2)}
+.row:first-child{border-top:0}
+.row.head{background:#F7F9F6;color:var(--muted);font-size:12.5px;font-weight:650;padding-top:10px;padding-bottom:10px}
+.row.tap{cursor:pointer}
+.row.tap:hover{background:#FAFBF9}
+.c-main b{display:block;font-weight:750;font-size:14.5px}
+.c-main span{color:var(--muted);font-size:13px}
+.c{font-size:14px;min-width:0}
+.c small{display:block;color:var(--muted);font-size:12.5px}
+.c-act{display:flex;justify-content:flex-end;gap:8px}
+.idtag{font-weight:750;color:var(--teak-d)}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-size:15px;margin-bottom:4px}
+
+/* ---------- Pills ---------- */
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.p-grey{background:#EDF0EC;color:#56615A}
+.p-amber{background:var(--amber-soft);color:#855705}
+.p-moss{background:var(--moss-soft);color:var(--moss)}
+.p-blue{background:var(--blue-soft);color:var(--blue)}
+.p-red{background:var(--red-soft);color:var(--red)}
+.p-teak{background:var(--teak-soft);color:var(--teak-d)}
+
+/* ---------- Dashboard ---------- */
+.dash{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:22px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px 12px}
+.panel-h h2{margin:0;font-size:16px;font-weight:750;letter-spacing:-.01em}
+.panel-h span,.panel-h button.link{color:var(--muted);font-size:13px}
+button.link{color:var(--teak-d)!important;font-weight:700}
+
+/* The signature: material flow drawn as a 7-ply cross-section */
+.ply{margin:0 20px 20px;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px rgba(70,40,15,.28),0 8px 18px -12px rgba(70,40,15,.5)}
+.layer{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 16px;color:#3A2311;position:relative;border-top:1px solid rgba(70,40,15,.28);transition:filter .15s}
+.layer:first-child{border-top:0}
+.layer:nth-child(odd){background-color:#EBD3AE;background-image:repeating-linear-gradient(180deg,rgba(120,70,25,.07) 0 1px,transparent 1px 5px),linear-gradient(90deg,rgba(255,255,255,.18),rgba(0,0,0,.02))}
+.layer:nth-child(even){background-color:#D9B283;background-image:repeating-linear-gradient(90deg,rgba(90,50,15,.09) 0 1px,transparent 1px 6px)}
+.layer:hover{filter:brightness(1.04)}
+.layer .st{font-size:12px;font-weight:800;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.55);color:#5A3614;flex:none}
+.layer .lt{flex:1;min-width:0}
+.layer .lt b{display:block;font-size:14.5px;font-weight:750}
+.layer .lt small{font-size:12.5px;color:#6B4724}
+.layer .num{text-align:right}
+.layer .num b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.layer .num small{font-size:12px;color:#6B4724}
+.layer .alert{position:absolute;right:auto;left:16px;bottom:4px}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-bottom:22px}
+.kpi{padding:16px 20px;border-left:1px solid var(--line2)}
+.kpi:first-child{border-left:0}
+.kpi small{color:var(--muted);font-size:12.5px;font-weight:600}
+.kpi b{display:block;font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:2px}
+.kpi span{font-size:12.5px;color:var(--muted)}
+.kpi span.up{color:var(--moss);font-weight:650}
+
+.att{list-style:none;margin:0;padding:0 8px 10px}
+.att li{display:flex;gap:12px;align-items:flex-start;padding:11px 12px;border-radius:9px;cursor:pointer}
+.att li:hover{background:#F6F8F5}
+.att .dot{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex:none}
+.att .dot svg.i{width:17px;height:17px}
+.att b{display:block;font-size:14px;font-weight:700}
+.att small{color:var(--muted);font-size:12.5px}
+.feed{list-style:none;margin:0;padding:0 20px 14px}
+.feed li{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line2);font-size:13.5px}
+.feed li:first-child{border-top:0}
+.feed time{color:var(--faint);font-size:12.5px;white-space:nowrap;margin-left:auto;padding-left:10px}
+.feed .fi{width:28px;height:28px;border-radius:50%;background:#EEF1ED;color:var(--muted);display:grid;place-items:center;flex:none}
+.feed .fi svg.i{width:15px;height:15px}
+.greet{color:var(--muted);margin:-14px 0 20px}
+
+/* ---------- Bars, steps ---------- */
+.bar{position:relative;height:8px;background:#ECEFEB;border-radius:4px;margin-top:6px}
+.bar b{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--moss)}
+.bar b.low{background:var(--amber)}
+.bar b.crit{background:var(--red)}
+.bar s{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink3);border-radius:1px}
+.steps{display:flex;gap:4px;margin-top:6px}
+.steps i{flex:1;height:6px;border-radius:3px;background:#E3E7E2}
+.steps i.done{background:var(--moss)}
+.steps i.cur{background:var(--teak)}
+
+/* ---------- Tabs (stock) ---------- */
+.lines{margin:0;padding:0;list-style:none}
+.lines li{font-size:13.5px}
+
+/* ---------- Sheet / modal ---------- */
+.scrim{position:fixed;inset:0;background:rgba(18,24,21,.42);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;z-index:61;top:0;right:0;bottom:0;width:min(470px,100%);background:var(--panel);display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .25s cubic-bezier(.2,.8,.2,1);box-shadow:-18px 0 40px -20px rgba(0,0,0,.35)}
+.sheet.show{transform:none}
+.sheet-h{display:flex;align-items:flex-start;gap:12px;padding:20px 22px 14px;border-bottom:1px solid var(--line2)}
+.sheet-h h3{margin:0;font-size:19px;font-weight:800;letter-spacing:-.015em}
+.sheet-h p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.sheet-h .x{margin-left:auto;width:36px;height:36px;border-radius:9px;display:grid;place-items:center;color:var(--muted)}
+.sheet-h .x:hover{background:#F0F3EF}
+.sheet-b{padding:18px 22px;overflow-y:auto;flex:1}
+.sheet-f{padding:14px 22px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line2);display:flex;align-items:center;gap:10px}
+.sheet-f .quota{font-size:12.5px;color:var(--muted);margin-right:auto}
+.grab{display:none}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.field label em{font-style:normal;font-weight:500;color:var(--faint)}
+.field input,.field select{width:100%;height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font:inherit;background:#fff;color:var(--text);appearance:none;-webkit-appearance:none}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23626D66' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.field input:focus,.field select:focus{outline:0;border-color:var(--teak);box-shadow:0 0 0 3px rgba(154,90,36,.15)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hint{font-size:12.5px;color:var(--muted);margin-top:5px}
+.box{background:#F7F9F6;border:1px solid var(--line2);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13.5px}
+.box h4{margin:0 0 8px;font-size:13px;font-weight:750}
+.req{width:100%;border-collapse:collapse;font-size:13px}
+.req td{padding:5px 0;border-top:1px solid var(--line2)}
+.req tr:first-child td{border-top:0}
+.req td:nth-child(2),.req td:nth-child(3){text-align:right;white-space:nowrap;padding-left:10px}
+.ok{color:var(--moss);font-weight:700}.no{color:var(--red);font-weight:700}
+.divider{height:1px;background:var(--line2);margin:6px 0 16px}
+
+.modal{position:fixed;z-index:70;left:50%;top:50%;transform:translate(-50%,-46%) scale(.98);opacity:0;pointer-events:none;width:min(420px,calc(100% - 32px));background:var(--panel);border-radius:16px;padding:26px 24px 20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.45);transition:all .2s}
+.modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal .lk-ic{width:48px;height:48px;border-radius:12px;background:var(--teak-soft);color:var(--teak-d);display:grid;place-items:center;margin-bottom:14px}
+.modal h3{margin:0 0 6px;font-size:19px;font-weight:800;letter-spacing:-.015em}
+.modal p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.modal ul{margin:0 0 14px;padding-left:18px;color:var(--text);font-size:13.5px}
+.modal ul li{margin-bottom:4px}
+.modal .contact{background:#F7F9F6;border-radius:10px;padding:10px 12px;font-size:13px;color:var(--muted);margin-bottom:16px}
+.modal .contact b{color:var(--text)}
+
+/* Timeline */
+.tl{list-style:none;margin:0;padding:18px 20px 16px}
+.tl li{position:relative;padding:0 0 20px 34px}
+.tl li::before{content:"";position:absolute;left:10px;top:22px;bottom:-2px;width:2px;background:var(--line)}
+.tl li:last-child::before{display:none}
+.tl li.done::before{background:var(--moss)}
+.tl .dt{position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:#fff;display:grid;place-items:center}
+.tl li.done .dt{background:var(--moss);border-color:var(--moss);color:#fff}
+.tl li.now .dt{border-color:var(--teak);box-shadow:0 0 0 4px var(--teak-soft)}
+.tl .dt svg.i{width:12px;height:12px;stroke-width:3}
+.tl b{display:block;font-weight:700}
+.tl small{color:var(--muted);font-size:12.5px}
+.tl li.todo b{color:var(--faint);font-weight:600}
+.trk-head{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line2);border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.trk-head div{background:#fff;padding:12px 20px}
+.trk-head small{display:block;color:var(--muted);font-size:12px}
+.trk-head b{font-size:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:650}
+.chips button:hover{border-color:var(--teak);color:var(--teak-d)}
+
+/* Toast */
+.toast{position:fixed;z-index:80;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:600;display:flex;gap:10px;align-items:center;transition:all .22s;max-width:calc(100% - 32px);pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast svg.i{color:#9ED3B1;width:18px;height:18px}
+
+
+/* ---------- 3D factory ---------- */
+.hero3d{margin-bottom:22px;overflow:hidden}
+.f3d{position:relative;height:400px;background:linear-gradient(180deg,#EEF1EC,#E4E9E2);border-top:1px solid var(--line2);overflow:hidden}
+.f3d.big{height:max(460px,calc(100vh - 330px));border-top:0}
+.f3d canvas{display:block;width:100%!important;height:100%!important;touch-action:pan-y;cursor:grab}
+.f3d canvas:active{cursor:grabbing}
+.f3d-labels{position:absolute;inset:0;pointer-events:none}
+.f3d-lbl{position:absolute;left:0;top:0;pointer-events:auto;background:rgba(30,38,34,.9);color:#fff;border-radius:9px;padding:6px 10px 7px;text-align:left;
+  box-shadow:0 6px 16px -6px rgba(0,0,0,.45);white-space:nowrap;line-height:1.25;transition:background .2s;will-change:transform}
+.f3d-lbl::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-bottom:0;border-top-color:rgba(30,38,34,.9)}
+.f3d-lbl b{display:block;font-size:12.5px;font-weight:750}
+.f3d-lbl small{display:block;font-size:11.5px;color:#E3CBA6;font-weight:600}
+.f3d-lbl:hover{background:var(--teak-d)}
+.f3d-lbl.hot{background:var(--teak);animation:lblp 1s ease-out 3}
+.f3d-lbl.hot::after{border-top-color:var(--teak)}
+@keyframes lblp{0%{box-shadow:0 0 0 0 rgba(154,90,36,.55)}100%{box-shadow:0 0 0 14px rgba(154,90,36,0)}}
+.f3d-fallback{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:24px;color:var(--muted);font-size:13.5px}
+.f3d-fallback b{display:block;color:var(--text);font-size:15px;margin-bottom:4px}
+.f3d-hint{position:absolute;left:14px;bottom:12px;background:rgba(255,255,255,.85);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--muted);pointer-events:none}
+.stations{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--line2);border-top:1px solid var(--line2)}
+.stations button{background:#fff;text-align:left;padding:12px 16px}
+.stations button:hover{background:#FAFBF9}
+.stations button.on{box-shadow:inset 0 -3px 0 var(--teak)}
+.stations small{display:block;color:var(--faint);font-size:12px;font-weight:700}
+.stations b{display:block;font-size:13.5px;font-weight:750}
+.stations span{display:block;font-size:12.5px;color:var(--muted)}
+.try{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.try p{margin:0;flex:1;min-width:240px;color:var(--muted)}
+/* one orchestrated moment: layers are laid up and pressed, like a real sheet */
+.ply.assemble{animation:squeeze .4s ease-out .7s both}
+.ply.assemble .layer{animation:layup .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 75ms)}
+@keyframes layup{from{opacity:0;transform:perspective(800px) translateY(-22px) rotateX(-62deg)}}
+@keyframes squeeze{50%{transform:scaleY(.982)}}
+
+/* ---------- Language ---------- */
+.seg.lang button{font-weight:700;padding:7px 14px}
+.seg.lang button[lang="gu"]{font-family:"Hind Vadodara",var(--font);font-size:14px;padding-top:6px;padding-bottom:6px}
+.topbar [data-langslot] .seg{background:#E4E9E3}
+.mlang{width:auto!important;padding:0 10px;border:1px solid rgba(255,255,255,.28);font-weight:800;font-size:13px;font-family:"Hind Vadodara",var(--font)}
+html[lang="gu"] body{line-height:1.6}
+html[lang="gu"] .ph h1{letter-spacing:0;line-height:1.3}
+html[lang="gu"] .kpi b,html[lang="gu"] .layer .num b{letter-spacing:0}
+/* ---------- Mobile ---------- */
+@media (max-width:900px){
+  body{font-size:15px}
+  .app{display:block}
+  .side,.topbar,.ribbon{display:none}
+  .mtop{display:flex;position:sticky;top:0;z-index:20;align-items:center;gap:12px;background:var(--ink);color:#fff;
+    padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px}
+  .mtop .mark{width:34px;height:34px}
+  .mtop .t{flex:1;min-width:0}
+  .mtop .t b{display:block;font-size:15px;font-weight:750;line-height:1.2}
+  .mtop .t small{color:#A9B6AE;font-size:12px}
+  .mtop .ib{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:#DDE5DF}
+  .mtop .proto-chip{font-size:11.5px;padding:3px 8px}
+  .content{padding:18px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+  .ph{margin-bottom:16px;align-items:flex-start}
+  .ph h1{font-size:23px}
+  .ph .acts{width:100%}
+  .ph .acts .btn.primary{flex:1}
+  .bnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.96);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+  .bnav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:11.5px;font-weight:650;color:var(--muted);border-radius:10px}
+  .bnav button.on{color:var(--teak-d)}
+  .bnav button.on svg.i{background:var(--teak-soft);border-radius:999px;padding:3px 14px;width:50px;height:28px}
+  .bnav svg.i{width:22px;height:22px;padding:3px}
+  .dash{grid-template-columns:1fr;gap:16px}
+  .kpis{grid-template-columns:1fr 1fr;margin-bottom:16px}
+  .kpi{padding:14px 16px}
+  .kpi:nth-child(3){border-left:0}
+  .kpi:nth-child(n+3){border-top:1px solid var(--line2)}
+  .kpi b{font-size:21px}
+  .ply{margin:0 14px 16px}
+  .layer{padding:11px 12px;gap:10px}
+  .layer .num b{font-size:19px}
+  .panel-h{padding:14px 16px 10px}
+  .feed{padding:0 16px 12px}
+  .list{background:none;border:0;border-radius:0;overflow:visible;display:grid;gap:10px}
+  .row{background:var(--panel);border:1px solid var(--line)!important;border-radius:var(--r);grid-template-columns:1fr 1fr;gap:10px 14px;padding:14px 16px}
+  .row.head{display:none}
+  .c-main{grid-column:1/-1;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .c-main > div{min-width:0}
+  .c::before{content:attr(data-l);display:block;font-size:11.5px;color:var(--faint);font-weight:600;margin-bottom:1px}
+  .c.wide{grid-column:1/-1}
+  .c.hide-m{display:none}
+  .c-act{grid-column:1/-1;justify-content:stretch}
+  .c-act .btn{flex:1}
+  .sheet{top:auto;left:0;width:100%;max-height:92vh;border-radius:18px 18px 0 0;transform:translateY(100%)}
+  .sheet.show{transform:none}
+  .grab{display:block;width:40px;height:4px;border-radius:2px;background:#D5DBD5;margin:8px auto 0}
+  .sheet-h{padding-top:12px}
+  .field input,.field select{height:48px;font-size:16px}
+  .trk-head{grid-template-columns:1fr 1fr}
+  .toolbar .btn.lock{display:none}
+  .toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+}
+@media (min-width:901px){ .c-main .pill-m{display:none} }
+@media (max-width:900px){ .c.st-d{display:none}
+  .f3d{height:300px}.f3d.big{height:62vh}
+  .f3d-lbl{padding:4px 8px 5px}.f3d-lbl b{font-size:11.5px}.f3d-lbl small{font-size:10.5px}
+  .stations{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .stations button{padding:10px 12px}
+  .hide-m{display:none}
+  .hero3d{margin-bottom:16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Printing is a locked feature in the prototype */
+@media print{
+  body *{display:none!important}
+  body::before{content:"Printing is not available in this prototype. Please contact Sangam InfoAnalytics.";display:block;padding:40px;font:600 18px Arial}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="side" aria-label="Main navigation">
+    <div class="brand"><div class="mark"><span>A</span></div><div><b>AUM Industries</b><small>Plywood &amp; doors</small></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      Prototype built by Sangam InfoAnalytics<br>
+      <button data-act="about">What's limited in this preview</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="ribbon">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
+      <span>You're viewing a prototype with sample data. Anything you add is cleared when the page reloads.</span>
+      <button data-act="about">See limits</button>
+    </div>
+    <header class="topbar">
+      <label class="search">
+        <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="gsearch" placeholder="Track an order, batch or PO number (e.g. SO-5103)" autocomplete="off">
+      </label>
+      <span data-langslot></span>
+      <span class="proto-chip">Prototype</span>
+      <div class="who"><div><b style="display:block;font-weight:700;line-height:1.2">Factory owner</b><small style="color:var(--muted)">AUM Industries</small></div><div class="avatar">AI</div></div>
+    </header>
+
+    <header class="mtop">
+      <div class="mark"><span>A</span></div>
+      <div class="t"><b id="mtitle">Dashboard</b><small>AUM Industries</small></div>
+      <span class="proto-chip">Prototype</span>
+      <button class="ib mlang" id="mlang" data-act="langToggle" data-notr aria-label="Switch language">ગુજ</button>
+      <button class="ib" data-act="go" data-id="track" aria-label="Track"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    </header>
+
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<nav class="bnav" id="bnav"></nav>
+
+<div class="scrim" id="scrim" data-act="closeAll"></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true"></aside>
+<div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast"></div>
+
+<script src="three.min.js"></script>
+<script>
+/* ================= Icons ================= */
+const IC={
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+ po:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h7M9 17h5"/>',
+ inward:'<path d="M12 3v11M7.5 9.5L12 14l4.5-4.5"/><path d="M4 15v5h16v-5"/>',
+ stock:'<path d="M4 8l8-4 8 4v9l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v9"/>',
+ prod:'<path d="M3 7h18M3 12h18M3 17h18"/><path d="M3 4h18v16H3z"/>',
+ orders:'<path d="M3 4h2.5l2.2 11.5h11l2.3-8H7"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17.5" cy="19.5" r="1.4"/>',
+ dispatch:'<path d="M2 6h12v10H2z"/><path d="M14 9h4.5L22 12.5V16h-8"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/>',
+ track:'<circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/>',
+ reports:'<path d="M4 20V11M10 20V5M16 20v-6M21 20H3"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.6 3.2-5.5 6.5-5.5s6 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 010 7M21.5 20c-.3-2.4-1.6-4.1-3.5-5"/>',
+ settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7.5a4 4 0 018 0V11"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ alert:'<path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5v.3"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ more:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+ next:'<path d="M9 6l6 6-6 6"/>',
+ scan:'<path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3M4 12h16"/>',
+ export:'<path d="M12 15V3M7.5 7.5L12 3l4.5 4.5"/><path d="M4 14v6h16v-6"/>',
+ factory:'<path d="M3 21V10l6 3.5V10l6 3.5V7l6 3v11z"/><path d="M3 21h18M7 17h2M12 17h2"/>',
+ chat:'<path d="M4 20l1.4-4.2A8 8 0 1112 20a8 8 0 01-4-1z"/>'
+};
+const ic=(n,cls='i')=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`;
+
+/* ================= Helpers ================= */
+const NOW=new Date();
+function d(off,h=10,m=0){const x=new Date(NOW);x.setDate(x.getDate()+off);x.setHours(h,m,0,0);return x}
+const n=v=>Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});
+const rs=v=>'₹'+Math.round(v).toLocaleString('en-IN');
+const lakh=v=>v>=1e7?'₹'+(v/1e7).toFixed(2)+' Cr':v>=1e5?'₹'+(v/1e5).toFixed(2)+' L':rs(v);
+const sameDay=(a,b)=>a.toDateString()===b.toDateString();
+const hm=t=>t.toLocaleTimeString(LOC(),{hour:'numeric',minute:'2-digit'});
+const dm=t=>t.toLocaleDateString(LOC(),{day:'numeric',month:'short'});
+function when(t){if(!t)return'';const y=new Date(NOW);y.setDate(y.getDate()-1);
+  if(sameDay(t,NOW))return'Today, '+hm(t);if(sameDay(t,y))return'Yesterday, '+hm(t);return dm(t)+', '+hm(t)}
+function dayLabel(t){const diff=Math.round((new Date(t).setHours(0,0,0,0)-new Date(NOW).setHours(0,0,0,0))/864e5);
+  if(diff===0)return'Today';if(diff===1)return'Tomorrow';if(diff===-1)return'Yesterday';return dm(t)}
+const dlow=t=>{const s=dayLabel(t);return ['Today','Tomorrow','Yesterday'].includes(s)?s.toLowerCase():s};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=s=>document.querySelector(s);
+const isMobile=()=>matchMedia('(max-width:900px)').matches;
+
+/* ================= Sample data ================= */
+const SUPPLIERS=['Shree Veneer Traders, Morbi','Gujarat Resins & Chemicals, Vapi','Saurashtra Timber Mart, Kandla','Kutch Wood Industries, Gandhidham','Decowood Laminates, Ahmedabad'];
+const CUSTOMERS=['Patel Hardware & Ply, Rajkot','Shiv Interiors, Surat','Krishna Builders, Ahmedabad','Om Furniture House, Junagadh','Mahadev Timber & Ply, Jamnagar','Riddhi Siddhi Constructions, Vadodara','Balaji Door Centre, Bhavnagar'];
+const STAGES={ply:['Core laying','Glue spreading','Hot press','Trimming & sanding','Quality check'],
+              door:['Frame making','Core filling','Hot press','Lipping & edging','Sanding & finish','Quality check']};
+
+const S={
+ page:'home', lang:'en', filter:{}, stockTab:'raw', trackId:null,
+ limits:{po:3,grn:3,batch:3,order:3,dc:3},
+ seq:{po:1047,grn:2234,b:3305,so:5107,dc:7803},
+ materials:[
+  {id:'M1',name:'Face veneer (Gurjan)',spec:'0.5 mm, 8×4 ft',unit:'sheets',stock:4180,reorder:3000,rate:38,sup:0},
+  {id:'M2',name:'Core veneer (Eucalyptus)',spec:'1.6 mm, 8×4 ft',unit:'sheets',stock:9650,reorder:8000,rate:22,sup:0},
+  {id:'M3',name:'PF resin, BWP grade',spec:'Phenol formaldehyde',unit:'kg',stock:1420,reorder:1000,rate:118,sup:1},
+  {id:'M4',name:'UF resin, MR grade',spec:'Urea formaldehyde',unit:'kg',stock:610,reorder:800,rate:64,sup:1},
+  {id:'M5',name:'Teak lipping strip',spec:'10 mm edge band',unit:'rft',stock:2350,reorder:1500,rate:45,sup:3},
+  {id:'M6',name:'Pine timber for door frames',spec:'Seasoned, kiln-dried',unit:'CFT',stock:165,reorder:250,rate:1650,sup:2},
+  {id:'M7',name:'Decorative laminate',spec:'1 mm, 8×4 ft',unit:'sheets',stock:320,reorder:200,rate:950,sup:4},
+  {id:'M8',name:'Hardener & wood filler',spec:'Mixed additive',unit:'kg',stock:205,reorder:150,rate:140,sup:1}],
+ products:[
+  {id:'P1',name:'BWP marine plywood',spec:'18 mm, 8×4 ft',unit:'sheets',type:'ply',stock:640,reserved:200,price:2950,bom:{M1:2,M2:9,M3:4.5,M8:0.2}},
+  {id:'P2',name:'MR commercial plywood',spec:'12 mm, 8×4 ft',unit:'sheets',type:'ply',stock:1180,reserved:300,price:1240,bom:{M1:2,M2:6,M4:3,M8:0.15}},
+  {id:'P3',name:'Flush door',spec:'32 mm, 7×3 ft',unit:'doors',type:'door',stock:210,reserved:0,price:3150,bom:{M1:2,M2:6,M6:0.6,M4:2,M5:20}},
+  {id:'P4',name:'Laminated flush door',spec:'32 mm, 7×3 ft',unit:'doors',type:'door',stock:86,reserved:0,price:5350,bom:{M7:2,M2:6,M6:0.6,M3:2,M5:20}},
+  {id:'P5',name:'Block board',spec:'19 mm, 8×4 ft',unit:'sheets',type:'ply',stock:310,reserved:0,price:2080,bom:{M1:2,M2:3,M6:0.4,M4:3}}],
+ pos:[
+  {id:'PO-1041',sup:0,mat:'M1',qty:3000,rate:38,date:d(-9,11),exp:d(-3),received:3000},
+  {id:'PO-1042',sup:1,mat:'M3',qty:1200,rate:118,date:d(-7,12),exp:d(-2),received:1200},
+  {id:'PO-1043',sup:2,mat:'M6',qty:200,rate:1650,date:d(-5,10),exp:d(1),received:80},
+  {id:'PO-1044',sup:1,mat:'M4',qty:1000,rate:64,date:d(-2,15),exp:d(2),received:0},
+  {id:'PO-1045',sup:0,mat:'M2',qty:12000,rate:22,date:d(-1,11),exp:d(4),received:0},
+  {id:'PO-1046',sup:4,mat:'M7',qty:150,rate:950,date:d(0,9,40),exp:d(6),received:0}],
+ grns:[
+  {id:'GRN-2231',po:'PO-1041',qty:3000,rej:60,veh:'GJ-36-T-4521',by:'Nilesh (store)',date:d(-3,11,20)},
+  {id:'GRN-2232',po:'PO-1042',qty:1200,rej:0,veh:'GJ-15-AV-7710',by:'Nilesh (store)',date:d(-2,16,5)},
+  {id:'GRN-2233',po:'PO-1043',qty:80,rej:0,veh:'GJ-12-BX-3308',by:'Nilesh (store)',date:d(-1,14,40)}],
+ batches:[
+  {id:'B-3300',p:'P5',qty:150,stage:5,log:[d(-4,9),d(-4,12),d(-3,9),d(-3,14),d(-2,10),d(-2,17)],done:d(-2,17)},
+  {id:'B-3301',p:'P1',qty:120,stage:2,log:[d(-1,9),d(-1,13),d(0,9,20)]},
+  {id:'B-3302',p:'P3',qty:60,stage:3,log:[d(-2,9),d(-2,14),d(-1,10),d(0,9,5)]},
+  {id:'B-3303',p:'P2',qty:200,stage:0,log:[d(0,8,45)]},
+  {id:'B-3304',p:'P4',qty:40,stage:5,log:[d(-3,9),d(-3,13),d(-2,10),d(-2,15),d(-1,11),d(0,8,30)]}],
+ orders:[
+  {id:'SO-5101',cust:0,lines:[['P1',200],['P2',300]],date:d(-6,12),due:d(1),ready:d(-1,17,30)},
+  {id:'SO-5102',cust:1,lines:[['P3',40],['P4',20]],date:d(-4,15),due:d(3)},
+  {id:'SO-5103',cust:2,lines:[['P3',120]],date:d(-8,11),due:d(-1),ready:d(-2,12),dc:'DC-7802'},
+  {id:'SO-5104',cust:3,lines:[['P2',150],['P5',60]],date:d(-10,10),due:d(-5),ready:d(-6,16),dc:'DC-7801'},
+  {id:'SO-5105',cust:4,lines:[['P1',400]],date:d(-2,11,30),due:d(5)},
+  {id:'SO-5106',cust:5,lines:[['P4',80]],date:d(-1,17),due:d(7)}],
+ dcs:[
+  {id:'DC-7801',so:'SO-5104',veh:'GJ-11-VV-2290',driver:'Ramesh Chavda',phone:'98250 41127',loaded:d(-5,9,30),transit:d(-5,10,15),delivered:d(-5,15,50)},
+  {id:'DC-7802',so:'SO-5103',veh:'GJ-01-KT-8812',driver:'Imran Sheikh',phone:'97129 60348',loaded:d(-1,8,40),transit:d(-1,9,30)}],
+ activity:[
+  {t:d(0,9,40),ic:'po',txt:'Purchase order <b>PO-1046</b> raised for 150 sheets of decorative laminate'},
+  {t:d(0,9,20),ic:'prod',txt:'Batch <b>B-3301</b> moved to hot press'},
+  {t:d(0,9,5),ic:'prod',txt:'Batch <b>B-3302</b> moved to lipping & edging'},
+  {t:d(0,8,45),ic:'prod',txt:'Batch <b>B-3303</b> started, 200 sheets of 12 mm MR plywood'},
+  {t:d(0,8,30),ic:'prod',txt:'Batch <b>B-3304</b> reached quality check'},
+  {t:d(-1,17,30),ic:'orders',txt:'Order <b>SO-5101</b> stock reserved and ready to dispatch'},
+  {t:d(-1,14,40),ic:'inward',txt:'80 CFT pine timber received against <b>PO-1043</b>'},
+  {t:d(-1,9,30),ic:'dispatch',txt:'<b>DC-7802</b> left the factory for Krishna Builders, Ahmedabad'}]
+};
+
+const M=id=>S.materials.find(x=>x.id===id);
+const P=id=>S.products.find(x=>x.id===id);
+const PO=id=>S.pos.find(x=>x.id===id);
+const SO=id=>S.orders.find(x=>x.id===id);
+const DC=id=>S.dcs.find(x=>x.id===id);
+const B=id=>S.batches.find(x=>x.id===id);
+const avail=p=>p.stock-p.reserved;
+const stagesOf=b=>STAGES[P(b.p).type];
+const bDone=b=>b.stage>=stagesOf(b).length;
+
+function poStatus(p){return p.received>=p.qty?'Received':p.received>0?'Partly received':(p.exp<NOW&&!sameDay(p.exp,NOW)?'Delayed':'Ordered')}
+function soStatus(o){if(o.dc){const c=DC(o.dc);return c.delivered?'Delivered':c.transit?'In transit':'Loaded'}return o.ready?'Ready to dispatch':'Pending'}
+function dcStatus(c){return c.delivered?'Delivered':c.transit?'In transit':'Loaded'}
+function soValue(o){return o.lines.reduce((s,[p,q])=>s+P(p).price*q,0)}
+function canFulfil(o){return o.lines.every(([p,q])=>avail(P(p))>=q)}
+const PILL={'Received':'p-moss','Partly received':'p-blue','Ordered':'p-grey','Delayed':'p-red','Pending':'p-grey','Ready to dispatch':'p-teak',
+ 'Loaded':'p-amber','In transit':'p-blue','Delivered':'p-moss','Finished':'p-moss','Quality check':'p-amber','Accepted':'p-moss','Low stock':'p-amber','Reorder now':'p-red','Healthy':'p-moss'};
+const pill=s=>`<span class="pill ${PILL[s]||'p-teak'}">${esc(s)}</span>`;
+function log(icn,txt){S.activity.unshift({t:new Date(),ic:icn,txt})}
+function matLevel(m){return m.stock<m.reorder*0.8?'Reorder now':m.stock<m.reorder?'Low stock':'Healthy'}
+
+/* ================= Navigation ================= */
+const NAV=[
+ {g:'Overview'},
+ {id:'home',t:'Dashboard',ic:'home'},
+ {id:'factory',t:'Factory view (3D)',ic:'factory'},
+ {id:'track',t:'Track anything',ic:'track'},
+ {g:'Material in'},
+ {id:'purchase',t:'Purchase orders',ic:'po',cnt:()=>S.pos.filter(p=>p.received<p.qty).length},
+ {id:'inward',t:'Material inward',ic:'inward'},
+ {id:'stock',t:'Stock',ic:'stock',cnt:()=>S.materials.filter(m=>m.stock<m.reorder).length||''},
+ {g:'Factory'},
+ {id:'production',t:'Production',ic:'prod',cnt:()=>S.batches.filter(b=>!bDone(b)).length},
+ {g:'Material out'},
+ {id:'orders',t:'Customer orders',ic:'orders',cnt:()=>S.orders.filter(o=>!o.dc).length},
+ {id:'dispatch',t:'Dispatch',ic:'dispatch'},
+ {g:'Full version'},
+ {id:'reports',t:'Reports',ic:'reports',lock:1},
+ {id:'users',t:'Users & roles',ic:'users',lock:1},
+ {id:'settings',t:'Settings',ic:'settings',lock:1}];
+const BNAV=[['home','Home','home'],['inward','Inward','inward'],['production','Production','prod'],['orders','Orders','orders'],['more','More','more']];
+const TITLES={home:'Dashboard',factory:'Factory view',track:'Track anything',purchase:'Purchase orders',inward:'Material inward',stock:'Stock',production:'Production',orders:'Customer orders',dispatch:'Dispatch'};
+
+function renderNav(){
+ $('#nav').innerHTML=NAV.map(x=>x.g?`<div class="nav-group">${x.g}</div>`:
+  `<a class="${S.page===x.id?'on':''} ${x.lock?'locked':''}" data-act="${x.lock?'locked':'go'}" data-id="${x.id}">${ic(x.ic)}<span>${x.t}</span>${x.lock?ic('lock','i lk'):(x.cnt&&x.cnt()?`<span class="cnt">${x.cnt()}</span>`:'')}</a>`).join('');
+ const moreOn=!['home','inward','production','orders'].includes(S.page);
+ $('#bnav').innerHTML=BNAV.map(([id,t,i])=>`<button class="${(S.page===id||(id==='more'&&moreOn))?'on':''}" data-act="${id==='more'?'more':'go'}" data-id="${id}">${ic(i)}<span>${t}</span></button>`).join('');
+ $('#mtitle').textContent=TITLES[S.page]||'';
+}
+function render(){renderNav();$('#content').innerHTML=(PAGES[S.page]||PAGES.home)();document.title=`${TITLES[S.page]} | AUM Industries (Prototype)`;
+ F3D.mount();F3D.update();if(S.page==='home'&&!S.seenHome){S.seenHome=1;countUp()}}
+function stay(p){if(S.page==='factory'||S.page==='home'){closeAll();render()}else go(p)}
+function countUp(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ document.querySelectorAll('[data-count]').forEach(el=>{const v=+el.dataset.count,fm=el.dataset.fmt==='lakh'?lakh:n,t0=performance.now();
+  const step=t=>{const k=Math.min(1,(t-t0)/1100),e=1-Math.pow(1-k,3);el.textContent=fm(fm===n?Math.round(v*e):v*e);if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
+function go(p){S.page=p;closeAll();render();window.scrollTo({top:0})}
+
+function head(title,sub,acts=''){return`<div class="ph"><div><h1>${title}</h1>${sub?`<p>${sub}</p>`:''}</div>${acts?`<div class="acts">${acts}</div>`:''}</div>`}
+function seg(key,opts){const cur=S.filter[key]||opts[0][0];return`<div class="seg" role="tablist">${opts.map(([v,l,c])=>`<button class="${cur===v?'on':''}" data-act="filter" data-id="${key}:${v}">${l}${c!==undefined?`<em>${c}</em>`:''}</button>`).join('')}</div>`}
+const lockBtn=(f,label,icn='export')=>`<button class="btn lock sm" data-act="locked" data-id="${f}">${ic('lock')}${label}</button>`;
+const emptyBox=(t,s)=>`<div class="empty"><b>${t}</b>${s}</div>`;
+
+/* ================= Pages ================= */
+const PAGES={};
+
+PAGES.home=()=>{
+ const openPO=S.pos.filter(p=>p.received<p.qty);
+ const weekGRN=S.grns.filter(g=>(NOW-g.date)/864e5<7);
+ const low=S.materials.filter(m=>m.stock<m.reorder);
+ const wip=S.batches.filter(b=>!bDone(b));
+ const fin=S.products.reduce((s,p)=>s+avail(p),0);
+ const openSO=S.orders.filter(o=>!o.dc);
+ const transit=S.dcs.filter(c=>c.transit&&!c.delivered);
+ const rawVal=S.materials.reduce((s,m)=>s+m.stock*m.rate,0);
+ const wipUnits=wip.reduce((s,b)=>s+b.qty,0);
+ const orderVal=S.orders.reduce((s,o)=>s+soValue(o),0);
+ const layers=[
+  ['purchase','Purchase orders','Raw material ordered from suppliers',openPO.length,'open'],
+  ['inward','Material inward','Arrivals checked in at the gate',weekGRN.length,'this week'],
+  ['stock','Raw material store','Veneer, resin, timber, laminate',S.materials.length,low.length?`${low.length} running low`:'items'],
+  ['production','Production floor','Batches on the press line',wip.length,`${n(wipUnits)} pcs`],
+  ['stock','Finished goods','Ready plywood, boards and doors',n(fin),'available'],
+  ['orders','Customer orders','Waiting for stock or dispatch',openSO.length,'open'],
+  ['dispatch','Dispatch','Vehicles on the road right now',transit.length,'in transit']];
+ const h=NOW.getHours(),greet=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+
+ const att=[];
+ low.forEach(m=>att.push({ic:'alert',c:'var(--amber-soft);color:#855705',t:`${m.name} is below reorder level`,s:`${n(m.stock)} ${m.unit} left, reorder at ${n(m.reorder)}`,go:'stock'}));
+ S.pos.filter(p=>poStatus(p)==='Delayed'||(p.received>0&&p.received<p.qty)).forEach(p=>att.push({ic:'clock',c:'var(--blue-soft);color:var(--blue)',t:`${p.id} is waiting on ${n(p.qty-p.received)} ${M(p.mat).unit}`,s:`${SUPPLIERS[p.sup]}, expected ${dlow(p.exp)}`,go:'purchase'}));
+ S.batches.filter(b=>!bDone(b)&&b.stage===stagesOf(b).length-1).forEach(b=>att.push({ic:'check',c:'var(--moss-soft);color:var(--moss)',t:`${b.id} is waiting for quality check`,s:`${n(b.qty)} ${P(b.p).unit} of ${P(b.p).name.toLowerCase()}`,go:'production'}));
+ S.orders.filter(o=>!o.dc&&(o.due-NOW)/864e5<2).forEach(o=>att.push({ic:'orders',c:'var(--red-soft);color:var(--red)',t:`${o.id} is due ${dlow(o.due)}`,s:`${CUSTOMERS[o.cust]}, ${soStatus(o).toLowerCase()}`,go:'orders'}));
+
+ return head(greet,null,langSeg())+
+ `<p class="greet">${NOW.toLocaleDateString(LOC(),{weekday:'long',day:'numeric',month:'long'})}. Here's where every piece of material stands across the factory.</p>
+<section class="panel hero3d"><div class="panel-h"><h2>Live factory</h2><div style="display:flex;gap:12px;align-items:center"><span class="hide-m">Drag to turn it. Tap a label to open that section.</span><button class="btn ghost sm" data-act="go" data-id="factory">${ic('factory')}Full view</button></div></div><div class="f3d" id="f3dMount" data-page="home" data-tour="${isMobile()?1:0}"></div></section>
+ <div class="kpis">
+  <div class="kpi"><small>Raw material in store</small><b data-count="${rawVal}" data-fmt="lakh">${lakh(rawVal)}</b><span>${S.materials.length} items tracked</span></div>
+  <div class="kpi"><small>On the production floor</small><b data-count="${wipUnits}">${n(wipUnits)}</b><span>${wip.length} batches running</span></div>
+  <div class="kpi"><small>Finished and ready</small><b data-count="${fin}">${n(fin)}</b><span>sheets and doors</span></div>
+  <div class="kpi"><small>Order book value</small><b data-count="${orderVal}" data-fmt="lakh">${lakh(orderVal)}</b><span class="up">${openSO.length} orders open</span></div>
+ </div>
+ <div class="dash">
+  <section class="panel">
+   <div class="panel-h"><h2>Material flow</h2><span>Tap a layer to open it</span></div>
+   <div class="ply ${S.seenPly?'':'assemble'}">${(S.seenPly=1,'')}${layers.map((l,i)=>`<button class="layer" style="--i:${i}" data-act="go" data-id="${l[0]}"><span class="st">${i+1}</span><span class="lt"><b>${l[1]}</b><small>${l[2]}</small></span><span class="num"><b>${l[3]}</b><small>${l[4]}</small></span></button>`).join('')}</div>
+  </section>
+  <div style="display:grid;gap:22px">
+   <section class="panel"><div class="panel-h"><h2>Needs attention</h2><span>${att.length} items</span></div>
+    <ul class="att">${att.slice(0,6).map(a=>`<li data-act="go" data-id="${a.go}"><span class="dot" style="background:${a.c}">${ic(a.ic)}</span><span><b>${esc(a.t)}</b><small>${esc(a.s)}</small></span></li>`).join('')||'<li>All clear for today.</li>'}</ul></section>
+   <section class="panel"><div class="panel-h"><h2>Latest activity</h2></div>
+    <ul class="feed">${S.activity.slice(0,6).map(a=>`<li><span class="fi">${ic(a.ic)}</span><span>${a.txt}</span><time>${when(a.t)}</time></li>`).join('')}</ul></section>
+  </div>
+ </div>`;
+};
+
+PAGES.factory=()=>{
+ const st=[['inward','Material inward'],['store','Raw store'],['press','Hot press'],['line','Trimming & QC'],['finished','Finished goods'],['dispatch','Dispatch bay']];
+ const cur=S.f3dFocus||'all';
+ return head('Factory view','A live 3D model of the shop floor. Stack heights, drums and doors follow the real stock numbers, and the trucks, press and conveyor react when you record something.',
+  `<button class="btn ${cur==='all'?'primary':'ghost'}" data-act="f3d" data-id="all">Whole factory</button>`)+
+ `<section class="panel" style="overflow:hidden"><div class="f3d big" id="f3dMount" data-page="factory" style="border-top:0"><span class="f3d-hint hide-m">Drag to turn the view</span></div>
+  <div class="stations">${st.map(([k,t],i)=>`<button data-act="f3d" data-id="${k}" class="${cur===k?'on':''}"><small>Step ${i+1}</small><b>${t}</b></button>`).join('')}</div></section>
+ <div class="try"><p>Try it: receive a truck, push a batch through the press, or dispatch an order. The 3D view updates in front of you.</p>
+  <button class="btn ghost" data-act="receive">${ic('inward')}Receive material</button><button class="btn ghost" data-act="newBatch">${ic('prod')}Start batch</button><button class="btn primary" data-act="newDispatch">${ic('dispatch')}Dispatch an order</button></div>`;
+};
+
+PAGES.purchase=()=>{
+ const f=S.filter.purchase||'open';
+ const list=S.pos.slice().reverse().filter(p=>f==='all'||(f==='open'?p.received<p.qty:p.received>=p.qty));
+ const cols='1.1fr 1.5fr 1.6fr 1fr 1fr 1.05fr 150px';
+ return head('Purchase orders','Raw material ordered from suppliers, and how much of it has actually arrived at the gate.',
+   `<button class="btn primary" data-act="newPO">${ic('plus')}New purchase order</button>`)+
+ `<div class="toolbar">${seg('purchase',[['open','Open',S.pos.filter(p=>p.received<p.qty).length],['done','Fully received',S.pos.filter(p=>p.received>=p.qty).length],['all','All',S.pos.length]])}${lockBtn('export','Export')}</div>
+ <div class="list"><div class="row head" style="--cols:${cols}"><div>PO number</div><div>Supplier</div><div>Material</div><div>Ordered</div><div>Received</div><div>Status</div><div></div></div>
+ ${list.map(p=>{const m=M(p.mat),st=poStatus(p),pct=Math.min(100,p.received/p.qty*100);return`<div class="row" style="--cols:${cols}">
+  <div class="c-main"><div><b class="idtag">${p.id}</b><span>${dm(p.date)}, expected ${dlow(p.exp)}</span></div><span class="pill-m">${pill(st)}</span></div>
+  <div class="c wide" data-l="Supplier">${esc(SUPPLIERS[p.sup])}</div>
+  <div class="c wide" data-l="Material">${esc(m.name)}<small>${esc(m.spec)}</small></div>
+  <div class="c" data-l="Ordered">${n(p.qty)} ${m.unit}<small>${rs(p.qty*p.rate)}</small></div>
+  <div class="c" data-l="Received">${n(p.received)} ${m.unit}<div class="bar"><b style="width:${pct}%"></b></div></div>
+  <div class="c st-d" data-l="Status">${pill(st)}</div>
+  <div class="c-act">${p.received<p.qty?`<button class="btn ghost sm" data-act="receive" data-id="${p.id}">${ic('inward')}Receive</button>`:`<button class="btn ghost sm" data-act="track" data-id="${p.id}">View trail</button>`}</div></div>`}).join('')||emptyBox('No purchase orders here','Switch the filter above or raise a new purchase order.')}</div>`;
+};
+
+PAGES.inward=()=>{
+ const cols='1.1fr 1.1fr 1.7fr 1.1fr .9fr 1.2fr 120px';
+ const list=S.grns.slice().reverse();
+ return head('Material inward','Every truck that arrives is checked in here. Accepted quantity goes straight into the raw material store.',
+   `${lockBtn('scan','Scan barcode','scan')}<button class="btn primary" data-act="receive">${ic('plus')}Receive material</button>`)+
+ `<div class="list"><div class="row head" style="--cols:${cols}"><div>Entry no.</div><div>Against PO</div><div>Material</div><div>Accepted</div><div>Rejected</div><div>Vehicle</div><div></div></div>
+ ${list.map(g=>{const p=PO(g.po),m=M(p.mat);return`<div class="row" style="--cols:${cols}">
+  <div class="c-main"><div><b class="idtag">${g.id}</b><span>${when(g.date)}</span></div><span class="pill-m">${pill('Accepted')}</span></div>
+  <div class="c" data-l="Against PO"><button class="link" data-act="track" data-id="${p.id}">${p.id}</button><small>${esc(SUPPLIERS[p.sup].split(',')[0])}</small></div>
+  <div class="c" data-l="Material">${esc(m.name)}</div>
+  <div class="c" data-l="Accepted"><b>${n(g.qty-g.rej)}</b> ${m.unit}</div>
+  <div class="c" data-l="Rejected">${g.rej?`<span class="no">${n(g.rej)}</span>`:'None'}</div>
+  <div class="c" data-l="Vehicle">${g.veh}<small>Checked by ${esc(g.by)}</small></div>
+  <div class="c-act">${lockBtn('print','Print','export')}</div></div>`}).join('')}</div>`;
+};
+
+PAGES.stock=()=>{
+ const tab=S.filter.stock||'raw';
+ const t=seg('stock',[['raw','Raw material',S.materials.length],['fin','Finished goods',S.products.length]]);
+ if(tab==='raw'){
+  const cols='2fr 1.8fr 1fr 1fr 1fr';
+  return head('Stock','Live balance of everything in the store. The dark tick on each bar marks the reorder level.',`${lockBtn('export','Export')}`)+
+  `<div class="toolbar">${t}</div><div class="list"><div class="row head" style="--cols:${cols}"><div>Material</div><div>In store</div><div>Reorder at</div><div>Value</div><div>Status</div></div>
+  ${S.materials.map(m=>{const lv=matLevel(m),max=Math.max(m.stock,m.reorder)*1.35,cls=lv==='Reorder now'?'crit':lv==='Low stock'?'low':'';return`<div class="row" style="--cols:${cols}">
+   <div class="c-main"><div><b>${esc(m.name)}</b><span>${esc(m.spec)}</span></div><span class="pill-m">${pill(lv)}</span></div>
+   <div class="c wide" data-l="In store"><b>${n(m.stock)}</b> ${m.unit}<div class="bar"><b class="${cls}" style="width:${m.stock/max*100}%"></b><s style="left:${m.reorder/max*100}%"></s></div></div>
+   <div class="c" data-l="Reorder at">${n(m.reorder)} ${m.unit}</div>
+   <div class="c" data-l="Value">${lakh(m.stock*m.rate)}</div>
+   <div class="c st-d" data-l="Status">${pill(lv)}</div></div>`}).join('')}</div>`;
+ }
+ const cols='2fr 1fr 1fr 1fr 1fr';
+ return head('Stock','Finished plywood, boards and doors. Reserved stock is already promised to a customer order.',`${lockBtn('export','Export')}`)+
+ `<div class="toolbar">${t}</div><div class="list"><div class="row head" style="--cols:${cols}"><div>Product</div><div>In godown</div><div>Reserved</div><div>Available</div><div>Rate</div></div>
+ ${S.products.map(p=>`<div class="row" style="--cols:${cols}">
+  <div class="c-main"><div><b>${esc(p.name)}</b><span>${esc(p.spec)}</span></div></div>
+  <div class="c" data-l="In godown">${n(p.stock)} ${p.unit}</div>
+  <div class="c" data-l="Reserved">${n(p.reserved)}</div>
+  <div class="c" data-l="Available"><b class="${avail(p)<50?'no':'ok'}">${n(avail(p))}</b></div>
+  <div class="c" data-l="Rate">${rs(p.price)} <small>per ${p.unit==='doors'?'door':'sheet'}</small></div></div>`).join('')}</div>`;
+};
+
+PAGES.production=()=>{
+ const f=S.filter.production||'run';
+ const run=S.batches.filter(b=>!bDone(b)),done=S.batches.filter(bDone);
+ const list=(f==='run'?run:f==='done'?done:S.batches).slice().reverse();
+ const cols='1fr 1.7fr .8fr 2fr 190px';
+ return head('Production','Each batch moves stage by stage. Raw material is taken from the store when a batch starts, and finished stock goes up once it clears quality check.',
+   `<button class="btn primary" data-act="newBatch">${ic('plus')}Start new batch</button>`)+
+ `<div class="toolbar">${seg('production',[['run','In progress',run.length],['done','Finished',done.length],['all','All',S.batches.length]])}</div>
+ <div class="list"><div class="row head" style="--cols:${cols}"><div>Batch</div><div>Product</div><div>Quantity</div><div>Stage</div><div></div></div>
+ ${list.map(b=>{const p=P(b.p),st=stagesOf(b),fin=bDone(b),lbl=fin?'Finished':st[b.stage];return`<div class="row" style="--cols:${cols}">
+  <div class="c-main"><div><b class="idtag">${b.id}</b><span>Started ${when(b.log[0]).toLowerCase()}</span></div><span class="pill-m">${pill(fin?'Finished':lbl==='Quality check'?'Quality check':'In progress')}</span></div>
+  <div class="c wide" data-l="Product">${esc(p.name)}<small>${esc(p.spec)}</small></div>
+  <div class="c" data-l="Quantity"><b>${n(b.qty)}</b> ${p.unit}</div>
+  <div class="c" data-l="Stage"><b style="font-weight:700">${fin?'Finished':`${lbl}`}</b> <small style="display:inline">${fin?'':`step ${b.stage+1} of ${st.length}`}</small>
+   <div class="steps">${st.map((_,i)=>`<i class="${i<b.stage?'done':i===b.stage?'cur':''}"></i>`).join('')}</div></div>
+  <div class="c-act">${fin?`<button class="btn ghost sm" data-act="track" data-id="${b.id}">View trail</button>`:
+    `<button class="btn ${b.stage===st.length-1?'moss':'ghost'} sm" data-act="advance" data-id="${b.id}">${ic(b.stage===st.length-1?'check':'next')}${b.stage===st.length-1?'Pass QC':'Move to '+st[b.stage+1].toLowerCase()}</button>`}</div></div>`}).join('')||emptyBox('No batches here','Start a new batch to see it move through the line.')}</div>`;
+};
+
+PAGES.orders=()=>{
+ const f=S.filter.orders||'open';
+ const list=S.orders.slice().reverse().filter(o=>f==='all'||(f==='open'?!o.dc:!!o.dc));
+ const cols='1fr 1.7fr 1.8fr 1fr 1.15fr 160px';
+ return head('Customer orders','What each dealer or builder has ordered, whether the stock is set aside, and when it leaves the factory.',
+   `<button class="btn primary" data-act="newOrder">${ic('plus')}New order</button>`)+
+ `<div class="toolbar">${seg('orders',[['open','Open',S.orders.filter(o=>!o.dc).length],['sent','Dispatched',S.orders.filter(o=>o.dc).length],['all','All',S.orders.length]])}${lockBtn('export','Export')}</div>
+ <div class="list"><div class="row head" style="--cols:${cols}"><div>Order</div><div>Customer</div><div>Items</div><div>Value</div><div>Status</div><div></div></div>
+ ${list.map(o=>{const st=soStatus(o),late=!o.dc&&o.due<NOW&&!sameDay(o.due,NOW);let act;
+  if(st==='Pending')act=canFulfil(o)?`<button class="btn ghost sm" data-act="reserve" data-id="${o.id}">${ic('check')}Reserve stock</button>`:`<button class="btn ghost sm" data-act="short" data-id="${o.id}">${ic('alert')}Stock short</button>`;
+  else if(st==='Ready to dispatch')act=`<button class="btn primary sm" data-act="newDispatch" data-id="${o.id}">${ic('dispatch')}Dispatch</button>`;
+  else act=`<button class="btn ghost sm" data-act="track" data-id="${o.id}">Track</button>`;
+  return`<div class="row" style="--cols:${cols}">
+  <div class="c-main"><div><b class="idtag">${o.id}</b><span>Due ${dlow(o.due)}${late?' <span class="no">(overdue)</span>':''}</span></div><span class="pill-m">${pill(st)}</span></div>
+  <div class="c wide" data-l="Customer">${esc(CUSTOMERS[o.cust].split(',')[0])}<small>${esc(CUSTOMERS[o.cust].split(',')[1]||'')}</small></div>
+  <div class="c wide" data-l="Items"><ul class="lines">${o.lines.map(([p,q])=>`<li>${n(q)} × ${esc(P(p).name)} <small style="display:inline">${esc(P(p).spec.split(',')[0])}</small></li>`).join('')}</ul></div>
+  <div class="c" data-l="Value">${lakh(soValue(o))}</div>
+  <div class="c st-d" data-l="Status">${pill(st)}</div>
+  <div class="c-act">${act}</div></div>`}).join('')||emptyBox('No orders here','Switch the filter or add a new customer order.')}</div>`;
+};
+
+PAGES.dispatch=()=>{
+ const ready=S.orders.filter(o=>o.ready&&!o.dc);
+ const cols='1fr 1fr 1.6fr 1.3fr 1fr 190px';
+ return head('Dispatch','Loading, on the road, delivered. Stock leaves the godown the moment a challan is created.',
+   `${lockBtn('whatsapp','WhatsApp alerts','chat')}<button class="btn primary" data-act="newDispatch">${ic('plus')}New dispatch</button>`)+
+ (ready.length?`<div class="box" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--teak-soft);border-color:#EBD6BF"><span style="flex:1;min-width:200px"><b>${ready.length} order${ready.length>1?'s are':' is'} packed and waiting for a vehicle:</b> ${ready.map(o=>o.id).join(', ')}</span><button class="btn primary sm" data-act="newDispatch" data-id="${ready[0].id}">Dispatch ${ready[0].id}</button></div>`:'')+
+ `<div class="list"><div class="row head" style="--cols:${cols}"><div>Challan</div><div>Order</div><div>Customer</div><div>Vehicle and driver</div><div>Status</div><div></div></div>
+ ${S.dcs.slice().reverse().map(c=>{const o=SO(c.so),st=dcStatus(c);return`<div class="row" style="--cols:${cols}">
+  <div class="c-main"><div><b class="idtag">${c.id}</b><span>Loaded ${when(c.loaded).toLowerCase()}</span></div><span class="pill-m">${pill(st)}</span></div>
+  <div class="c" data-l="Order"><button class="link" data-act="track" data-id="${o.id}">${o.id}</button><small>${o.lines.reduce((s,l)=>s+l[1],0)} pcs</small></div>
+  <div class="c" data-l="Customer">${esc(CUSTOMERS[o.cust].split(',')[0])}<small>${esc(CUSTOMERS[o.cust].split(',')[1]||'')}</small></div>
+  <div class="c wide" data-l="Vehicle and driver">${c.veh}<small>${esc(c.driver)}, ${c.phone}</small></div>
+  <div class="c st-d" data-l="Status">${pill(st)}</div>
+  <div class="c-act">${st==='Loaded'?`<button class="btn ghost sm" data-act="dcNext" data-id="${c.id}">${ic('dispatch')}Mark left factory</button>`:st==='In transit'?`<button class="btn moss sm" data-act="dcNext" data-id="${c.id}">${ic('check')}Mark delivered</button>`:`<button class="btn ghost sm" data-act="track" data-id="${o.id}">View trail</button>`}</div></div>`}).join('')}</div>`;
+};
+
+PAGES.track=()=>{
+ const id=S.trackId;
+ const samples=['SO-5103','SO-5101','B-3302','PO-1043'];
+ let body='';
+ if(id){const r=trail(id);body=r?r:`<section class="panel" style="margin-top:18px">${emptyBox('Nothing found for '+esc(id),'Check the number and try again. Order numbers start with SO, batches with B, purchase orders with PO.')}</section>`}
+ return head('Track anything','Type any order, batch or purchase order number to see its full trail through the factory.')+
+ `<section class="panel" style="padding:18px 20px"><div class="field" style="margin:0"><label for="tin">Number to track</label>
+  <div style="display:flex;gap:10px"><input id="tin" value="${esc(id||'')}" placeholder="e.g. SO-5103" style="flex:1" onkeydown="if(event.key==='Enter')doTrack(this.value)"><button class="btn primary" onclick="doTrack(document.getElementById('tin').value)">Track</button></div></div>
+  <div class="chips">${samples.map(s=>`<button data-act="track" data-id="${s}">${s}</button>`).join('')}</div></section>${body}`;
+};
+
+function tl(steps){let curSet=false;return`<ul class="tl">${steps.map(s=>{let cls=s.t?'done':'todo';if(!s.t&&!curSet){cls='todo now';curSet=true}
+ return`<li class="${cls}"><span class="dt">${s.t?ic('check'):''}</span><b>${s.l}</b><small>${s.t?when(s.t)+(s.d?', '+s.d:''):(s.d||'Not yet')}</small></li>`}).join('')}</ul>`}
+function trkHead(items){return`<div class="trk-head">${items.map(([a,b])=>`<div><small>${a}</small><b>${b}</b></div>`).join('')}</div>`}
+function trail(raw){
+ const id=raw.trim().toUpperCase();
+ const o=SO(id),b=B(id),p=PO(id);
+ if(o){const c=o.dc?DC(o.dc):null;
+  return`<section class="panel" style="margin-top:18px"><div class="panel-h"><h2>Order ${o.id}</h2>${pill(soStatus(o))}</div>
+  ${trkHead([['Customer',esc(CUSTOMERS[o.cust].split(',')[0])],['Items',o.lines.map(([x,q])=>`${q} × ${esc(P(x).name)}`).join(', ')],['Value',lakh(soValue(o))],['Due',dayLabel(o.due)]])}
+  ${tl([{l:'Order placed',t:o.date},{l:'Stock reserved in godown',t:o.ready,d:o.ready?'':'Waiting for finished stock'},{l:'Loaded on vehicle',t:c&&c.loaded,d:c?`${c.id}, ${c.veh}`:''},{l:'Left the factory',t:c&&c.transit,d:c?`Driver ${c.driver}`:''},{l:'Delivered to customer',t:c&&c.delivered}])}</section>`}
+ if(b){const pr=P(b.p),st=stagesOf(b);
+  return`<section class="panel" style="margin-top:18px"><div class="panel-h"><h2>Batch ${b.id}</h2>${pill(bDone(b)?'Finished':'In progress')}</div>
+  ${trkHead([['Product',esc(pr.name)],['Size',esc(pr.spec)],['Quantity',`${n(b.qty)} ${pr.unit}`],['Raw material used',Object.keys(pr.bom).length+' items']])}
+  ${tl([...st.map((s,i)=>({l:s,t:i<b.stage?b.log[i]:null,d:i===b.stage&&!bDone(b)?'Running now, started '+when(b.log[i]).toLowerCase():''})),{l:'Moved to finished goods',t:b.done}])}</section>`}
+ if(p){const m=M(p.mat),gs=S.grns.filter(g=>g.po===p.id);
+  return`<section class="panel" style="margin-top:18px"><div class="panel-h"><h2>Purchase order ${p.id}</h2>${pill(poStatus(p))}</div>
+  ${trkHead([['Supplier',esc(SUPPLIERS[p.sup].split(',')[0])],['Material',esc(m.name)],['Ordered',`${n(p.qty)} ${m.unit}`],['Expected',dayLabel(p.exp)]])}
+  ${tl([{l:'Order sent to supplier',t:p.date},...gs.map(g=>({l:`${n(g.qty)} ${m.unit} arrived (${g.id})`,t:g.date,d:`${g.veh}${g.rej?`, ${g.rej} rejected`:''}`})),{l:'Fully received',t:p.received>=p.qty?(gs[gs.length-1]||{}).date:null,d:p.received<p.qty?`${n(p.qty-p.received)} ${m.unit} still to come`:''}])}</section>`}
+ return null;
+}
+function doTrack(v){S.trackId=(v||'').trim().toUpperCase()||null;S.page='track';render()}
+
+/* ================= Sheets (forms) ================= */
+function openSheet(title,sub,body,foot){
+ $('#sheet').innerHTML=`<div class="grab"></div><div class="sheet-h"><div><h3>${title}</h3>${sub?`<p>${sub}</p>`:''}</div><button class="x" data-act="closeAll" aria-label="Close">${ic('x')}</button></div><div class="sheet-b">${body}</div><div class="sheet-f">${foot}</div>`;
+ $('#sheet').classList.add('show');$('#scrim').classList.add('show');
+}
+function closeAll(){['#sheet','#modal','#scrim'].forEach(s=>$(s).classList.remove('show'))}
+const quota=k=>`<span class="quota">Prototype: ${S.limits[k]} of 3 new entries left</span>`;
+const opt=(arr,sel)=>arr.map(([v,l])=>`<option value="${v}" ${v===sel?'selected':''}>${esc(l)}</option>`).join('');
+const val=id=>document.getElementById(id).value;
+function useLimit(k){if(S.limits[k]<=0){showLocked('limit');return false}S.limits[k]--;return true}
+const isoDate=t=>{const x=new Date(t);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)};
+
+function formPO(){
+ openSheet('New purchase order','Order raw material from a supplier.',
+ `<div class="field"><label for="fSup">Supplier</label><select id="fSup">${opt(SUPPLIERS.map((s,i)=>[i,s]),0)}</select></div>
+  <div class="field"><label for="fMat">Material</label><select id="fMat" onchange="document.getElementById('fRate').value=M(this.value).rate;poCalc()">${opt(S.materials.map(m=>[m.id,`${m.name} (${m.unit})`]),'M4')}</select></div>
+  <div class="two"><div class="field"><label for="fQty">Quantity</label><input id="fQty" type="number" min="1" value="800" oninput="poCalc()"></div>
+  <div class="field"><label for="fRate">Rate <em>(₹ per unit)</em></label><input id="fRate" type="number" min="0" value="${M('M4').rate}" oninput="poCalc()"></div></div>
+  <div class="field"><label for="fExp">Expected delivery</label><input id="fExp" type="date" value="${isoDate(d(4))}"></div>
+  <div class="box" id="poTot"></div>`,
+ `${quota('po')}<button class="btn ghost" data-act="closeAll">Cancel</button><button class="btn primary" data-act="savePO">Raise PO</button>`);poCalc();
+}
+function poCalc(){const m=M(val('fMat')),q=+val('fQty')||0,r=+val('fRate')||0;
+ $('#poTot').innerHTML=`<b>Order total ${rs(q*r)}</b> plus GST<div class="hint">Current stock of ${esc(m.name.toLowerCase())}: ${n(m.stock)} ${m.unit}, reorder level ${n(m.reorder)}</div>`}
+function savePO(){const q=+val('fQty'),r=+val('fRate');if(!(q>0)){toast('Enter a quantity above zero');return}
+ if(!useLimit('po'))return;
+ const p={id:'PO-'+S.seq.po++,sup:+val('fSup'),mat:val('fMat'),qty:q,rate:r,date:new Date(),exp:new Date(val('fExp')||d(4)),received:0};
+ S.pos.push(p);log('po',`Purchase order <b>${p.id}</b> raised for ${n(q)} ${M(p.mat).unit} of ${esc(M(p.mat).name.toLowerCase())}`);
+ closeAll();S.filter.purchase='open';stay('purchase');toast(`${p.id} raised`);
+}
+
+function formGRN(poId){
+ const open=S.pos.filter(p=>p.received<p.qty);
+ if(!open.length){toast('No open purchase orders to receive against');return}
+ const sel=poId||open[0].id;
+ openSheet('Receive material','Check in a truck at the gate against its purchase order.',
+ `<div class="field"><label for="gPo">Purchase order</label><select id="gPo" onchange="grnFill()">${opt(open.map(p=>[p.id,`${p.id}, ${M(p.mat).name}`]),sel)}</select></div>
+  <div class="box" id="gInfo"></div>
+  <div class="two"><div class="field"><label for="gQty">Quantity arrived</label><input id="gQty" type="number" min="1"></div>
+  <div class="field"><label for="gRej">Rejected at check <em>(if any)</em></label><input id="gRej" type="number" min="0" value="0"></div></div>
+  <div class="two"><div class="field"><label for="gVeh">Vehicle number</label><input id="gVeh" placeholder="GJ-11-AB-1234" value="GJ-03-CT-6021"></div>
+  <div class="field"><label for="gBy">Checked by</label><input id="gBy" value="Nilesh (store)"></div></div>
+  <button class="btn lock sm" data-act="locked" data-id="scan" style="width:100%">${ic('lock')}Scan supplier invoice or barcode</button>`,
+ `${quota('grn')}<button class="btn ghost" data-act="closeAll">Cancel</button><button class="btn primary" data-act="saveGRN">Add to store</button>`);grnFill();
+}
+function grnFill(){const p=PO(val('gPo')),m=M(p.mat),left=p.qty-p.received;
+ $('#gInfo').innerHTML=`<b>${esc(SUPPLIERS[p.sup])}</b><div class="hint">${n(p.qty)} ${m.unit} ordered, ${n(p.received)} received so far, <b>${n(left)} ${m.unit} pending</b></div>`;
+ $('#gQty').value=left}
+function saveGRN(){const p=PO(val('gPo')),m=M(p.mat),q=+val('gQty'),rej=+val('gRej')||0;
+ if(!(q>0)){toast('Enter the quantity that arrived');return}
+ if(rej>q){toast('Rejected quantity cannot be more than what arrived');return}
+ if(!useLimit('grn'))return;
+ const g={id:'GRN-'+S.seq.grn++,po:p.id,qty:q,rej,veh:val('gVeh')||'Not noted',by:val('gBy')||'Store',date:new Date()};
+ S.grns.push(g);p.received=Math.min(p.qty,p.received+q);m.stock+=q-rej;
+ log('inward',`${n(q-rej)} ${m.unit} ${esc(m.name.toLowerCase())} received against <b>${p.id}</b>`);
+ F3D.fx('inward');stay('inward');toast(`${n(q-rej)} ${m.unit} added to store`);
+}
+
+function formBatch(){
+ openSheet('Start new batch','Raw material is issued from the store as soon as the batch starts.',
+ `<div class="field"><label for="bP">Product</label><select id="bP" onchange="bCalc()">${opt(S.products.map(p=>[p.id,`${p.name}, ${p.spec}`]),'P3')}</select></div>
+  <div class="field"><label for="bQ">Quantity</label><input id="bQ" type="number" min="1" value="50" oninput="bCalc()"></div>
+  <div class="box"><h4>Material needed from store</h4><table class="req" id="bReq"></table></div>
+  <div class="hint" id="bStages"></div>`,
+ `${quota('batch')}<button class="btn ghost" data-act="closeAll">Cancel</button><button class="btn primary" id="bGo" data-act="saveBatch">Start batch</button>`);bCalc();
+}
+function bCalc(){const p=P(val('bP')),q=+val('bQ')||0;let ok=q>0;
+ $('#bReq').innerHTML=Object.entries(p.bom).map(([mid,per])=>{const m=M(mid),need=+(per*q).toFixed(2),has=m.stock>=need;if(!has)ok=false;
+  return`<tr><td>${esc(m.name)}</td><td>${n(need)} ${m.unit}</td><td class="${has?'ok':'no'}">${has?'In stock':'Short by '+n(need-m.stock)}</td></tr>`}).join('');
+ $('#bStages').textContent='Stages: '+STAGES[p.type].join(', ')+'.';
+ $('#bGo').disabled=!ok}
+function saveBatch(){const p=P(val('bP')),q=+val('bQ');
+ if(!(q>0))return;if(!useLimit('batch'))return;
+ Object.entries(p.bom).forEach(([mid,per])=>M(mid).stock=+(M(mid).stock-per*q).toFixed(2));
+ const b={id:'B-'+S.seq.b++,p:p.id,qty:q,stage:0,log:[new Date()]};S.batches.push(b);
+ log('prod',`Batch <b>${b.id}</b> started, ${n(q)} ${p.unit} of ${esc(p.name.toLowerCase())}`);
+ F3D.fx('store');S.filter.production='run';stay('production');toast(`${b.id} started, material issued from store`);
+}
+function advance(id){const b=B(id),st=stagesOf(b),p=P(b.p);
+ b.stage++;b.log[b.stage]=new Date();
+ if(bDone(b)){F3D.fx('qc');b.done=new Date();p.stock+=b.qty;log('stock',`Batch <b>${b.id}</b> passed QC, ${n(b.qty)} ${p.unit} moved to finished goods`);toast(`${n(b.qty)} ${p.unit} added to finished goods`)}
+ else{F3D.fx(st[b.stage]==='Hot press'?'press':'line');log('prod',`Batch <b>${b.id}</b> moved to ${st[b.stage].toLowerCase()}`);toast(`${b.id} moved to ${st[b.stage].toLowerCase()}`)}
+ render();
+}
+
+function formOrder(){
+ const pr=[['','None'],...S.products.map(p=>[p.id,`${p.name}, ${p.spec.split(',')[0]}`])];
+ const line=i=>`<div class="two"><div class="field"><label for="oP${i}">Item ${i+1}${i?' <em>(optional)</em>':''}</label><select id="oP${i}" onchange="oCalc()">${opt(i?pr:pr.slice(1),i?'':'P2')}</select></div><div class="field"><label for="oQ${i}">Quantity</label><input id="oQ${i}" type="number" min="0" value="${i?'':'100'}" oninput="oCalc()"></div></div>`;
+ openSheet('New customer order','Record what a dealer or builder has ordered.',
+ `<div class="field"><label for="oC">Customer</label><select id="oC">${opt(CUSTOMERS.map((c,i)=>[i,c]),6)}</select></div>
+  ${line(0)}${line(1)}${line(2)}
+  <div class="field"><label for="oD">Delivery due</label><input id="oD" type="date" value="${isoDate(d(5))}"></div>
+  <div class="box" id="oTot"></div>`,
+ `${quota('order')}<button class="btn ghost" data-act="closeAll">Cancel</button><button class="btn primary" data-act="saveOrder">Save order</button>`);oCalc();
+}
+function oLines(){const L=[];for(let i=0;i<3;i++){const p=val('oP'+i),q=+val('oQ'+i);if(p&&q>0)L.push([p,q])}return L}
+function oCalc(){const L=oLines();const v=L.reduce((s,[p,q])=>s+P(p).price*q,0);
+ $('#oTot').innerHTML=L.length?`<b>Order value ${rs(v)}</b> plus GST<div class="hint">${L.map(([p,q])=>{const a=avail(P(p));return`${esc(P(p).name)}: ${n(a)} available${a<q?' <span class="no">(short by '+n(q-a)+')</span>':' <span class="ok">(enough)</span>'}`}).join('<br>')}</div>`:'Add at least one item.'}
+function saveOrder(){const L=oLines();if(!L.length){toast('Add at least one item with a quantity');return}
+ if(!useLimit('order'))return;
+ const o={id:'SO-'+S.seq.so++,cust:+val('oC'),lines:L,date:new Date(),due:new Date(val('oD')||d(5))};S.orders.push(o);
+ log('orders',`Order <b>${o.id}</b> received from ${esc(CUSTOMERS[o.cust].split(',')[0])}`);
+ closeAll();S.filter.orders='open';stay('orders');toast(`${o.id} saved`);
+}
+function reserve(id){const o=SO(id);if(!canFulfil(o)){toast('Not enough finished stock for this order');return}
+ o.lines.forEach(([p,q])=>P(p).reserved+=q);o.ready=new Date();
+ F3D.fx('finished');log('orders',`Order <b>${o.id}</b> stock reserved and ready to dispatch`);toast(`${o.id} is ready to dispatch`);render()}
+function short(id){const o=SO(id);showInfo('Not enough finished stock',`To fulfil ${o.id}, the godown needs:`,
+ o.lines.map(([p,q])=>{const a=avail(P(p));return`<li>${esc(P(p).name)}: need ${n(q)}, available ${n(a)}${a<q?` <span class="no">(short ${n(q-a)})</span>`:''}</li>`}).join(''),'Start a production batch for the missing items, then reserve the stock again.')}
+
+function formDispatch(soId){
+ const ready=S.orders.filter(o=>o.ready&&!o.dc);
+ if(!ready.length){showInfo('No orders ready yet','An order has to have its stock reserved before it can be dispatched.','','Open Customer orders and use Reserve stock on a pending order.');return}
+ const sel=soId&&ready.find(o=>o.id===soId)?soId:ready[0].id;
+ openSheet('New dispatch','Create a delivery challan and load the vehicle.',
+ `<div class="field"><label for="dO">Order</label><select id="dO" onchange="dFill()">${opt(ready.map(o=>[o.id,`${o.id}, ${CUSTOMERS[o.cust].split(',')[0]}`]),sel)}</select></div>
+  <div class="box" id="dInfo"></div>
+  <div class="field"><label for="dV">Vehicle number</label><input id="dV" value="GJ-11-TT-4417"></div>
+  <div class="two"><div class="field"><label for="dDr">Driver name</label><input id="dDr" value="Mahesh Solanki"></div>
+  <div class="field"><label for="dPh">Driver phone</label><input id="dPh" value="99090 22184" inputmode="tel"></div></div>
+  <button class="btn lock sm" data-act="locked" data-id="whatsapp" style="width:100%">${ic('lock')}Send challan to customer on WhatsApp</button>`,
+ `${quota('dc')}<button class="btn ghost" data-act="closeAll">Cancel</button><button class="btn primary" data-act="saveDispatch">Load vehicle</button>`);dFill();
+}
+function dFill(){const o=SO(val('dO'));$('#dInfo').innerHTML=`<b>${esc(CUSTOMERS[o.cust])}</b><div class="hint">${o.lines.map(([p,q])=>`${n(q)} × ${esc(P(p).name)}, ${esc(P(p).spec)}`).join('<br>')}</div>`}
+function saveDispatch(){const o=SO(val('dO'));if(!val('dV').trim()){toast('Enter the vehicle number');return}
+ if(!useLimit('dc'))return;
+ const c={id:'DC-'+S.seq.dc++,so:o.id,veh:val('dV').toUpperCase(),driver:val('dDr')||'Driver',phone:val('dPh'),loaded:new Date()};
+ S.dcs.push(c);o.dc=c.id;o.lines.forEach(([p,q])=>{P(p).stock-=q;P(p).reserved-=q});
+ log('dispatch',`Challan <b>${c.id}</b> created for ${o.id}, vehicle ${esc(c.veh)} loading`);
+ F3D.fx('dispatch');stay('dispatch');toast(`${c.id} created, stock moved out of godown`);
+}
+function dcNext(id){const c=DC(id),o=SO(c.so);
+ if(!c.transit){c.transit=new Date();log('dispatch',`<b>${c.id}</b> left the factory for ${esc(CUSTOMERS[o.cust].split(',')[0])}`);toast(`${c.id} is on the road`)}
+ else{c.delivered=new Date();log('dispatch',`<b>${c.id}</b> delivered to ${esc(CUSTOMERS[o.cust].split(',')[0])}`);toast(`${o.id} delivered`)}
+ render()}
+
+/* ================= Locked features & info ================= */
+const LOCKED={
+ reports:['Reports','Daily production, material consumption, wastage, supplier performance and dispatch reports with date filters.'],
+ users:['Users & roles','Separate logins for owner, store keeper, supervisor and dispatch staff, each seeing only what they need.'],
+ settings:['Settings','Your company details, GST number, product list, sizes, stages and reorder levels, all editable.'],
+ export:['Export to Excel and PDF','Download any list as Excel or a print-ready PDF.'],
+ scan:['Barcode and QR scanning','Scan supplier invoices, batch tags and challans straight from the phone camera.'],
+ whatsapp:['WhatsApp alerts','Automatic dispatch updates and challans sent to the customer on WhatsApp.'],
+ print:['Printing','Printable GRN slips, batch cards and delivery challans with your letterhead.'],
+ limit:['Entry limit reached','This prototype allows 3 new entries of each type so you can try the flow. The full version has no limits and keeps all your data safely.']};
+function showLocked(k){const [t,s]=LOCKED[k]||LOCKED.export;
+ $('#modal').innerHTML=`<div class="lk-ic">${ic('lock')}</div><h3>${t}</h3><p>${s}</p><p>${k==='limit'?'':'This is switched on in the full version, once your exact requirements are finalised.'}</p>
+ <div class="contact">Prototype by <b>Sangam InfoAnalytics</b><br>Call or WhatsApp <b>+91 84900 02023</b></div><button class="btn primary" style="width:100%" data-act="closeAll">Got it</button>`;
+ $('#modal').classList.add('show');$('#scrim').classList.add('show')}
+function showInfo(t,s,items,foot){
+ $('#modal').innerHTML=`<div class="lk-ic">${ic('alert')}</div><h3>${t}</h3><p>${s}</p>${items?`<ul>${items}</ul>`:''}<p>${foot||''}</p><button class="btn primary" style="width:100%" data-act="closeAll">OK</button>`;
+ $('#modal').classList.add('show');$('#scrim').classList.add('show')}
+function about(){showInfo('About this prototype','This preview shows how the AUM Industries material tracking app will work, on phone and computer. A few things are intentionally limited:',
+ `<li>All data is sample data and resets when the page reloads</li><li>Up to 3 new entries of each type</li><li>Reports, exports, printing, logins, barcode scanning and WhatsApp alerts are locked</li><li>Screens and fields will be adjusted to your exact process before the final build</li>`,
+ 'Prototype by Sangam InfoAnalytics, +91 84900 02023');
+ $('#modal .lk-ic').innerHTML=ic('lock')}
+function moreSheet(){
+ const items=[['factory','Factory view (3D)','factory'],['purchase','Purchase orders','po'],['stock','Stock','stock'],['dispatch','Dispatch','dispatch'],['track','Track anything','track']];
+ const lk=[['reports','Reports','reports'],['users','Users & roles','users'],['settings','Settings','settings']];
+ openSheet('More','',`<div class="list" style="display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden">
+ ${items.map(([id,t,i])=>`<button class="row tap" style="--cols:28px 1fr 20px;width:100%;text-align:left;border:0!important;border-radius:0;border-top:1px solid var(--line2)!important;display:grid;grid-template-columns:28px 1fr 20px" data-act="go" data-id="${id}">${ic(i)}<b style="font-weight:700">${t}</b>${ic('next')}</button>`).join('')}
+ ${lk.map(([id,t,i])=>`<button class="row tap" style="width:100%;text-align:left;border:0!important;border-radius:0;border-top:1px solid var(--line2)!important;display:grid;grid-template-columns:28px 1fr 20px;color:var(--muted)" data-act="locked" data-id="${id}">${ic(i)}<b style="font-weight:600">${t}</b>${ic('lock')}</button>`).join('')}</div>
+ <p class="hint" style="margin-top:14px">Prototype with sample data. <button class="link" data-act="about">See what's limited</button></p>`,
+ `<button class="btn ghost" style="width:100%" data-act="closeAll">Close</button>`)}
+
+/* ================= 3D factory (three.js r128) ================= */
+const F3D=(()=>{
+ let ok=null,R,scene,cam,labelsEl,mountEl,raf=0,inView=false,last=0,T=0,idleUntil=0,tour=false,tourI=0,tourT=0,ro,io;
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const O={};const hot={};
+ const STN={
+  all:{p:[1.5,0,-0.4],name:'Whole factory'},
+  inward:{p:[-16,0,3.6],lp:[-15,2.6,2.5],name:'Material inward',page:'inward',stat:()=>`${S.grns.filter(g=>(NOW-g.date)/864e5<7).length} arrivals this week`},
+  store:{p:[-9,0,-1.5],lp:[-9.2,3.9,-2],name:'Raw material store',page:'stock',stat:()=>{const l=S.materials.filter(m=>m.stock<m.reorder).length;return l?`${l} item${l>1?'s':''} running low`:'All items healthy'}},
+  press:{p:[-2,0,-0.8],lp:[-2,5.4,-0.8],name:'Hot press',page:'production',stat:()=>{const b=S.batches.filter(b=>!bDone(b)&&stagesOf(b)[b.stage]==='Hot press');return b.length?b.map(x=>x.id).join(', '):'Idle'}},
+  line:{p:[4.8,0,-0.8],lp:[5.2,2.9,-0.8],name:'Trimming and QC',page:'production',stat:()=>`${S.batches.filter(b=>!bDone(b)&&b.stage>=2).length} batches on the line`},
+  finished:{p:[12.3,0,-1.5],lp:[12.3,3.9,-1.8],name:'Finished goods',page:'stock',stat:()=>`${n(S.products.reduce((s,p)=>s+avail(p),0))} ready`},
+  dispatch:{p:[18,0,3.6],lp:[17,2.6,2.5],name:'Dispatch bay',page:'dispatch',stat:()=>{const r=S.orders.filter(o=>o.ready&&!o.dc).length,t=S.dcs.filter(c=>c.transit&&!c.delivered).length;return`${r} waiting, ${t} on the road`}}};
+ const TOUR=['inward','store','press','line','finished','dispatch'];
+ const rig={th:-0.3,ph:0.98,r:34,tg:null},want={th:-0.3,ph:0.98,r:34,tg:null};
+ let focusId='all',dragTh=0,lastPage=null;
+ const E={io:t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,out:t=>1-Math.pow(1-t,3),in:t=>t*t*t};
+
+ function tex(draw,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=4;return t}
+ function init(){
+  if(ok!==null)return ok;
+  if(!window.THREE){return ok=false}
+  try{R=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'})}catch(e){return ok=false}
+  R.setPixelRatio(Math.min(devicePixelRatio,2));R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;
+  R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.setClearColor(0xE9EDE7);
+  scene=new THREE.Scene();scene.fog=new THREE.Fog(0xE9EDE7,55,110);
+  cam=new THREE.PerspectiveCamera(32,2,0.5,200);
+  rig.tg=new THREE.Vector3(1,0,0);want.tg=rig.tg.clone();
+  scene.add(new THREE.HemisphereLight(0xFFF6EA,0x8C958E,0.75));
+  const sun=new THREE.DirectionalLight(0xFFF1DC,1.15);sun.position.set(-12,26,16);sun.castShadow=true;
+  sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-28,right:28,top:14,bottom:-14,near:1,far:70});sun.shadow.bias=-0.0006;scene.add(sun);
+  const fill=new THREE.DirectionalLight(0xDDE8FF,0.35);fill.position.set(14,10,-12);scene.add(fill);
+
+  // materials
+  const sideTex=tex((g,w,h)=>{for(let i=0;i<4;i++){const y=i*16;g.fillStyle='#E7C694';g.fillRect(0,y,w,3);g.fillStyle='#B67E47';g.fillRect(0,y+3,w,10);g.fillStyle='#E0BC87';g.fillRect(0,y+13,w,2);g.fillStyle='#6E4521';g.fillRect(0,y+15,w,1)}},16,64);
+  const grainTex=tex((g,w,h)=>{g.fillStyle='#DDB685';g.fillRect(0,0,w,h);g.strokeStyle='rgba(120,70,30,.18)';g.lineWidth=1.2;for(let i=0;i<22;i++){g.beginPath();let y=Math.random()*h;g.moveTo(0,y);for(let x=0;x<=w;x+=16){y+=Math.sin(x*.05+i)*1.6;g.lineTo(x,y)}g.stroke()}},256,256);
+  const M3=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.75,metalness:0},o));
+  O.m={floor:M3(0xD6DBD4,{roughness:.95}),slab:M3(0xCBD1C9,{roughness:.9}),road:M3(0x46504B,{roughness:.95}),wall:M3(0xC4CBC3),steel:M3(0x46524C,{metalness:.55,roughness:.45}),
+   teak:M3(0xB0692A,{roughness:.55}),yellow:M3(0xE2B13C,{roughness:.5}),dark:M3(0x222926,{roughness:.8}),glass:M3(0x9FB6C4,{roughness:.15,metalness:.3}),
+   moss:M3(0x2E6A47,{roughness:.55}),white:M3(0xF3F4F1),grain:M3(0xFFFFFF,{map:grainTex,roughness:.7}),
+   heat:M3(0x6B1E0E,{emissive:0xFF4A1A,emissiveIntensity:.3}),qc:M3(0x1E4A31,{emissive:0x3DDC84,emissiveIntensity:.15}),
+   drumPF:M3(0x9C3B22,{metalness:.35,roughness:.4}),drumUF:M3(0x2F5F8F,{metalness:.35,roughness:.4}),timber:M3(0xA87445,{roughness:.8}),
+   door:M3(0xFFFFFF,{map:grainTex,color:0xE8C9A0}),doorL:M3(0x7C4B2A,{roughness:.35})};
+  O.sideTex=sideTex;
+  const box=(w,h,d,m,x,y,z,par=scene)=>{const me=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);me.position.set(x,y+h/2,z);me.castShadow=me.receiveShadow=true;par.add(me);return me};
+  const cyl=(r,h,m,x,y,z,par=scene,seg=20)=>{const me=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,seg),m);me.position.set(x,y,z);me.castShadow=true;par.add(me);return me};
+  O.box=box;O.cyl=cyl;
+  const plyMats=()=>{const t=sideTex.clone();t.needsUpdate=true;const s=new THREE.MeshStandardMaterial({map:t,roughness:.8});return{t,mats:[s,s,O.m.grain,s,s,s]}};
+  const stack=(w,d,x,z,par=scene)=>{const {t,mats}=plyMats();const me=new THREE.Mesh(new THREE.BoxGeometry(w,1,d),mats);me.position.set(x,.5,z);me.castShadow=me.receiveShadow=true;par.add(me);me.userData.t=t;return me};
+  const setH=(me,h,base=0)=>{me.scale.y=h;me.position.y=base+h/2;me.userData.t.repeat.set(1,Math.max(1,h*5))};
+  O.stack=stack;O.setH=setH;
+
+  // ground, road, walls
+  const g=new THREE.Mesh(new THREE.PlaneGeometry(160,90),O.m.floor);g.rotation.x=-Math.PI/2;g.receiveShadow=true;scene.add(g);
+  box(46,.06,11,O.m.slab,0.5,0,-1.2);
+  box(80,.03,3.4,O.m.road,0,0,5.4);
+  for(let x=-38;x<40;x+=3)box(1.4,.035,.12,O.m.white,x,0,5.4);
+  box(46,.035,.12,O.m.yellow,0.5,0,3.55);
+  box(46,4,.4,O.m.wall,0.5,0,-6.8);
+  for(let x=-22;x<=23;x+=5)box(.5,4.2,.5,O.m.steel,x,0,-6.6);
+  const sign=new THREE.Mesh(new THREE.PlaneGeometry(9,1.5),new THREE.MeshStandardMaterial({map:tex((c,w,h)=>{c.fillStyle='#1E2622';c.fillRect(0,0,w,h);c.fillStyle='#E7C694';for(let i=0;i<5;i++)c.fillRect(24,26+i*14,70,7);c.fillStyle='#fff';c.font='700 74px Manrope, Arial';c.textBaseline='middle';c.fillText('AUM Industries',120,h/2+2);c.font='500 30px Manrope, Arial';c.fillStyle='#C9B18F';c.fillText('Plywood & doors',650,h/2+6)},900,150),roughness:.6}));
+  sign.position.set(5.2,2.9,-6.58);scene.add(sign);
+  // station floor pads
+  [['inward',4.6,3],['dispatch',4.6,3]].forEach(([k,w,d])=>box(w,.6,d,O.m.slab,STN[k].p[0],0,STN[k].p[2]-0.2));
+  box(8.4,.07,5.6,M3(0xC2C9C0),-9.2,0,-1.9);box(7.2,.07,5.4,M3(0xC2C9C0),12.3,0,-1.9);
+
+  // raw store
+  O.face=stack(1.6,.9,-11.1,-3.3);O.core=stack(1.6,.9,-9.2,-3.3);
+  O.drums=new THREE.Group();scene.add(O.drums);
+  O.timber=new THREE.Group();scene.add(O.timber);
+
+  // forklift
+  const fl=new THREE.Group();box(1.2,.55,.8,O.m.yellow,0,.2,0,fl);box(.5,.6,.7,O.m.dark,-.15,.75,0,fl);box(.08,1.7,.7,O.m.steel,.66,.1,0,fl);
+  box(.7,.05,.5,O.m.steel,1.05,.25,0,fl);O.flLoad=stack(.8,.55,1.05,0,fl);setH(O.flLoad,.3,.3);
+  [[-.35,.4],[.4,.4],[-.35,-.4],[.4,-.4]].forEach(([x,z])=>{const w=cyl(.2,.15,O.m.dark,x,.2,z,fl,12);w.rotation.x=Math.PI/2});
+  fl.position.set(-11,0,.9);scene.add(fl);O.fl=fl;
+
+  // hot press
+  const px=-2,pz=-.8;box(3,.7,2.2,O.m.steel,px,0,pz);
+  [[-1.25,-.9],[1.25,-.9],[-1.25,.9],[1.25,.9]].forEach(([x,z])=>box(.26,4,.26,O.m.steel,px+x,.7,pz+z));
+  box(3.1,.7,2.4,O.m.teak,px,4.7,pz);cyl(.38,.9,O.m.steel,px,5.8,pz);
+  O.platens=[];for(let i=0;i<3;i++){const p=new THREE.Group();box(2.3,.14,1.9,O.m.steel,0,0,0,p);box(2.1,.05,1.7,O.m.heat,0,.14,0,p);
+   const sh=stack(2,1.6,0,0,p);setH(sh,.1,.19);p.position.set(px,1.1+i*1.05,pz);p.userData.base=1.1+i*1.05;scene.add(p);O.platens.push(p)}
+  O.pressGlow=new THREE.PointLight(0xFF6A2A,0,6);O.pressGlow.position.set(px,2.2,pz+1.6);scene.add(O.pressGlow);
+
+  // conveyor
+  const cx0=.2,cx1=9.8,cl=cx1-cx0,cz=-.8;box(cl,.14,1.7,O.m.steel,(cx0+cx1)/2,.72,cz);
+  for(let x=cx0+.4;x<cx1;x+=1.6){box(.12,.72,.12,O.m.dark,x,0,cz-.7);box(.12,.72,.12,O.m.dark,x,0,cz+.7)}
+  O.rollers=[];for(let x=cx0+.25;x<cx1;x+=.45){const r=cyl(.08,1.55,O.m.steel,x,.92,cz,scene,10);r.rotation.x=Math.PI/2;r.castShadow=false;O.rollers.push(r)}
+  O.sheets=[0,1,2,3].map(i=>{const s=stack(1.5,1.15,cx0+i*cl/4,cz);setH(s,.09,1);s.userData.x=cx0+i*cl/4;return s});
+  O.cx0=cx0;O.cx1=cx1;
+  // trimming saw
+  box(.9,.5,.5,O.m.teak,3.6,1.55,-.05);O.blade=cyl(.42,.03,M3(0xCFD6D2,{metalness:.9,roughness:.25}),3.6,1.35,-.05,scene,28);O.blade.rotation.x=Math.PI/2;
+  box(.14,1.1,.14,O.m.steel,3.6,.72,.35);
+  // QC arch
+  box(.18,2.2,.18,O.m.steel,7.2,0,-1.85);box(.18,2.2,.18,O.m.steel,7.2,0,.25);box(.3,.25,2.4,O.m.steel,7.2,2.2,-.8);
+  O.qc=box(.24,.08,1.9,O.m.qc,7.2,2.12,-.8);O.qcLight=new THREE.PointLight(0x3DDC84,0,5);O.qcLight.position.set(7.2,1.8,-.8);scene.add(O.qcLight);
+
+  // finished goods
+  O.fin={P1:stack(1.6,.95,10.4,-3.3),P2:stack(1.6,.95,12.3,-3.3),P5:stack(1.6,.95,14.2,-3.3)};
+  O.doors={P3:new THREE.Group(),P4:new THREE.Group()};O.doors.P3.position.set(10.1,0,-.9);O.doors.P4.position.set(12.9,0,-.9);scene.add(O.doors.P3,O.doors.P4);
+  box(2.4,.15,1.1,O.m.steel,11.1,0,-.9);box(2.4,.15,1.1,O.m.steel,13.9,0,-.9);
+
+  // trucks
+  const truck=(cab)=>{const t=new THREE.Group();box(6,.35,2,O.m.dark,0,.55,0,t);box(1.6,1.7,2,cab,2.2,.9,0,t);box(.08,.7,1.7,O.m.glass,3.02,1.7,0,t);
+   box(4.1,.12,2,O.m.steel,-.8,.9,0,t);box(4.1,.7,.08,cab,-.8,1.02,.96,t);box(4.1,.7,.08,cab,-.8,1.02,-.96,t);box(.08,.7,2,cab,-2.85,1.02,0,t);
+   t.userData.wheels=[];[[2.1,.9],[2.1,-.9],[-1.6,.9],[-1.6,-.9],[-.6,.9],[-.6,-.9]].forEach(([x,z])=>{const w=cyl(.38,.28,O.m.dark,x,.38,z,t,16);w.rotation.x=Math.PI/2;t.userData.wheels.push(w)});
+   const ld=stack(3.6,1.6,-.8,0,t);setH(ld,1,1.02);t.userData.load=ld;t.position.set(300,0,5.4);scene.add(t);return t};
+  O.tIn=truck(new THREE.MeshStandardMaterial({color:0x1F4D34,roughness:.5}));O.tOut=truck(O.m.teak);
+  O.tIn.userData.ph={s:'wait',t:0,dur:1.2};O.tOut.userData.ph={s:'wait',t:0,dur:5};
+
+  // labels
+  labelsEl=document.createElement('div');labelsEl.className='f3d-labels';window.__f3dLabels=labelsEl;
+  Object.entries(STN).forEach(([k,s])=>{if(!s.lp)return;const b=document.createElement('button');b.className='f3d-lbl';b.dataset.act='go';b.dataset.id=s.page;b.innerHTML=`<b>${s.name}</b><small></small>`;labelsEl.appendChild(b);s.el=b;s.v=new THREE.Vector3(...s.lp)});
+
+  // input: drag to turn (touch: horizontal only so the page still scrolls)
+  const cv=R.domElement;let drag=null;
+  cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,type:e.pointerType};idleUntil=T+6;tour=false});
+  addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;
+   dragTh-=dx*0.006;if(drag.type==='mouse')want.ph=Math.min(1.3,Math.max(.55,want.ph-dy*0.004));idleUntil=T+6});
+  addEventListener('pointerup',()=>drag=null);
+  update();return ok=true;
+ }
+
+ function update(){if(!ok)return;
+  const h=(v,d,mn,mx)=>Math.min(mx,Math.max(mn,v/d));
+  O.setH(O.face,h(M('M1').stock,1500,.25,3.2));O.setH(O.core,h(M('M2').stock,3400,.25,3.2));
+  O.drums.clear();[['M3',O.m.drumPF,0],['M4',O.m.drumUF,1]].forEach(([id,mat,row])=>{const c=Math.round(h(M(id).stock,240,1,7));for(let i=0;i<c;i++)O.cyl(.34,.9,mat,-12+i*.78,.45,-1+row*.82,O.drums,16)});
+  O.timber.clear();const tl=Math.round(h(M('M6').stock,45,1,6));for(let l=0;l<tl;l++)for(let i=0;i<3;i++)O.box(.32,.26,2.4,O.m.timber,-7.5+i*.38,l*.27,-2.2,O.timber);
+  ['P1','P2','P5'].forEach(id=>O.setH(O.fin[id],h(avail(P(id)),260,.15,3.2)));
+  ['P3','P4'].forEach(id=>{const g=O.doors[id];g.clear();const c=Math.round(h(avail(P(id)),12,1,14));for(let i=0;i<c;i++)O.box(.07,2.1,.95,id==='P4'?O.m.doorL:O.m.door,i*.16,.15,0,g)});
+  Object.values(STN).forEach(s=>{if(s.el)s.el.querySelector('small').textContent=s.stat()});
+ }
+
+ function resize(){if(!mountEl)return;const w=mountEl.clientWidth,hh=mountEl.clientHeight;if(!w||!hh)return;R.setSize(w,hh,false);cam.aspect=w/hh;cam.updateProjectionMatrix();if(focusId==='all')want.r=overviewR()}
+ function overviewR(){return Math.min(70,Math.max(26,20.5/(Math.tan(THREE.MathUtils.degToRad(cam.fov/2))*cam.aspect)))}
+ function focus(id,fromTour){if(!ok)return;focusId=id;const s=STN[id]||STN.all;want.tg.set(...s.p);
+  want.r=id==='all'?overviewR():(id==='inward'||id==='dispatch')?(cam.aspect<1.3?18:14):(cam.aspect<1.3?15:10.5);want.ph=id==='all'?.93:.88;dragTh=0;if(!fromTour){tour=false;idleUntil=T+2}
+  document.querySelectorAll('.stations [data-act="f3d"]').forEach(b=>b.classList.toggle('on',b.dataset.id===id))}
+
+ function phase(tr,dt,cfg){const p=tr.userData.ph;p.t+=dt;const k=Math.min(1,p.t/p.dur);let x=tr.position.x,prev=x;
+  if(p.s==="wait"){tr.position.x=300;if(p.t>=p.dur)Object.assign(p,{s:'in',t:0,dur:4})}
+  else if(p.s==='in'){x=cfg.from+(cfg.stop-cfg.from)*E.out(k);if(k>=1)Object.assign(p,{s:'work',t:0,dur:2.6})}
+  else if(p.s==='work'){x=cfg.stop;cfg.work(k);if(k>=1)Object.assign(p,{s:'out',t:0,dur:3.6})}
+  else if(p.s==='out'){x=cfg.stop+(cfg.to-cfg.stop)*E.in(k);if(k>=1){Object.assign(p,{s:'wait',t:0,dur:cfg.gap});cfg.reset()}}
+  if(p.s!=='wait'){tr.position.x=x;tr.userData.wheels.forEach(w=>w.rotation.y+=(x-prev)/.38*(1))}}
+
+ function frame(now){raf=requestAnimationFrame(frame);const rawDt=(now-(last||now))/1000,dt=Math.min(.1,rawDt);last=now;T+=dt;
+  const sp=reduce?.35:1;
+  // camera
+  if(tour&&!reduce&&T>idleUntil){tourT+=dt;if(tourT>4.5){tourT=0;tourI=(tourI+1)%TOUR.length;focus(TOUR[tourI],true)}}
+  const sway=(!reduce&&T>idleUntil&&focusId==='all')?Math.sin(T*.12)*.16:0;
+  const a=1-Math.exp(-Math.min(.25,rawDt)*2.4);rig.th+=((want.th+sway+dragTh)-rig.th)*a;rig.ph+=(want.ph-rig.ph)*a;rig.r+=(want.r-rig.r)*a;rig.tg.lerp(want.tg,a);
+  cam.position.set(rig.tg.x+rig.r*Math.sin(rig.ph)*Math.sin(rig.th),rig.tg.y+rig.r*Math.cos(rig.ph),rig.tg.z+rig.r*Math.sin(rig.ph)*Math.cos(rig.th));cam.lookAt(rig.tg.x,rig.tg.y+.8,rig.tg.z);
+  // press cycle 6s: close, cure (glow), open
+  const pc=(T*sp%6)/6,close=pc<.3?E.io(pc/.3):pc<.65?1:1-E.io((pc-.65)/.35),boost=(hot.press>T)?1.6:1;
+  O.platens.forEach((p,i)=>p.position.y=p.userData.base-close*(i*.9+.35)*.55);
+  const glow=pc>.25&&pc<.7?Math.sin((pc-.25)/.45*Math.PI):0;O.m.heat.emissiveIntensity=.25+glow*1.6*boost;O.pressGlow.intensity=glow*1.4*boost;
+  // conveyor + saw + QC
+  const v=1.25*sp;O.rollers.forEach(r=>r.rotation.y-=dt*v/.08);O.blade.rotation.y+=dt*28*sp;
+  let q=0;O.sheets.forEach(s=>{s.userData.x+=dt*v;if(s.userData.x>O.cx1-.5)s.userData.x=O.cx0+.5;s.position.x=s.userData.x;const dq=Math.abs(s.userData.x-7.2);if(dq<.9)q=Math.max(q,1-dq/.9)});
+  const qb=(hot.qc>T)?1+Math.sin(T*10)*.5+.5:0;O.m.qc.emissiveIntensity=.15+q*1.5+qb;O.qcLight.intensity=q*1.3+qb;
+  // forklift ping-pong store -> press
+  const fp=(T*sp*.12)%2,fk=fp<1?fp:2-fp,fe=E.io(Math.min(1,Math.max(0,(fk-.08)/.84)));O.fl.position.x=-11+fe*6.4;O.fl.rotation.y=fp<1?0:Math.PI;O.flLoad.visible=fp<1;
+  // trucks
+  phase(O.tIn,dt*sp,{from:-34,stop:-15.5,to:-34,gap:7,work:k=>{const l=O.tIn.userData.load;l.scale.x=1-E.io(k);l.position.x=-.8-1.8*E.io(k);l.visible=k<.98},reset:()=>{const l=O.tIn.userData.load;l.scale.x=1;l.position.x=-.8;l.visible=true}});
+  phase(O.tOut,dt*sp,{from:36,stop:17.5,to:38,gap:8,work:k=>{const l=O.tOut.userData.load;l.visible=k>.02;l.scale.x=Math.max(.02,E.io(k))},reset:()=>{const l=O.tOut.userData.load;l.scale.x=.02;l.visible=false}});
+  if(O.tOut.userData.ph.s==='in'&&O.tOut.userData.ph.t<.05){O.tOut.userData.load.visible=false}
+  // labels
+  const w=mountEl.clientWidth,hh=mountEl.clientHeight;
+  Object.entries(STN).forEach(([k,s])=>{if(!s.el)return;const p=s.v.clone().project(cam);const vis=p.z<1&&p.x>-1.1&&p.x<1.1&&p.y>-1.1&&p.y<1.2;
+   s.el.style.display=vis?'':'none';if(vis)s.el.style.transform=`translate(${(p.x*.5+.5)*w}px,${(-p.y*.5+.5)*hh}px) translate(-50%,-100%)`;s.el.classList.toggle('hot',(hot[k]||0)>T)});
+  R.render(scene,cam);
+ }
+ function run(){const want2=inView&&mountEl&&document.visibilityState==='visible';if(want2&&!raf){last=0;raf=requestAnimationFrame(frame)}else if(!want2&&raf){cancelAnimationFrame(raf);raf=0}}
+ document.addEventListener('visibilitychange',run);
+
+ function mount(){
+  const m=document.getElementById('f3dMount');
+  if(!m){inView=false;mountEl=null;lastPage=null;run();return}
+  if(!init()){m.innerHTML='<div class="f3d-fallback"><b>3D view is not supported on this device</b>Everything else in the app works normally.</div>';return}
+  mountEl=m;m.appendChild(R.domElement);m.appendChild(labelsEl);
+  if(ro)ro.disconnect();ro=new ResizeObserver(resize);ro.observe(m);resize();
+  if(io)io.disconnect();io=new IntersectionObserver(es=>{inView=es[0].isIntersecting;run()});io.observe(m);
+  const fresh=m.dataset.page!==lastPage;lastPage=m.dataset.page;if(fresh){tour=m.dataset.tour==='1'&&!reduce;if(tour){tourI=0;tourT=0;focus(TOUR[0],true)}else focus(S.f3dFocus||'all',true)}
+  update();
+ }
+ function fx(kind){if(!ok)return;const t=T+4;
+  const map={inward:['inward','store'],store:['store','press'],press:['press'],line:['line'],qc:['line','finished'],finished:['finished'],dispatch:['finished','dispatch']};
+  (map[kind]||[]).forEach(k=>hot[k]=t);if(kind==='press'||kind==='store')hot.press=t;if(kind==='qc')hot.qc=t;
+  if(kind==='inward'){const p=O.tIn.userData.ph;if(p.s==='wait')p.t=p.dur}
+  if(kind==='dispatch'){const p=O.tOut.userData.ph;if(p.s==='wait')p.t=p.dur}
+  update();
+ }
+ return{mount,focus,fx,update};
+})();
+
+/* ================= Gujarati language ================= */
+const I18N=(()=>{
+const GU={
+"Overview":"ઝાંખી","Dashboard":"ડેશબોર્ડ","Factory view (3D)":"ફેક્ટરી વ્યૂ (3D)","Factory view":"ફેક્ટરી વ્યૂ","Track anything":"કંઈપણ ટ્રેક કરો",
+"Material in":"માલ આવક","Purchase orders":"ખરીદી ઓર્ડર","Material inward":"માલ આવક (ઇનવર્ડ)","Stock":"સ્ટોક","Factory":"ફેક્ટરી","Production":"ઉત્પાદન",
+"Material out":"માલ જાવક","Customer orders":"ગ્રાહક ઓર્ડર","Dispatch":"ડિસ્પેચ","Full version":"સંપૂર્ણ વર્ઝન","Reports":"રિપોર્ટ્સ","Users & roles":"યુઝર અને ભૂમિકા","Settings":"સેટિંગ્સ",
+"Prototype built by Sangam InfoAnalytics":"પ્રોટોટાઇપ: સંગમ ઇન્ફોએનાલિટિક્સ","What's limited in this preview":"આ પ્રિવ્યૂમાં શું મર્યાદિત છે",
+"You're viewing a prototype with sample data. Anything you add is cleared when the page reloads.":"તમે નમૂના ડેટા સાથેનો પ્રોટોટાઇપ જોઈ રહ્યા છો. પેજ રીલોડ થતાં તમે ઉમેરેલું બધું ભૂંસાઈ જશે.",
+"See limits":"મર્યાદાઓ જુઓ","Prototype":"પ્રોટોટાઇપ","Factory owner":"ફેક્ટરી માલિક","Plywood & doors":"પ્લાયવુડ અને દરવાજા","AUM Industries":"AUM ઇન્ડસ્ટ્રીઝ",
+"Home":"હોમ","Inward":"આવક","Orders":"ઓર્ડર","More":"વધુ",
+"Good morning":"સુપ્રભાત","Good afternoon":"શુભ બપોર","Good evening":"શુભ સાંજ","Live factory":"લાઇવ ફેક્ટરી",
+"Drag to turn it. Tap a label to open that section.":"ફેરવવા માટે ખેંચો. વિભાગ ખોલવા લેબલ પર ટેપ કરો.","Full view":"પૂરો વ્યૂ",
+"Raw material in store":"સ્ટોરમાં કાચો માલ","On the production floor":"ઉત્પાદન ફ્લોર પર","Finished and ready":"તૈયાર માલ","Order book value":"ઓર્ડર બુક કિંમત",
+"sheets and doors":"શીટ અને દરવાજા","Material flow":"માલનો પ્રવાહ","Tap a layer to open it":"ખોલવા માટે સ્તર પર ટેપ કરો",
+"Raw material ordered from suppliers":"સપ્લાયર પાસેથી મંગાવેલ કાચો માલ","Arrivals checked in at the gate":"ગેટ પર ચકાસાયેલ આવક","Raw material store":"કાચા માલનો સ્ટોર",
+"Veneer, resin, timber, laminate":"વિનીયર, રેઝિન, લાકડું, લેમિનેટ","Production floor":"ઉત્પાદન ફ્લોર","Batches on the press line":"પ્રેસ લાઇન પરની બેચ",
+"Finished goods":"તૈયાર માલ","Ready plywood, boards and doors":"તૈયાર પ્લાયવુડ, બોર્ડ અને દરવાજા","Waiting for stock or dispatch":"સ્ટોક કે ડિસ્પેચની રાહમાં",
+"Vehicles on the road right now":"હાલ રસ્તા પરનાં વાહનો","open":"બાકી","this week":"આ અઠવાડિયે","items":"વસ્તુઓ","available":"ઉપલબ્ધ","in transit":"રસ્તામાં",
+"Needs attention":"ધ્યાન આપવાનું","Latest activity":"તાજી પ્રવૃત્તિ","All clear for today.":"આજે બધું બરાબર છે.",
+"Dispatch bay":"ડિસ્પેચ બે","Hot press":"હોટ પ્રેસ","Trimming and QC":"ટ્રિમિંગ અને QC","Idle":"ખાલી","All items healthy":"બધી વસ્તુઓ પૂરતી",
+"A live 3D model of the shop floor. Stack heights, drums and doors follow the real stock numbers, and the trucks, press and conveyor react when you record something.":"ફેક્ટરી ફ્લોરનું લાઇવ 3D મોડેલ. સ્ટેકની ઊંચાઈ, ડ્રમ અને દરવાજા સાચા સ્ટોક પ્રમાણે બદલાય છે, અને તમે કંઈ નોંધો ત્યારે ટ્રક, પ્રેસ અને કન્વેયર તરત હલચલ કરે છે.",
+"Whole factory":"આખી ફેક્ટરી","Drag to turn the view":"વ્યૂ ફેરવવા ખેંચો","Raw store":"કાચો સ્ટોર","Trimming & QC":"ટ્રિમિંગ અને QC",
+"Try it: receive a truck, push a batch through the press, or dispatch an order. The 3D view updates in front of you.":"અજમાવો: ટ્રકની આવક નોંધો, બેચને પ્રેસમાંથી પસાર કરો, અથવા ઓર્ડર ડિસ્પેચ કરો. 3D વ્યૂ તમારી સામે જ બદલાશે.",
+"Receive material":"માલ આવક નોંધો","Start batch":"બેચ શરૂ કરો","Dispatch an order":"ઓર્ડર ડિસ્પેચ કરો",
+"Raw material ordered from suppliers, and how much of it has actually arrived at the gate.":"સપ્લાયર પાસેથી મંગાવેલ કાચો માલ, અને તેમાંથી કેટલો ખરેખર ગેટ પર આવ્યો.",
+"New purchase order":"નવો ખરીદી ઓર્ડર","Open":"બાકી","Fully received":"પૂરો મળ્યો","All":"બધા","Export":"એક્સપોર્ટ","PO number":"PO નંબર","Supplier":"સપ્લાયર",
+"Material":"માલ","Ordered":"ઓર્ડર કરેલ","Received":"મળેલ","Status":"સ્થિતિ","Receive":"આવક નોંધો","View trail":"ટ્રેલ જુઓ","Partly received":"અંશતઃ મળ્યો","Delayed":"મોડું",
+"Every truck that arrives is checked in here. Accepted quantity goes straight into the raw material store.":"આવતી દરેક ટ્રક અહીં નોંધાય છે. સ્વીકારેલ જથ્થો સીધો કાચા માલના સ્ટોરમાં જાય છે.",
+"Scan barcode":"બારકોડ સ્કેન","Entry no.":"એન્ટ્રી નં.","Against PO":"PO સામે","Accepted":"સ્વીકાર્યું","Rejected":"નામંજૂર","Vehicle":"વાહન","None":"કંઈ નહીં","Print":"પ્રિન્ટ",
+"Live balance of everything in the store. The dark tick on each bar marks the reorder level.":"સ્ટોરની દરેક વસ્તુનું લાઇવ બેલેન્સ. દરેક બાર પરનું ઘાટું નિશાન રીઓર્ડર લેવલ બતાવે છે.",
+"Raw material":"કાચો માલ","In store":"સ્ટોરમાં","Reorder at":"રીઓર્ડર લેવલ","Value":"કિંમત","Healthy":"પૂરતો","Low stock":"ઓછો સ્ટોક","Reorder now":"હમણાં મંગાવો",
+"Finished plywood, boards and doors. Reserved stock is already promised to a customer order.":"તૈયાર પ્લાયવુડ, બોર્ડ અને દરવાજા. અનામત સ્ટોક પહેલેથી કોઈ ગ્રાહક ઓર્ડર માટે રાખેલો છે.",
+"Product":"પ્રોડક્ટ","In godown":"ગોડાઉનમાં","Reserved":"અનામત","Available":"ઉપલબ્ધ","Rate":"ભાવ","per door":"પ્રતિ દરવાજો","per sheet":"પ્રતિ શીટ",
+"Each batch moves stage by stage. Raw material is taken from the store when a batch starts, and finished stock goes up once it clears quality check.":"દરેક બેચ એક પછી એક તબક્કામાં આગળ વધે છે. બેચ શરૂ થતાં સ્ટોરમાંથી કાચો માલ લેવાય છે, અને ગુણવત્તા ચકાસણી પાસ થતાં તૈયાર સ્ટોક વધે છે.",
+"Start new batch":"નવી બેચ શરૂ કરો","In progress":"ચાલુ","Finished":"પૂર્ણ","Batch":"બેચ","Quantity":"જથ્થો","Stage":"તબક્કો","Pass QC":"QC પાસ કરો","Quality check":"ગુણવત્તા ચકાસણી",
+"What each dealer or builder has ordered, whether the stock is set aside, and when it leaves the factory.":"દરેક ડીલર કે બિલ્ડરે શું મંગાવ્યું છે, સ્ટોક અલગ રાખ્યો છે કે નહીં, અને માલ ફેક્ટરીમાંથી ક્યારે નીકળે છે.",
+"New order":"નવો ઓર્ડર","Dispatched":"ડિસ્પેચ થયેલ","Order":"ઓર્ડર","Customer":"ગ્રાહક","Items":"વસ્તુઓ","Reserve stock":"સ્ટોક અનામત રાખો","Stock short":"સ્ટોક ઓછો",
+"Track":"ટ્રેક","Pending":"બાકી","Ready to dispatch":"ડિસ્પેચ માટે તૈયાર","(overdue)":"(મોડું)",
+"Loading, on the road, delivered. Stock leaves the godown the moment a challan is created.":"લોડિંગ, રસ્તામાં, ડિલિવર. ચલણ બને એ જ ક્ષણે સ્ટોક ગોડાઉનમાંથી બહાર જાય છે.",
+"WhatsApp alerts":"WhatsApp એલર્ટ","New dispatch":"નવું ડિસ્પેચ","Challan":"ચલણ","Vehicle and driver":"વાહન અને ડ્રાઇવર","Loaded":"લોડ થયું","In transit":"રસ્તામાં",
+"Delivered":"ડિલિવર થયું","Mark left factory":"ફેક્ટરીથી નીકળ્યું","Mark delivered":"ડિલિવર થયું નોંધો",
+"Type any order, batch or purchase order number to see its full trail through the factory.":"ફેક્ટરીમાં તેની આખી સફર જોવા કોઈપણ ઓર્ડર, બેચ કે ખરીદી ઓર્ડર નંબર લખો.",
+"Number to track":"ટ્રેક કરવાનો નંબર","Due":"ડિલિવરી તારીખ","Order placed":"ઓર્ડર મળ્યો","Stock reserved in godown":"ગોડાઉનમાં સ્ટોક અનામત","Waiting for finished stock":"તૈયાર સ્ટોકની રાહ",
+"Loaded on vehicle":"વાહનમાં લોડ","Left the factory":"ફેક્ટરીથી નીકળ્યું","Delivered to customer":"ગ્રાહકને ડિલિવર","Not yet":"હજુ નહીં","Size":"સાઇઝ","Raw material used":"વપરાયેલ કાચો માલ",
+"Moved to finished goods":"તૈયાર માલમાં ગયું","Order sent to supplier":"સપ્લાયરને ઓર્ડર મોકલ્યો","Expected":"અપેક્ષિત",
+"Check the number and try again. Order numbers start with SO, batches with B, purchase orders with PO.":"નંબર તપાસી ફરી પ્રયાસ કરો. ઓર્ડર નંબર SO થી, બેચ B થી અને ખરીદી ઓર્ડર PO થી શરૂ થાય છે.",
+"Order raw material from a supplier.":"સપ્લાયર પાસેથી કાચો માલ મંગાવો.","Cancel":"રદ કરો","Raise PO":"PO બનાવો","Expected delivery":"અપેક્ષિત ડિલિવરી","(₹ per unit)":"(₹ પ્રતિ યુનિટ)","plus GST":"+ GST",
+"Check in a truck at the gate against its purchase order.":"ખરીદી ઓર્ડર સામે ગેટ પર ટ્રકની આવક નોંધો.","Purchase order":"ખરીદી ઓર્ડર","Quantity arrived":"આવેલ જથ્થો",
+"Rejected at check":"ચકાસણીમાં નામંજૂર","(if any)":"(જો હોય તો)","Vehicle number":"વાહન નંબર","Checked by":"ચકાસનાર","Scan supplier invoice or barcode":"સપ્લાયર બિલ કે બારકોડ સ્કેન કરો",
+"Add to store":"સ્ટોરમાં ઉમેરો","Raw material is issued from the store as soon as the batch starts.":"બેચ શરૂ થતાં જ સ્ટોરમાંથી કાચો માલ અપાય છે.","Material needed from store":"સ્ટોરમાંથી જોઈતો માલ",
+"In stock":"સ્ટોકમાં","Record what a dealer or builder has ordered.":"ડીલર કે બિલ્ડરે શું મંગાવ્યું તે નોંધો.","New customer order":"નવો ગ્રાહક ઓર્ડર","(optional)":"(વૈકલ્પિક)",
+"Delivery due":"ડિલિવરી તારીખ","Save order":"ઓર્ડર સેવ કરો","Add at least one item.":"ઓછામાં ઓછી એક વસ્તુ ઉમેરો.","(enough)":"(પૂરતું)",
+"Create a delivery challan and load the vehicle.":"ડિલિવરી ચલણ બનાવો અને વાહન લોડ કરો.","Driver name":"ડ્રાઇવરનું નામ","Driver phone":"ડ્રાઇવરનો ફોન",
+"Send challan to customer on WhatsApp":"ગ્રાહકને WhatsApp પર ચલણ મોકલો","Load vehicle":"વાહન લોડ કરો","Close":"બંધ કરો",
+"About this prototype":"આ પ્રોટોટાઇપ વિશે",
+"This preview shows how the AUM Industries material tracking app will work, on phone and computer. A few things are intentionally limited:":"આ પ્રિવ્યૂ બતાવે છે કે AUM ઇન્ડસ્ટ્રીઝની મટિરિયલ ટ્રેકિંગ એપ ફોન અને કમ્પ્યુટર પર કેવી રીતે કામ કરશે. કેટલીક વસ્તુઓ જાણીજોઈને મર્યાદિત રાખી છે:",
+"All data is sample data and resets when the page reloads":"બધો ડેટા નમૂનાનો છે અને પેજ રીલોડ થતાં રીસેટ થાય છે","Up to 3 new entries of each type":"દરેક પ્રકારની વધુમાં વધુ 3 નવી એન્ટ્રી",
+"Reports, exports, printing, logins, barcode scanning and WhatsApp alerts are locked":"રિપોર્ટ, એક્સપોર્ટ, પ્રિન્ટ, લૉગિન, બારકોડ સ્કેન અને WhatsApp એલર્ટ લૉક છે",
+"Screens and fields will be adjusted to your exact process before the final build":"અંતિમ એપ પહેલાં સ્ક્રીન અને ફીલ્ડ તમારી ચોક્કસ પ્રક્રિયા મુજબ ગોઠવાશે",
+"Prototype by Sangam InfoAnalytics, +91 84900 02023":"પ્રોટોટાઇપ: સંગમ ઇન્ફોએનાલિટિક્સ, +91 84900 02023","OK":"બરાબર","Got it":"સમજાયું","Prototype by":"પ્રોટોટાઇપ:",
+"Sangam InfoAnalytics":"સંગમ ઇન્ફોએનાલિટિક્સ","Call or WhatsApp":"કૉલ કે WhatsApp","This is switched on in the full version, once your exact requirements are finalised.":"તમારી ચોક્કસ જરૂરિયાતો નક્કી થયા પછી આ સુવિધા સંપૂર્ણ વર્ઝનમાં ચાલુ થશે.",
+"Daily production, material consumption, wastage, supplier performance and dispatch reports with date filters.":"રોજનું ઉત્પાદન, માલનો વપરાશ, બગાડ, સપ્લાયરનું પ્રદર્શન અને ડિસ્પેચ રિપોર્ટ, તારીખ ફિલ્ટર સાથે.",
+"Separate logins for owner, store keeper, supervisor and dispatch staff, each seeing only what they need.":"માલિક, સ્ટોરકીપર, સુપરવાઇઝર અને ડિસ્પેચ સ્ટાફ માટે અલગ લૉગિન, દરેકને માત્ર જરૂરી માહિતી જ દેખાય.",
+"Your company details, GST number, product list, sizes, stages and reorder levels, all editable.":"તમારી કંપનીની વિગતો, GST નંબર, પ્રોડક્ટ યાદી, સાઇઝ, તબક્કા અને રીઓર્ડર લેવલ, બધું બદલી શકાય.",
+"Export to Excel and PDF":"Excel અને PDF માં એક્સપોર્ટ","Download any list as Excel or a print-ready PDF.":"કોઈપણ યાદી Excel કે પ્રિન્ટ-તૈયાર PDF તરીકે ડાઉનલોડ કરો.",
+"Barcode and QR scanning":"બારકોડ અને QR સ્કેનિંગ","Scan supplier invoices, batch tags and challans straight from the phone camera.":"ફોનના કેમેરાથી સીધા સપ્લાયર બિલ, બેચ ટેગ અને ચલણ સ્કેન કરો.",
+"Automatic dispatch updates and challans sent to the customer on WhatsApp.":"ગ્રાહકને WhatsApp પર આપોઆપ ડિસ્પેચ અપડેટ અને ચલણ મળે.","Printing":"પ્રિન્ટિંગ",
+"Printable GRN slips, batch cards and delivery challans with your letterhead.":"તમારા લેટરહેડ સાથે GRN સ્લિપ, બેચ કાર્ડ અને ડિલિવરી ચલણ પ્રિન્ટ કરો.","Entry limit reached":"એન્ટ્રી મર્યાદા પૂરી થઈ",
+"This prototype allows 3 new entries of each type so you can try the flow. The full version has no limits and keeps all your data safely.":"આ પ્રોટોટાઇપમાં ફ્લો અજમાવવા દરેક પ્રકારની 3 નવી એન્ટ્રી થઈ શકે છે. સંપૂર્ણ વર્ઝનમાં કોઈ મર્યાદા નથી અને તમારો બધો ડેટા સુરક્ષિત રહે છે.",
+"Not enough finished stock":"પૂરતો તૈયાર સ્ટોક નથી","Start a production batch for the missing items, then reserve the stock again.":"ખૂટતી વસ્તુઓ માટે ઉત્પાદન બેચ શરૂ કરો, પછી ફરી સ્ટોક અનામત રાખો.",
+"No orders ready yet":"હજુ કોઈ ઓર્ડર તૈયાર નથી","An order has to have its stock reserved before it can be dispatched.":"ડિસ્પેચ પહેલાં ઓર્ડરનો સ્ટોક અનામત રાખવો જરૂરી છે.",
+"Open Customer orders and use Reserve stock on a pending order.":"ગ્રાહક ઓર્ડર ખોલો અને બાકી ઓર્ડર પર ‘સ્ટોક અનામત રાખો’ દબાવો.","Prototype with sample data.":"નમૂના ડેટા સાથેનો પ્રોટોટાઇપ.","See what's limited":"શું મર્યાદિત છે તે જુઓ",
+"Enter a quantity above zero":"શૂન્યથી વધુ જથ્થો લખો","No open purchase orders to receive against":"આવક નોંધવા માટે કોઈ બાકી ખરીદી ઓર્ડર નથી","Enter the quantity that arrived":"આવેલ જથ્થો લખો",
+"Rejected quantity cannot be more than what arrived":"નામંજૂર જથ્થો આવેલ જથ્થાથી વધુ ન હોઈ શકે","Add at least one item with a quantity":"જથ્થા સાથે ઓછામાં ઓછી એક વસ્તુ ઉમેરો",
+"Not enough finished stock for this order":"આ ઓર્ડર માટે પૂરતો તૈયાર સ્ટોક નથી","Enter the vehicle number":"વાહન નંબર લખો",
+"No purchase orders here":"અહીં કોઈ ખરીદી ઓર્ડર નથી","Switch the filter above or raise a new purchase order.":"ઉપરનો ફિલ્ટર બદલો અથવા નવો ખરીદી ઓર્ડર બનાવો.","No batches here":"અહીં કોઈ બેચ નથી",
+"Start a new batch to see it move through the line.":"લાઇનમાંથી પસાર થતી જોવા નવી બેચ શરૂ કરો.","No orders here":"અહીં કોઈ ઓર્ડર નથી","Switch the filter or add a new customer order.":"ફિલ્ટર બદલો અથવા નવો ગ્રાહક ઓર્ડર ઉમેરો.",
+"Track an order, batch or PO number (e.g. SO-5103)":"ઓર્ડર, બેચ કે PO નંબર ટ્રેક કરો (દા.ત. SO-5103)","e.g. SO-5103":"દા.ત. SO-5103",
+"Phenol formaldehyde":"ફિનોલ ફોર્માલ્ડિહાઇડ","Urea formaldehyde":"યુરિયા ફોર્માલ્ડિહાઇડ","10 mm edge band":"10 mm એજ બેન્ડ","Seasoned, kiln-dried":"સીઝન્ડ, ભઠ્ઠીમાં સૂકવેલ","Mixed additive":"મિશ્ર એડિટિવ",
+"Language":"ભાષા","Yesterday":"ગઈકાલે","Today":"આજે","Tomorrow":"આવતીકાલે"
+};
+// nouns reused inside sentences (case-insensitive, longest first)
+const PH=[["Here's where every piece of material stands across the factory.","ફેક્ટરીમાં દરેક માલ અત્યારે ક્યાં છે તે અહીં જુઓ."],
+["face veneer (gurjan)","ફેસ વિનીયર (ગુર્જન)"],["core veneer (eucalyptus)","કોર વિનીયર (નીલગિરી)"],["pf resin, bwp grade","PF રેઝિન, BWP ગ્રેડ"],["uf resin, mr grade","UF રેઝિન, MR ગ્રેડ"],
+["teak lipping strip","સાગ લિપિંગ પટ્ટી"],["pine timber for door frames","દરવાજાની ફ્રેમ માટે પાઈન લાકડું"],["pine timber","પાઈન લાકડું"],["decorative laminate","ડેકોરેટિવ લેમિનેટ"],
+["hardener & wood filler","હાર્ડનર અને વુડ ફિલર"],["bwp marine plywood","BWP મરીન પ્લાયવુડ"],["mr commercial plywood","MR કોમર્શિયલ પ્લાયવુડ"],["mr plywood","MR પ્લાયવુડ"],
+["laminated flush door","લેમિનેટેડ ફ્લશ દરવાજો"],["flush door","ફ્લશ દરવાજો"],["block board","બ્લોક બોર્ડ"],
+["trimming & sanding","ટ્રિમિંગ અને સેન્ડિંગ"],["lipping & edging","લિપિંગ અને એજિંગ"],["sanding & finish","સેન્ડિંગ અને ફિનિશ"],["glue spreading","ગુંદર લગાવવું"],["core laying","કોર ગોઠવણી"],
+["core filling","કોર ભરવું"],["frame making","ફ્રેમ બનાવવી"],["quality check","ગુણવત્તા ચકાસણી"],["hot press","હોટ પ્રેસ"],
+["ready to dispatch","ડિસ્પેચ માટે તૈયાર"],["pending","બાકી"],["Nilesh (store)","નિલેશ (સ્ટોર)"],["rejected","નામંજૂર"],["Stages:","તબક્કા:"],["Driver","ડ્રાઇવર"],
+["8×4 ft","8×4 ફૂટ"],["7×3 ft","7×3 ફૂટ"],["yesterday","ગઈકાલે"],["today","આજે"],["tomorrow","આવતીકાલે"],
+["Rajkot","રાજકોટ"],["Surat","સુરત"],["Ahmedabad","અમદાવાદ"],["Junagadh","જૂનાગઢ"],["Jamnagar","જામનગર"],["Vadodara","વડોદરા"],["Bhavnagar","ભાવનગર"],
+["Morbi","મોરબી"],["Vapi","વાપી"],["Kandla","કંડલા"],["Gandhidham","ગાંધીધામ"],
+["sheets","શીટ"],["doors","દરવાજા"],["kg","કિલો"],["rft","રનિંગ ફૂટ"],["pcs","નંગ"]]
+ .map(([e,g])=>[new RegExp((/^\w/.test(e)?'\\b':'')+e.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+(/\w$/.test(e)?'\\b':''),'gi'),g]);
+const ph=s=>PH.reduce((a,[re,g])=>a.replace(re,g),s);
+const N='([\\d,.]+)';
+const RX=[
+ [/^(.+) is below reorder level$/,(a)=>`${ph(a)} રીઓર્ડર લેવલથી નીચે છે`],
+ [new RegExp(`^${N} (\\S+) left, reorder at ${N}$`),(a,u,b)=>`${a} ${ph(u)} બાકી, રીઓર્ડર ${b} પર`],
+ [new RegExp(`^(PO-\\d+) is waiting on ${N} (\\S+)$`),(p,a,u)=>`${p} માં હજુ ${a} ${ph(u)} આવવાનું બાકી`],
+ [/^(B-\d+) is waiting for quality check$/,b=>`${b} ગુણવત્તા ચકાસણીની રાહમાં`],
+ [/^(SO-\d+) is due (.+)$/,(o,d)=>`${o} ની ડિલિવરી ${ph(d)}`],
+ [/^(.+), expected (.+)$/,(a,d)=>`${ph(a)}, અપેક્ષિત ${ph(d)}`],
+ [new RegExp(`^${N} (sheets|doors) of (.+)$`),(a,u,p)=>`${ph(p)}, ${a} ${ph(u)}`],
+ [new RegExp(`^${N} arrivals this week$`),a=>`આ અઠવાડિયે ${a} આવક`],
+ [new RegExp(`^${N} items? running low$`),a=>`${a} વસ્તુઓ ઓછી`],[new RegExp(`^${N} running low$`),a=>`${a} ઓછી`],
+ [new RegExp(`^${N} batches on the line$`),a=>`લાઇન પર ${a} બેચ`],[new RegExp(`^${N} ready$`),a=>`${a} તૈયાર`],
+ [new RegExp(`^${N} waiting, ${N} on the road$`),(a,b)=>`${a} રાહમાં, ${b} રસ્તામાં`],[new RegExp(`^${N} items tracked$`),a=>`${a} વસ્તુઓ ટ્રેક થાય છે`],
+ [new RegExp(`^${N} batches running$`),a=>`${a} બેચ ચાલુ`],[new RegExp(`^${N} orders open$`),a=>`${a} ઓર્ડર બાકી`],[new RegExp(`^${N} items$`),a=>`${a} મુદ્દા`],
+ [new RegExp(`^${N} orders? (?:is|are) packed and waiting for a vehicle:$`),a=>`${a} ઓર્ડર પેક થઈને વાહનની રાહમાં:`],
+ [/^Due (.+)$/,d=>`ડિલિવરી: ${ph(d)}`],[/^Started (.+)$/,d=>`શરૂ: ${ph(d)}`],[/^Loaded (.+)$/,d=>`લોડ: ${ph(d)}`],[/^Checked by (.+)$/,d=>`ચકાસનાર: ${ph(d)}`],
+ [/^step (\d+) of (\d+)$/,(a,b)=>`તબક્કો ${a} / ${b}`],[/^Step (\d+)$/,a=>`પગલું ${a}`],[/^Item (\d+)$/,a=>`વસ્તુ ${a}`],
+ [/^Move to (.+)$/,a=>`${ph(a)} માં મોકલો`],[/^Dispatch (SO-\d+)$/,a=>`${a} ડિસ્પેચ કરો`],
+ [/^Batch (B-\d+)$/,a=>`બેચ ${a}`],[/^Order (SO-\d+)$/,a=>`ઓર્ડર ${a}`],[/^Purchase order (PO-\d+)$/,a=>`ખરીદી ઓર્ડર ${a}`],
+ [/^Nothing found for (.+)$/,a=>`${a} માટે કંઈ મળ્યું નહીં`],
+ [new RegExp(`^${N} (\\S+) arrived \\((GRN-\\d+)\\)$`),(a,u,g)=>`${a} ${ph(u)} આવ્યા (${g})`],
+ [new RegExp(`^${N} (\\S+) still to come$`),(a,u)=>`${a} ${ph(u)} હજુ આવવાના બાકી`],[new RegExp(`^${N} (\\S+) pending$`),(a,u)=>`${a} ${ph(u)} બાકી`],
+ [new RegExp(`^${N} (\\S+) ordered, ${N} received so far,$`),(a,u,b)=>`${a} ${ph(u)} ઓર્ડર, અત્યાર સુધી ${b} મળ્યા,`],
+ [new RegExp(`^Current stock of (.+): ${N} (\\S+), reorder level ${N}$`),(m,a,u,b)=>`${ph(m)} નો હાલનો સ્ટોક: ${a} ${ph(u)}, રીઓર્ડર લેવલ ${b}`],
+ [/^Order total (.+)$/,a=>`ઓર્ડર કુલ ${a}`],[/^Order value (.+)$/,a=>`ઓર્ડર કિંમત ${a}`],
+ [new RegExp(`^(.+): need ${N}, available ${N}$`),(p,a,b)=>`${ph(p)}: જરૂર ${a}, ઉપલબ્ધ ${b}`],[new RegExp(`^(.+): ${N} available$`),(p,a)=>`${ph(p)}: ${a} ઉપલબ્ધ`],
+ [new RegExp(`^\\(short by ${N}\\)$`),a=>`(${a} ઓછું)`],[new RegExp(`^\\(short ${N}\\)$`),a=>`(${a} ઓછું)`],[new RegExp(`^Short by ${N}$`),a=>`${a} ઓછું`],
+ [/^Prototype: (\d+) of 3 new entries left$/,a=>`પ્રોટોટાઇપ: 3 માંથી ${a} નવી એન્ટ્રી બાકી`],
+ [/^Running now, started (.+)$/,a=>`હાલ ચાલુ, શરૂ: ${ph(a)}`],[/^To fulfil (SO-\d+), the godown needs:$/,a=>`${a} પૂરો કરવા ગોડાઉનમાં આટલું જોઈએ:`],
+ // toasts
+ [new RegExp(`^${N} (\\S+) added to store$`),(a,u)=>`સ્ટોરમાં ${a} ${ph(u)} ઉમેરાયા`],[new RegExp(`^${N} (\\S+) added to finished goods$`),(a,u)=>`તૈયાર માલમાં ${a} ${ph(u)} ઉમેરાયા`],
+ [/^(PO-\d+) raised$/,a=>`${a} બન્યો`],[/^(B-\d+) started, material issued from store$/,a=>`${a} શરૂ, સ્ટોરમાંથી માલ અપાયો`],[/^(B-\d+) moved to (.+)$/,(a,b)=>`${a} ${ph(b)} માં ગઈ`],
+ [/^(SO-\d+) is ready to dispatch$/,a=>`${a} ડિસ્પેચ માટે તૈયાર`],[/^(DC-\d+) created, stock moved out of godown$/,a=>`${a} બન્યું, સ્ટોક ગોડાઉનમાંથી બહાર`],
+ [/^(DC-\d+) is on the road$/,a=>`${a} રસ્તામાં છે`],[/^(SO-\d+) delivered$/,a=>`${a} ડિલિવર થયો`],[/^(SO-\d+) saved$/,a=>`${a} સેવ થયો`],
+ // activity feed fragments
+ [new RegExp(`^(started|raised for),? ${N} (\\S+) of (.+)$`),(v,a,u,p)=>`${v.startsWith('s')?'શરૂ':'બન્યો'}: ${ph(p)}, ${a} ${ph(u)}`],
+ [/^raised for (.+)$/,a=>`બન્યો: ${ph(a)}`],[/^moved to (.+)$/,a=>`${ph(a)} માં ગઈ`],[/^started, (.+)$/,a=>`શરૂ: ${ph(a)}`],[/^reached quality check$/,()=>`ગુણવત્તા ચકાસણીમાં પહોંચી`],
+ [/^passed QC, (.+) moved to finished goods$/,a=>`QC પાસ, ${ph(a)} તૈયાર માલમાં ગયા`],[/^stock reserved and ready to dispatch$/,()=>`નો સ્ટોક અનામત, ડિસ્પેચ માટે તૈયાર`],
+ [/^(.+) received against$/,a=>`${ph(a)} આવ્યું, ઓર્ડર`],[/^left the factory for (.+)$/,a=>`ફેક્ટરીથી નીકળ્યું, ${ph(a)} માટે`],[/^delivered to (.+)$/,a=>`ડિલિવર થયું: ${ph(a)}`],
+ [/^created for (SO-\d+), vehicle (.+) loading$/,(a,b)=>`બન્યું, ${a} માટે, વાહન ${b} લોડ થાય છે`],[/^received from (.+)$/,a=>`મળ્યો: ${ph(a)}`],
+ [/^(.+) \((sheets|doors|kg|rft|CFT)\)$/i,(a,u)=>`${ph(a)} (${ph(u)})`]
+];
+function tr(s){const t=s.trim();if(!t||!/[A-Za-z]/.test(t))return null;let r=GU[t];
+ if(!r)for(const [re,f] of RX){const m=t.match(re);if(m){r=f(...m.slice(1));break}}
+ if(!r){const p=ph(t);if(p!==t)r=p}
+ return r?s.replace(t,r):null}
+const skip=n=>{const p=n.parentElement;return !p||p.closest('script,style,[data-notr]')};
+function node(n){if(skip(n))return;const v=n.nodeValue,r=tr(v);if(r&&r!==v){if(n._en===undefined)n._en=v;n.nodeValue=r}}
+function tree(root){if(root.nodeType===3){node(root);return}if(root.nodeType!==1)return;
+ const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let x;while(x=w.nextNode())node(x);
+ [root,...root.querySelectorAll('[data-l]')].forEach(e=>{const p=e.getAttribute&&e.getAttribute('data-l');if(!p)return;const r=tr(p);if(r&&r!==p){if(!e.dataset.enl)e.dataset.enl=p;e.setAttribute('data-l',r)}});
+ [root,...root.querySelectorAll('[placeholder]')].forEach(e=>{const p=e.getAttribute&&e.getAttribute('placeholder');if(!p)return;const r=tr(p);if(r&&r!==p){if(!e.dataset.enph)e.dataset.enph=p;e.setAttribute('placeholder',r)}})}
+function restore(){[document.body,window.__f3dLabels].filter(Boolean).forEach(r=>{const w=document.createTreeWalker(r,NodeFilter.SHOW_TEXT);let x;while(x=w.nextNode()){if(x._en!==undefined){x.nodeValue=x._en;delete x._en}}});
+ document.querySelectorAll('[data-enl]').forEach(e=>{e.setAttribute('data-l',e.dataset.enl);delete e.dataset.enl});document.querySelectorAll('[data-enph]').forEach(e=>{e.setAttribute('placeholder',e.dataset.enph);delete e.dataset.enph})}
+new MutationObserver(ms=>{if(S.lang!=='gu')return;ms.forEach(m=>{if(m.type==='characterData')node(m.target);else if(m.type==='childList')m.addedNodes.forEach(tree)})})
+ .observe(document.body,{childList:true,subtree:true,characterData:true});
+return{tree,restore,tr};
+})();
+function LOC(){return S.lang==='gu'?'gu-IN':'en-IN'}
+function langSeg(){return`<div class="seg lang" data-notr role="group" aria-label="Language"><button class="${S.lang!=='gu'?'on':''}" data-act="lang" data-id="en">English</button><button class="${S.lang==='gu'?'on':''}" data-act="lang" data-id="gu" lang="gu">ગુજરાતી</button></div>`}
+function setLang(l){if(S.lang===l)return;S.lang=l;document.documentElement.lang=l;
+ if(l!=='gu')I18N.restore();render();
+ document.querySelectorAll('[data-langslot]').forEach(e=>e.innerHTML=langSeg());
+ $('#mlang').textContent=l==='gu'?'EN':'ગુજ';
+ if(l==='gu')I18N.tree(document.body);
+ toast(l==='gu'?'ભાષા: ગુજરાતી':'Language: English')}
+
+/* ================= Toast ================= */
+let tt;function toast(m){const t=$('#toast');t.innerHTML=ic('check')+esc(m);t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2400)}
+
+/* ================= Events ================= */
+const ACT={
+ go:id=>go(id), lang:id=>setLang(id), langToggle:()=>setLang(S.lang==='gu'?'en':'gu'), more:()=>moreSheet(), closeAll, about,
+ locked:id=>{closeAll();setTimeout(()=>showLocked(id),isMobile()?0:0)},
+ filter:v=>{const [k,x]=v.split(':');S.filter[k]=x;render()},
+ newPO:()=>formPO(), savePO, receive:id=>formGRN(id), saveGRN,
+ newBatch:()=>formBatch(), saveBatch, advance,
+ newOrder:()=>formOrder(), saveOrder, reserve, short,
+ newDispatch:id=>formDispatch(id), saveDispatch, dcNext,
+ f3d:id=>{S.f3dFocus=id;if(S.page!=='factory'){go('factory')}else{F3D.focus(id);document.querySelectorAll('.ph .acts .btn').forEach(b=>b.className='btn '+(id==='all'?'primary':'ghost'))}},
+ track:id=>{closeAll();doTrack(id);window.scrollTo({top:0})}
+};
+document.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(!a)return;const f=ACT[a.dataset.act];if(f){e.preventDefault();f(a.dataset.id)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll();
+ if((e.ctrlKey||e.metaKey)&&['p','s'].includes(e.key.toLowerCase())){e.preventDefault();showLocked(e.key.toLowerCase()==='p'?'print':'export')}});
+document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,select'))e.preventDefault()});
+document.addEventListener('copy',e=>{if(!e.target.closest||!e.target.closest('input')){e.preventDefault()}});
+$('#gsearch').addEventListener('keydown',e=>{if(e.key==='Enter'){doTrack(e.target.value);e.target.value=''}});
+
+render();document.querySelectorAll('[data-langslot]').forEach(e=>e.innerHTML=langSeg());
+</script>
+<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(210,160,106,.45);border-radius:999px;background:rgba(30,38,34,.94);color:#fff;font:600 12px/1.2 'Manrope',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.28);">← Back to portfolios</a>
+</body>
+</html>

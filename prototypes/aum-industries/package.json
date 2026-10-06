@@ -1,0 +1,12 @@
+{
+  "name": "aum-industries",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AUM Industries material tracking prototype by Sangam InfoAnalytics",
+  "scripts": {
+    "build": "rm -rf dist && mkdir -p dist && cp index.html 404.html favicon.svg robots.txt _headers three.min.js dist/ && touch dist/.nojekyll && echo \"Build ready: dist folder created\"",
+    "start": "npm run build && npx --yes serve dist -l 5173",
+    "deploy:cloudflare": "npm run build && npx --yes wrangler deploy",
+    "deploy:firebase": "npx --yes firebase-tools deploy --only hosting"
+  }
+}

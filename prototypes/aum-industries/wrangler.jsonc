@@ -1,0 +1,9 @@
+{
+  // Cloudflare Workers (static assets). The "dist" folder is created by: npm run build
+  "name": "aum-industries",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
