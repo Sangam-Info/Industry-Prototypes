@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1E2622">
 <meta name="robots" content="noindex, nofollow">
-<meta name="description" content="Material tracking prototype for StockPilot: purchase, inward, production, stock, orders and dispatch. Built by Sangam InfoAnalytics.">
-<meta property="og:title" content="StockPilot — Material Tracking (Prototype)">
+<meta name="description" content="Inventory Manager prototype: purchase, inward, production, stock, orders and dispatch. Built by Sangam InfoAnalytics.">
+<meta property="og:title" content="Inventory Manager — Material Tracking (Prototype)">
 <meta property="og:description" content="Live prototype by Sangam InfoAnalytics. Works on phone and PC, in English and ગુજરાતી.">
 <meta property="og:type" content="website">
-<title>StockPilot — Material Tracking (Prototype)</title>
+<title>Inventory Manager — Material Tracking (Prototype)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Hind+Vadodara:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,7 +39,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stro
 
 /* Watermark: prototype restriction */
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.045;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='240'%3E%3Ctext x='20' y='130' transform='rotate(-24 210 120)' font-family='Arial' font-size='30' font-weight='700' fill='%231E2622'%3EPrototype  StockPilot%3C/text%3E%3C/svg%3E")}
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='240'%3E%3Ctext x='20' y='130' transform='rotate(-24 210 120)' font-family='Arial' font-size='30' font-weight='700' fill='%231E2622'%3EPrototype  Inventory Manager%3C/text%3E%3C/svg%3E")}
 
 /* ---------- Layout ---------- */
 .app{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
@@ -375,7 +375,7 @@ html[lang="gu"] .kpi b,html[lang="gu"] .layer .num b{letter-spacing:0}
 
 <div class="app">
   <aside class="side" aria-label="Main navigation">
-    <div class="brand"><div><b>StockPilot</b><small>Plywood &amp; doors · Stock to dispatch</small></div></div>
+    <div class="brand"><div><b>Inventory Manager</b><small>Plywood &amp; doors · Stock to dispatch</small></div></div>
     <nav class="nav" id="nav"></nav>
     <div class="side-foot">
       Prototype built by Sangam InfoAnalytics<br>
@@ -396,11 +396,11 @@ html[lang="gu"] .kpi b,html[lang="gu"] .layer .num b{letter-spacing:0}
       </label>
       <span data-langslot></span>
       <span class="proto-chip">Prototype</span>
-      <div class="who"><div><b style="display:block;font-weight:700;line-height:1.2">Factory owner</b><small style="color:var(--muted)">StockPilot</small></div><div class="avatar">FO</div></div>
+      <div class="who"><div><b style="display:block;font-weight:700;line-height:1.2">Factory owner</b><small style="color:var(--muted)">Inventory Manager</small></div><div class="avatar">FO</div></div>
     </header>
 
     <header class="mtop">
-      <div class="t"><b id="mtitle">Dashboard</b><small>StockPilot</small></div>
+      <div class="t"><b id="mtitle">Dashboard</b><small>Inventory Manager</small></div>
       <span class="proto-chip">Prototype</span>
       <button class="ib mlang" id="mlang" data-act="langToggle" data-notr aria-label="Switch language">ગુજ</button>
       <button class="ib" data-act="go" data-id="track" aria-label="Track"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
@@ -578,7 +578,7 @@ function renderNav(){
  $('#bnav').innerHTML=BNAV.map(([id,t,i])=>`<button class="${(S.page===id||(id==='more'&&moreOn))?'on':''}" data-act="${id==='more'?'more':'go'}" data-id="${id}">${ic(i)}<span>${t}</span></button>`).join('');
  $('#mtitle').textContent=TITLES[S.page]||'';
 }
-function render(){renderNav();$('#content').innerHTML=(PAGES[S.page]||PAGES.home)();document.title=`${TITLES[S.page]} | StockPilot (Prototype)`;
+function render(){renderNav();$('#content').innerHTML=(PAGES[S.page]||PAGES.home)();document.title=`${TITLES[S.page]} | Inventory Manager (Prototype)`;
  F3D.mount();F3D.update();if(S.page==='home'&&!S.seenHome){S.seenHome=1;countUp()}}
 function stay(p){if(S.page==='factory'||S.page==='home'){closeAll();render()}else go(p)}
 function countUp(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
@@ -956,7 +956,7 @@ function showLocked(k){const [t,s]=LOCKED[k]||LOCKED.export;
 function showInfo(t,s,items,foot){
  $('#modal').innerHTML=`<div class="lk-ic">${ic('alert')}</div><h3>${t}</h3><p>${s}</p>${items?`<ul>${items}</ul>`:''}<p>${foot||''}</p><button class="btn primary" style="width:100%" data-act="closeAll">OK</button>`;
  $('#modal').classList.add('show');$('#scrim').classList.add('show')}
-function about(){showInfo('About this prototype','This preview shows how the StockPilot material tracking app will work, on phone and computer. A few things are intentionally limited:',
+function about(){showInfo('About this prototype','This preview shows how the Inventory Manager material tracking app will work, on phone and computer. A few things are intentionally limited:',
  `<li>All data is sample data and resets when the page reloads</li><li>Up to 3 new entries of each type</li><li>Reports, exports, printing, logins, barcode scanning and WhatsApp alerts are locked</li><li>Screens and fields will be adjusted to your exact process before the final build</li>`,
  'Prototype by Sangam InfoAnalytics, +91 84900 02023');
  $('#modal .lk-ic').innerHTML=ic('lock')}
@@ -1174,7 +1174,7 @@ const GU={
 "Material out":"માલ જાવક","Customer orders":"ગ્રાહક ઓર્ડર","Dispatch":"ડિસ્પેચ","Full version":"સંપૂર્ણ વર્ઝન","Reports":"રિપોર્ટ્સ","Users & roles":"યુઝર અને ભૂમિકા","Settings":"સેટિંગ્સ",
 "Prototype built by Sangam InfoAnalytics":"પ્રોટોટાઇપ: સંગમ ઇન્ફોએનાલિટિક્સ","What's limited in this preview":"આ પ્રિવ્યૂમાં શું મર્યાદિત છે",
 "You're viewing a prototype with sample data. Anything you add is cleared when the page reloads.":"તમે નમૂના ડેટા સાથેનો પ્રોટોટાઇપ જોઈ રહ્યા છો. પેજ રીલોડ થતાં તમે ઉમેરેલું બધું ભૂંસાઈ જશે.",
-"See limits":"મર્યાદાઓ જુઓ","Prototype":"પ્રોટોટાઇપ","Factory owner":"ફેક્ટરી માલિક","Plywood & doors":"પ્લાયવુડ અને દરવાજા","StockPilot":"StockPilot",
+"See limits":"મર્યાદાઓ જુઓ","Prototype":"પ્રોટોટાઇપ","Factory owner":"ફેક્ટરી માલિક","Plywood & doors":"પ્લાયવુડ અને દરવાજા","Inventory Manager":"ઇન્વેન્ટરી મેનેજર",
 "Home":"હોમ","Inward":"આવક","Orders":"ઓર્ડર","More":"વધુ",
 "Good morning":"સુપ્રભાત","Good afternoon":"શુભ બપોર","Good evening":"શુભ સાંજ","Live factory":"લાઇવ ફેક્ટરી",
 "Drag to turn it. Tap a label to open that section.":"ફેરવવા માટે ખેંચો. વિભાગ ખોલવા લેબલ પર ટેપ કરો.","Full view":"પૂરો વ્યૂ",
@@ -1221,7 +1221,7 @@ const GU={
 "Create a delivery challan and load the vehicle.":"ડિલિવરી ચલણ બનાવો અને વાહન લોડ કરો.","Driver name":"ડ્રાઇવરનું નામ","Driver phone":"ડ્રાઇવરનો ફોન",
 "Send challan to customer on WhatsApp":"ગ્રાહકને WhatsApp પર ચલણ મોકલો","Load vehicle":"વાહન લોડ કરો","Close":"બંધ કરો",
 "About this prototype":"આ પ્રોટોટાઇપ વિશે",
-"This preview shows how the StockPilot material tracking app will work, on phone and computer. A few things are intentionally limited:":"આ પ્રિવ્યૂ બતાવે છે કે સ્ટોકપાયલટની મટિરિયલ ટ્રેકિંગ એપ ફોન અને કમ્પ્યુટર પર કેવી રીતે કામ કરશે. કેટલીક વસ્તુઓ જાણીજોઈને મર્યાદિત રાખી છે:",
+"This preview shows how the Inventory Manager material tracking app will work, on phone and computer. A few things are intentionally limited:":"આ પ્રિવ્યૂ બતાવે છે કે ઇન્વેન્ટરી મેનેજર એપ ફોન અને કમ્પ્યુટર પર કેવી રીતે કામ કરશે. કેટલીક વસ્તુઓ જાણીજોઈને મર્યાદિત રાખી છે:",
 "All data is sample data and resets when the page reloads":"બધો ડેટા નમૂનાનો છે અને પેજ રીલોડ થતાં રીસેટ થાય છે","Up to 3 new entries of each type":"દરેક પ્રકારની વધુમાં વધુ 3 નવી એન્ટ્રી",
 "Reports, exports, printing, logins, barcode scanning and WhatsApp alerts are locked":"રિપોર્ટ, એક્સપોર્ટ, પ્રિન્ટ, લૉગિન, બારકોડ સ્કેન અને WhatsApp એલર્ટ લૉક છે",
 "Screens and fields will be adjusted to your exact process before the final build":"અંતિમ એપ પહેલાં સ્ક્રીન અને ફીલ્ડ તમારી ચોક્કસ પ્રક્રિયા મુજબ ગોઠવાશે",

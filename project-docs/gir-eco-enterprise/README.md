@@ -1,8 +1,8 @@
-# LedgerFlow — Nonwoven Bag Accounts Prototype
+# Billing & Accounts — Nonwoven Bag Accounts Prototype
 
 ## Overview
 
-LedgerFlow demonstrates basic accounts and billing for a nonwoven-bag
+Billing & Accounts demonstrates basic accounts and billing for a nonwoven-bag
 business: customer and supplier balances, GST bills, received and paid amounts,
 and ageing of outstanding dues.
 

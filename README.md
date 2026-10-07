@@ -16,7 +16,7 @@ Sangam InfoAnalytics client prototype showcase, deployed on Cloudflare Workers (
     `gir-eco-enterprise/`, `shivam-salt/`, `monocraft-traceline/`
   - Monocraft includes the production blueprint and SQL schema; Chawla includes
     prototype details and deployment notes.
-  - Deservoir and OpsPilot also have client-facing detailed documentation in
+  - Deservoir and Workshop Management also have client-facing detailed documentation in
     their respective `public/` folders; project-docs READMEs link to those guides.
 - `wrangler.jsonc` — Cloudflare config
 

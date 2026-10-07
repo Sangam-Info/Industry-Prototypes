@@ -1,8 +1,8 @@
-# QuoteFlow — Mobile Quotation Prototype
+# Quotation Manager — Mobile Quotation Prototype
 
 ## Overview
 
-QuoteFlow demonstrates a mobile-first quotation workflow for a small business:
+Quotation Manager demonstrates a mobile-first quotation workflow for a small business:
 maintain an item and client list, prepare a GST-aware quotation, review its
 status, and share a prepared message with a customer.
 

@@ -1,8 +1,8 @@
-# CoatFlow — Powder Coating Production Prototype
+# Coating Job Tracker — Powder Coating Production Prototype
 
 ## Overview
 
-CoatFlow demonstrates job intake and shop-floor tracking for a powder-coating
+The Coating Job Tracker demonstrates job intake and shop-floor tracking for a powder-coating
 operation. A lot moves through preparation and coating stages before it is
 ready for dispatch. The interface is designed for office staff, production
 staff and drivers.

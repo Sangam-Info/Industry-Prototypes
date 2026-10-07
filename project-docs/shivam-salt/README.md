@@ -1,8 +1,8 @@
-# WorkLedger — Salt Workforce and Accounts Prototype
+# Staff & Accounts — Salt Workforce Prototype
 
 ## Overview
 
-WorkLedger demonstrates attendance and basic accounts workflows for a
+Staff & Accounts demonstrates attendance and basic accounts workflows for a
 salt-production workforce: marking daily attendance by team, viewing monthly
 work records and wages, and reviewing customer dues and supplier balances.
 

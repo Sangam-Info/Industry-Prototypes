@@ -1,7 +1,7 @@
-# Monocraft · TraceLine — Production Build Blueprint
+# Monocraft · Production Tracker — Production Build Blueprint
 
 **From:** Sangam InfoAnalytics · **For:** Monocraft Pvt. Ltd.
-**Purpose:** turn the TraceLine prototype into a real, database-driven **Manufacturing Production Tracking & Material Traceability System (MES)**.
+**Purpose:** turn the Production Tracker prototype into a real, database-driven **Manufacturing Production Tracking & Material Traceability System (MES)**.
 
 > This document is the engineering plan. It keeps the prototype's UI/UX as the visual spec and rebuilds everything under it for real. Items that must be confirmed with Monocraft before building are flagged **[CONFIRM]**.
 
@@ -38,7 +38,7 @@ I analysed the uploaded `monocraft-traceline (1).html` (913 lines, single file):
 
 ## 3. Recommended architecture & stack
 
-**Primary recommendation — Supabase + refactored TraceLine frontend:**
+**Primary recommendation — Supabase + refactored Production Tracker frontend:**
 
 | Concern | Choice | Why |
 |---|---|---|
@@ -47,7 +47,7 @@ I analysed the uploaded `monocraft-traceline (1).html` (913 lines, single file):
 | Real-time | **Supabase Realtime** | Board/KPIs/activity update instantly when a stage changes — no extra infra |
 | File storage | **Supabase Storage** | Drawings, material certs, QC docs, dispatch docs |
 | API | Supabase auto REST/RPC + a thin edge-function layer for business rules (job-ID generation, stage transitions, PDF) | Less glue code |
-| Frontend | The existing TraceLine UI, refactored into a **Vite SPA / PWA** that calls the API | Keeps the look, adds real data + offline-friendly shop-floor use |
+| Frontend | The existing Production Tracker UI, refactored into a **Vite SPA / PWA** that calls the API | Keeps the look, adds real data + offline-friendly shop-floor use |
 | Hosting | Frontend on **Cloudflare Pages/Workers** (your existing setup); DB/auth on Supabase | Matches your infra |
 
 **Alternative — stay fully on Cloudflare:** Workers (API) + **D1** (SQLite) + KV (sessions) + R2 (files) + Durable Objects/SSE (real-time). Fully in your existing stack, but you build auth/RBAC/real-time yourself, so more effort. `schema.sql` includes D1 adaptation notes.
@@ -181,4 +181,4 @@ The current signed direction was a **₹35,000 prototype-to-app** scope with sig
 
 ---
 
-*Prepared by Sangam InfoAnalytics · TraceLine production planning. Companion file: `schema.sql`.*
+*Prepared by Sangam InfoAnalytics · Production Tracker production planning. Companion file: `schema.sql`.*

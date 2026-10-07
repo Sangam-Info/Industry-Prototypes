@@ -1,5 +1,5 @@
 -- =====================================================================
--- Monocraft · TraceLine — Production database schema (v1)
+-- Monocraft · Production Tracker — Production database schema (v1)
 -- Target: PostgreSQL / Supabase.  (D1/SQLite notes at the bottom.)
 -- Everything here is REAL structure — no demo data. Config seed rows only.
 -- =====================================================================

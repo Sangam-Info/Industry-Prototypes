@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light only">
-<title>LedgerFlow – Accounts and Billing (Prototype)</title>
+<title>Billing &amp; Accounts – Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -410,7 +410,7 @@ svg{flex:none}
   </div>
   <div class="welcome">
     <div class="brand">
-      <div><div class="brand-t">LedgerFlow</div><div class="brand-s">Nonwoven bag accounts and billing</div></div>
+      <div><div class="brand-t">Billing &amp; Accounts</div><div class="brand-s">Nonwoven bag accounts and billing</div></div>
     </div>
     <div id="openBlock">
       <h1>Bills, payments and dues in one place</h1>
@@ -430,7 +430,7 @@ svg{flex:none}
 <div id="app">
   <aside class="side">
     <div class="side-brand">
-      <div><div class="brand-t" style="font-size:16px">LedgerFlow</div><div class="brand-s" style="font-size:12px">Accounts and billing</div></div>
+      <div><div class="brand-t" style="font-size:16px">Billing &amp; Accounts</div><div class="brand-s" style="font-size:12px">Accounts and billing</div></div>
     </div>
     <nav id="sideNav" aria-label="Main"></nav>
     <div class="mini"><canvas id="miniCanvas" aria-hidden="true"></canvas><span>Top seller: D cut bag</span></div>
@@ -439,10 +439,10 @@ svg{flex:none}
 
   <main class="main" id="main">
     <header class="mtop">
-      <div class="brand"><div class="brand-t">LedgerFlow</div></div>
+      <div class="brand"><div class="brand-t">Billing &amp; Accounts</div></div>
       <span class="pill" id="limPill"></span>
     </header>
-    <div class="strip"><span><b>Prototype</b> for LedgerFlow by Sangam InfoAnalytics. Sample data only.</span><span id="limStrip"></span></div>
+    <div class="strip"><span><b>Prototype</b> for Billing &amp; Accounts by Sangam InfoAnalytics. Sample data only.</span><span id="limStrip"></span></div>
     <div class="page" id="view"></div>
   </main>
 
@@ -842,7 +842,7 @@ function words(n){
 function invoiceHTML(bill, c){
   const inter = isInter(c), t = billTotals(bill.items, inter), due = new Date(bill.date.getTime() + c.credit*DAY);
   return `<div class="paper">
-    <div class="inv-top"><div><div class="f">LedgerFlow</div>Industrial Estate, Sample City, Gujarat<br>GSTIN: Sample only</div>
+    <div class="inv-top"><div><div class="f">Billing &amp; Accounts</div>Industrial Estate, Sample City, Gujarat<br>GSTIN: Sample only</div>
       <div class="meta"><div class="inv-title">Tax invoice</div>Bill no. <b>${bill.no}</b><br>Date ${dfmt(bill.date)}<br>Due ${dfmt(due)}</div></div>
     <div class="inv-p"><div><div class="k">Bill to</div><b>${esc(c.name)}</b><br>${esc(c.city)}, ${esc(c.state)}<br>Phone ${esc(c.phone)}<br>GSTIN ${c.gstin?esc(c.gstin):'Unregistered'}</div>
       <div><div class="k">Supply</div>Place of supply: ${esc(c.state)}<br>${inter?'Inter-state, IGST applies':'Within Gujarat, CGST and SGST apply'}<br>Credit: ${c.credit} days</div></div>
@@ -854,7 +854,7 @@ function invoiceHTML(bill, c){
       ${inter ? `<tr><td>IGST</td><td class="r">${inr2(t.igst)}</td></tr>` : `<tr><td>CGST</td><td class="r">${inr2(t.cgst)}</td></tr><tr><td>SGST</td><td class="r">${inr2(t.sgst)}</td></tr>`}
       <tr><td>Round off</td><td class="r">${t.roundoff<0?'-':''}${inr2(Math.abs(t.roundoff))}</td></tr>
       <tr class="g"><td>Total</td><td class="r">${inr2(t.total)}</td></tr></table></div>
-    <div class="inv-foot"><div>Prototype by Sangam InfoAnalytics. Sample bill, not for use.</div><div class="sign">For LedgerFlow<div>Authorised signatory</div></div></div>
+    <div class="inv-foot"><div>Prototype by Sangam InfoAnalytics. Sample bill, not for use.</div><div class="sign">For Billing &amp; Accounts<div>Authorised signatory</div></div></div>
   </div>`;
 }
 
@@ -948,8 +948,8 @@ function addPurModal(id){
 function remindModal(id){
   const st = partyState('cust',id), c = st.party, old = st.unpaid[0];
   const msg = st.bal>0.5
-    ? `Namaste ${c.name},\n\nThis is a gentle reminder from LedgerFlow. ${inr(st.bal)} is pending on your account${old?`, the oldest from bill ${old.e.no} dated ${dfmt(old.e.date)}`:''}.\n\nPlease arrange the payment at your earliest. UPI and bank transfer are accepted.\n\nThank you,\nLedgerFlow`
-    : `Namaste ${c.name},\n\nThank you for clearing all dues with LedgerFlow. We look forward to your next order.`;
+    ? `Namaste ${c.name},\n\nThis is a gentle reminder from Billing & Accounts. ${inr(st.bal)} is pending on your account${old?`, the oldest from bill ${old.e.no} dated ${dfmt(old.e.date)}`:''}.\n\nPlease arrange the payment at your earliest. UPI and bank transfer are accepted.\n\nThank you,\nBilling & Accounts`
+    : `Namaste ${c.name},\n\nThank you for clearing all dues with Billing & Accounts. We look forward to your next order.`;
   modal(`<div class="mhead"><h2>Payment reminder</h2><button class="x" data-act="closeModal" aria-label="Close">${I.x}</button></div><p>The message ${esc(c.name)} would get on WhatsApp:</p><div class="wa">${esc(msg)}</div>
   <div class="acts"><button class="btn pri" data-act="lock" data-f="whatsapp">Send on WhatsApp ${I.lock}</button></div>`);
 }
@@ -1060,7 +1060,7 @@ function printTexture(dark){
   const ink = dark ? '#1E293B' : '#FFFFFF'; g.strokeStyle = ink; g.fillStyle = ink; g.lineWidth = 10;
   g.beginPath(); g.arc(256,92,62,0,6.29); g.stroke();
   g.beginPath(); g.moveTo(256,140); g.bezierCurveTo(200,110,210,60,256,46); g.bezierCurveTo(302,60,312,110,256,140); g.fill();
-  g.font = '800 54px "Plus Jakarta Sans", Arial, sans-serif'; g.textAlign = 'center'; g.fillText('LEDGERFLOW',256,214);
+  g.font = '800 40px "Plus Jakarta Sans", Arial, sans-serif'; g.textAlign = 'center'; g.fillText('BILLING & ACCOUNTS',256,214);
   g.font = '600 24px Arial, sans-serif'; g.fillText('SAMPLE',256,246);
   return new THREE.CanvasTexture(c);
 }

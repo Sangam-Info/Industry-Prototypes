@@ -1,8 +1,8 @@
-# OpsPilot — Workshop Operations and Sales Suite
+# Workshop Management — Operations and Sales Suite
 
 ## Overview
 
-OpsPilot presents two connected workspaces for a small engineering or
+Workshop Management presents two connected workspaces for a small engineering or
 manufacturing business:
 
 - **Operations:** workforce, attendance, payroll, cashbook, billing and reports.

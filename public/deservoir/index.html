@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B1020">
-<title>QuoteFlow · Mobile</title>
+<title>Quotation Manager · Mobile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&family=Inter+Tight:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -280,7 +280,7 @@ textarea.inp{min-height:88px;resize:none;line-height:1.55;font-size:14px}
     <div class="ab-row">
       <button class="back" id="backBtn" onclick="go(BACK_TO)" style="display:none">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <div style="flex:1;min-width:0"><div class="ab-t" id="abTitle">Hello, Ravi</div><div class="ab-s" id="abSub">QuoteFlow · FY 2026–27</div></div>
+      <div style="flex:1;min-width:0"><div class="ab-t" id="abTitle">Hello, Ravi</div><div class="ab-s" id="abSub">Quotation Manager · FY 2026–27</div></div>
       <button class="iconbtn" id="abAction" onclick="abAct()">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
     </div>
@@ -405,7 +405,7 @@ textarea.inp{min-height:88px;resize:none;line-height:1.55;font-size:14px}
 Ahmedabad, Gujarat 382445</textarea></div>
       </div></div>
       <div class="card"><div class="ch"><h3>Contact</h3></div><div class="cb">
-        <div class="fld"><label class="f">EMAIL</label><input class="inp" value="hello@quoteflow.example"></div>
+        <div class="fld"><label class="f">EMAIL</label><input class="inp" value="hello@quotation-manager.example"></div>
         <div class="fld"><label class="f">WHATSAPP NUMBER</label><input class="inp n" value="+91 98250 41200"></div>
         <div class="fld" style="margin:0"><label class="f">LANDLINE</label><input class="inp n" value="+91 79 4004 1200"></div>
       </div></div>
@@ -460,10 +460,10 @@ Ahmedabad, Gujarat 382445</textarea></div>
 <script>
 /* ============ DATA (prototype only) ============ */
 const CO = {
-  name:"Your Business Name", brand:"QuoteFlow",
+  name:"Your Business Name", brand:"Quotation Manager",
   gstin:"24AABCD1234E1Z5", state:"Gujarat",
   addr:"Plot 42, GIDC Phase II, Vatva\nAhmedabad, Gujarat 382445",
-  em1:"hello@quoteflow.example", ph1:"+91 98250 41200", rep:"Ravi Patel"
+  em1:"hello@quotation-manager.example", ph1:"+91 98250 41200", rep:"Ravi Patel"
 };
 const DEFAULT_TERMS =
 `1. Prices are ex-works Ahmedabad.
@@ -938,7 +938,7 @@ function openQuote(cid,no){ CUR_CLIENT=cid; QNO=no; paint(); go("build"); }
 
 /* ============ NAV ============ */
 const NAVMAP = {
-  home:    {t:"Hello, Ravi",       s:"QuoteFlow · FY 2026–27", tab:"home",   act:"search"},
+  home:    {t:"Hello, Ravi",       s:"Quotation Manager · FY 2026–27", tab:"home",   act:"search"},
   quotes:  {t:"Quotations",        s:"FY 2026–27",             tab:"quotes", act:"search"},
   build:   {t:"New quotation",     s:"Draft · not yet sent",   tab:null,     act:"share", tot:true},
   items:   {t:"Items & GST rates", s:"Item master",            tab:"items",  act:"add"},

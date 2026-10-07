@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CatalogFlow — QR Catalog Prototype</title>
+<title>Product Catalogue — QR Catalogue Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -362,12 +362,12 @@ textarea.i{min-height:78px;resize:vertical}
 </head>
 <body>
 
-<div class="stagehead">Clickable prototype &nbsp;·&nbsp; <b>CatalogFlow</b> &nbsp;·&nbsp; Sangam InfoAnalytics</div>
+<div class="stagehead">Clickable prototype &nbsp;·&nbsp; <b>Product Catalogue</b> &nbsp;·&nbsp; Sangam InfoAnalytics</div>
 
 <div class="phone">
   <header class="top">
     <div class="grow">
-      <h1 id="brandName">CATALOGFLOW</h1>
+      <h1 id="brandName">PRODUCT CATALOGUE</h1>
       <div class="sub" id="brandSub">QR catalogue · Farm machines &amp; spare parts</div>
     </div>
     <button class="iconbtn" id="backBtn" hidden aria-label="Back">
@@ -402,7 +402,7 @@ textarea.i{min-height:78px;resize:vertical}
 
 <script>
 /* ============================================================
-   CATALOGFLOW — QR catalog prototype
+   PRODUCT CATALOGUE — QR catalogue prototype
    Sangam InfoAnalytics · demo data only
    ============================================================ */
 
@@ -577,7 +577,7 @@ const MACH = [
 const CATS=[['all','All machines','બધા મશીન'],['tillage','Tillage','ખેડ'],['spray','Spraying','છંટકાવ'],['harvest','Harvest','કાપણી'],['fodder','Fodder & mill','ચારો અને ઘંટી']];
 
 const T={
- brand:{en:'CATALOGFLOW',gu:'કેટલોગફ્લો'},
+ brand:{en:'PRODUCT CATALOGUE',gu:'ઉત્પાદન સૂચિ'},
  brandSub:{en:'QR catalogue · Farm machines & spare parts',gu:'QR કેટલોગ · ખેતીનાં મશીન અને છૂટા ભાગ'},
  heroH:{en:'Every machine in the shop, in your hand.',gu:'દુકાનનું દરેક મશીન, હવે તમારા હાથમાં.'},
  heroP:{en:'Prices, spare parts and working videos for all eight machines we build and stock. No app to install.',gu:'અમે બનાવીએ અને રાખીએ છીએ તે આઠેય મશીનના ભાવ, છૂટા ભાગ અને ચાલુ મશીનના વિડિયો. કોઈ એપ ઈન્સ્ટોલ કરવાની જરૂર નથી.'},
@@ -940,7 +940,7 @@ function submitEnq(){
   const mn = mach(mid);
   const draft = lang==='gu'
     ? `નમસ્તે કેટલોગફ્લો,\n\nનામ: ${n||'—'}\nમોબાઈલ: ${ph||'—'}\nમશીન: ${mn?L(mn.n):'—'}\n\n${txt}`
-    : `Hello CatalogFlow,\n\nName: ${n||'—'}\nMobile: ${ph||'—'}\nMachine: ${mn?L(mn.n):'—'}\n\n${txt}`;
+    : `Hello Product Catalogue,\n\nName: ${n||'—'}\nMobile: ${ph||'—'}\nMachine: ${mn?L(mn.n):'—'}\n\n${txt}`;
   window.open(waLink(draft), '_blank');
   window._sent=true; window._otab='enq'; window._ef='all';
   render(); toast(t('enqGot'));
@@ -1180,7 +1180,7 @@ function renderBar(){
     const em=mach(e.mid);
     const reply = lang==='gu'
       ? `નમસ્તે ${e.name},\n\nકેટલોગફ્લો તરફથી. તમે ${em?L(em.n):'મશીન'} વિશે પૂછ્યું હતું.`
-      : `Hello ${e.name},\n\nThis is CatalogFlow. You had asked about the ${em?L(em.n):'machine'}.`;
+      : `Hello ${e.name},\n\nThis is Product Catalogue. You had asked about the ${em?L(em.n):'machine'}.`;
     bar.innerHTML=`<a class="btn btn-call" href="tel:${e.ph.replace(/\s/g,'')}"${gu()}>${UI.phone} ${t('callCust')}</a>
       <a class="btn btn-wa" style="flex:0 0 auto;padding-left:18px;padding-right:18px" href="https://wa.me/91${e.ph.replace(/\D/g,'').slice(-10)}?text=${encodeURIComponent(reply)}" target="_blank" rel="noopener" aria-label="WhatsApp">${UI.wa}</a>`;
     return;
@@ -1239,10 +1239,10 @@ function waMsg(kind, extra){
     if(kind==='cat')     return `નમસ્તે કેટલોગફ્લો,\n\nમારે તમારું આખું કેટલોગ અને ભાવપત્રક જોઈએ છે.`;
     return `નમસ્તે કેટલોગફ્લો,\n\nમેં તમારો QR કેટલોગ જોયો. મારે મશીન વિશે માહિતી જોઈએ છે.`;
   }
-  if(kind==='machine') return `Hello CatalogFlow,\n\nI want to know about this machine:\n${extra}\n\nPlease share the price and delivery details.`;
-  if(kind==='part')    return `Hello CatalogFlow,\n\nI need this spare part:\n${extra}\n\nIs it in stock? Please share the price.`;
-  if(kind==='cat')     return `Hello CatalogFlow,\n\nPlease send me your full catalogue and price list.`;
-  return `Hello CatalogFlow,\n\nI saw your QR catalogue. I would like to know more about your machines.`;
+  if(kind==='machine') return `Hello Product Catalogue,\n\nI want to know about this machine:\n${extra}\n\nPlease share the price and delivery details.`;
+  if(kind==='part')    return `Hello Product Catalogue,\n\nI need this spare part:\n${extra}\n\nIs it in stock? Please share the price.`;
+  if(kind==='cat')     return `Hello Product Catalogue,\n\nPlease send me your full catalogue and price list.`;
+  return `Hello Product Catalogue,\n\nI saw your QR catalogue. I would like to know more about your machines.`;
 }
 function waLink(msg){ return 'https://wa.me/'+SHOP.wa+'?text='+encodeURIComponent(msg); }
 

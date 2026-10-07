@@ -1,8 +1,8 @@
-# StockPilot — Plywood Material Tracking Prototype
+# Inventory Manager — Plywood Material Tracking Prototype
 
 ## Overview
 
-StockPilot demonstrates inventory and order tracking for a plywood and door
+Inventory Manager demonstrates inventory and order tracking for a plywood and door
 factory, from purchasing and material inward through production and customer
 dispatch.
 

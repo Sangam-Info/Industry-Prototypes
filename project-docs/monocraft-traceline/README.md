@@ -1,4 +1,4 @@
-# Monocraft · TraceLine — Prototype Package
+# Monocraft · Production Tracker — Prototype Package
 
 Material Flow + Production Tracking + Traceability + Quality Control + Dispatch + Analytics
 for **Monocraft Pvt. Ltd.**, by **Sangam InfoAnalytics**.
@@ -14,7 +14,7 @@ monocraft-traceline-package/
 ```
 
 ## 1. What the prototype is
-A single self-contained HTML file — open it in any browser (keep it online; it loads 3D + PDF + fonts from a CDN). It demonstrates the full look, feel and workflow of TraceLine.
+A single self-contained HTML file — open it in any browser (keep it online; it loads 3D + PDF + fonts from a CDN). It demonstrates the full look, feel and workflow of the Production Tracker.
 
 **9 production stages:**
 Order received → Material inspection → Cutting → Forging → Heat treatment → Shot blasting → Machining (CNC+VMC) → Final inspection → Dispatch.
