@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light only">
-<title>Gir Eco Enterprise – Accounts and Billing (Prototype)</title>
+<title>LedgerFlow – Accounts and Billing (Prototype)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -41,8 +41,7 @@ svg{flex:none}
 .stage-cap{position:absolute;left:32px;right:32px;bottom:28px;color:#64748B;font-size:14px;max-width:44ch}
 .stage-cap b{color:#1E293B;font-weight:600}
 .welcome{display:flex;flex-direction:column;justify-content:center;padding:48px clamp(24px,5vw,72px);background:var(--surface);overflow-y:auto}
-.brand{display:flex;align-items:center;gap:12px}
-.mark{width:42px;height:42px;border-radius:11px;background:var(--primary-soft);display:grid;place-items:center;flex:none;border:1px solid #DCE6FC}
+.brand{display:flex;align-items:center}
 .brand-t{font-weight:800;font-size:18px;line-height:1.15}
 .brand-s{font-size:13px;color:var(--ink-2)}
 .welcome h1{font-size:clamp(28px,3.2vw,42px);line-height:1.12;margin:36px 0 12px;max-width:15ch;font-weight:800}
@@ -56,7 +55,6 @@ svg{flex:none}
 #app{display:none}
 .side{position:fixed;top:0;bottom:0;left:0;width:var(--side);background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);z-index:20}
 .side-brand{display:flex;align-items:center;gap:10px;padding:20px 20px 16px}
-.side-brand .mark{width:36px;height:36px;border-radius:10px}
 .side nav{padding:4px 12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
 .nav-g{font-size:12px;font-weight:600;color:var(--ink-3);padding:16px 10px 6px}
 .nav-b{display:flex;align-items:center;gap:11px;width:100%;min-height:40px;padding:8px 10px;border:0;border-radius:9px;background:none;text-align:left;font-size:14px;font-weight:550;color:var(--ink-2)}
@@ -282,8 +280,6 @@ svg{flex:none}
   .main{margin-left:0;padding-bottom:calc(var(--tab) + 24px + env(safe-area-inset-bottom,0px))}
   .page{padding:16px 16px 24px}
   .mtop{display:flex;position:sticky;top:env(safe-area-inset-top,0px);z-index:30;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
-  .mtop .brand{gap:10px}
-  .mtop .mark{width:34px;height:34px;border-radius:9px}
   .mtop .brand-t{font-size:16px}
   .pill{font-size:12px;font-weight:650;padding:5px 10px;border-radius:999px;background:var(--primary-soft);color:var(--primary);white-space:nowrap}
   .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -410,12 +406,11 @@ svg{flex:none}
 <div id="gate">
   <div class="stage">
     <canvas id="gateCanvas" aria-hidden="true"></canvas>
-    <div class="stage-cap"><b>W cut, D cut, loop handle and box bags.</b> Made in Shahpur Sorath, Junagadh. Drag to turn them.</div>
+    <div class="stage-cap"><b>W cut, D cut, loop handle and box bags.</b> Made for modern nonwoven bag businesses. Drag to turn them.</div>
   </div>
   <div class="welcome">
     <div class="brand">
-      <div class="mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5.5 8h13l-1.3 12.1a1 1 0 0 1-1 .9H7.8a1 1 0 0 1-1-.9L5.5 8Z" fill="#3366E0"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke="#3366E0" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-      <div><div class="brand-t">Gir Eco Enterprise</div><div class="brand-s">Nonwoven bag manufacturer, Junagadh</div></div>
+      <div><div class="brand-t">LedgerFlow</div><div class="brand-s">Nonwoven bag accounts and billing</div></div>
     </div>
     <div id="openBlock">
       <h1>Bills, payments and dues in one place</h1>
@@ -427,7 +422,7 @@ svg{flex:none}
       <h1>This prototype has ended</h1>
       <p class="lead">The demo period is over. Contact Sangam InfoAnalytics to get the full version of your accounts system.</p>
     </div>
-    <div class="foot">Prepared by <b>Sangam InfoAnalytics</b>, Junagadh. Not licensed for business use. Access ends <b id="expTxt"></b>.</div>
+    <div class="foot">Prepared by <b>Sangam InfoAnalytics</b>. Not licensed for business use. Access ends <b id="expTxt"></b>.</div>
   </div>
 </div>
 
@@ -435,8 +430,7 @@ svg{flex:none}
 <div id="app">
   <aside class="side">
     <div class="side-brand">
-      <div class="mark"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M5.5 8h13l-1.3 12.1a1 1 0 0 1-1 .9H7.8a1 1 0 0 1-1-.9L5.5 8Z" fill="#3366E0"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke="#3366E0" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-      <div><div class="brand-t" style="font-size:16px">Gir Eco Enterprise</div><div class="brand-s" style="font-size:12px">Accounts and billing</div></div>
+      <div><div class="brand-t" style="font-size:16px">LedgerFlow</div><div class="brand-s" style="font-size:12px">Accounts and billing</div></div>
     </div>
     <nav id="sideNav" aria-label="Main"></nav>
     <div class="mini"><canvas id="miniCanvas" aria-hidden="true"></canvas><span>Top seller: D cut bag</span></div>
@@ -445,10 +439,10 @@ svg{flex:none}
 
   <main class="main" id="main">
     <header class="mtop">
-      <div class="brand"><div class="mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5.5 8h13l-1.3 12.1a1 1 0 0 1-1 .9H7.8a1 1 0 0 1-1-.9L5.5 8Z" fill="#3366E0"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke="#3366E0" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="brand-t">Gir Eco</div></div>
+      <div class="brand"><div class="brand-t">LedgerFlow</div></div>
       <span class="pill" id="limPill"></span>
     </header>
-    <div class="strip"><span><b>Prototype</b> for Gir Eco Enterprise by Sangam InfoAnalytics. Sample data only.</span><span id="limStrip"></span></div>
+    <div class="strip"><span><b>Prototype</b> for LedgerFlow by Sangam InfoAnalytics. Sample data only.</span><span id="limStrip"></span></div>
     <div class="page" id="view"></div>
   </main>
 
@@ -848,7 +842,7 @@ function words(n){
 function invoiceHTML(bill, c){
   const inter = isInter(c), t = billTotals(bill.items, inter), due = new Date(bill.date.getTime() + c.credit*DAY);
   return `<div class="paper">
-    <div class="inv-top"><div><div class="f">Gir Eco Enterprise</div>Opp. Green Villa Nursery, Vanthli Road (Madhuram Road),<br>Shahpur Sorath, Junagadh 362205, Gujarat<br>GSTIN: to be added</div>
+    <div class="inv-top"><div><div class="f">LedgerFlow</div>Industrial Estate, Sample City, Gujarat<br>GSTIN: Sample only</div>
       <div class="meta"><div class="inv-title">Tax invoice</div>Bill no. <b>${bill.no}</b><br>Date ${dfmt(bill.date)}<br>Due ${dfmt(due)}</div></div>
     <div class="inv-p"><div><div class="k">Bill to</div><b>${esc(c.name)}</b><br>${esc(c.city)}, ${esc(c.state)}<br>Phone ${esc(c.phone)}<br>GSTIN ${c.gstin?esc(c.gstin):'Unregistered'}</div>
       <div><div class="k">Supply</div>Place of supply: ${esc(c.state)}<br>${inter?'Inter-state, IGST applies':'Within Gujarat, CGST and SGST apply'}<br>Credit: ${c.credit} days</div></div>
@@ -860,7 +854,7 @@ function invoiceHTML(bill, c){
       ${inter ? `<tr><td>IGST</td><td class="r">${inr2(t.igst)}</td></tr>` : `<tr><td>CGST</td><td class="r">${inr2(t.cgst)}</td></tr><tr><td>SGST</td><td class="r">${inr2(t.sgst)}</td></tr>`}
       <tr><td>Round off</td><td class="r">${t.roundoff<0?'-':''}${inr2(Math.abs(t.roundoff))}</td></tr>
       <tr class="g"><td>Total</td><td class="r">${inr2(t.total)}</td></tr></table></div>
-    <div class="inv-foot"><div>Prototype by Sangam InfoAnalytics. Sample bill, not for use.</div><div class="sign">For Gir Eco Enterprise<div>Authorised signatory</div></div></div>
+    <div class="inv-foot"><div>Prototype by Sangam InfoAnalytics. Sample bill, not for use.</div><div class="sign">For LedgerFlow<div>Authorised signatory</div></div></div>
   </div>`;
 }
 
@@ -932,12 +926,12 @@ function addCustModal(){
   if (limitHit('customers')) return;
   modal(`<h2>Add customer</h2><p>A shop or business you sell bags to.</p><form id="cForm">
   <label class="fld"><span>Shop or business name</span><input id="cName" required></label>
-  <div class="g2"><label class="fld"><span>City</span><input id="cCity" value="Junagadh"></label><label class="fld"><span>Phone</span><input id="cPhone" inputmode="tel"></label></div>
+  <div class="g2"><label class="fld"><span>City</span><input id="cCity" value="Sample City"></label><label class="fld"><span>Phone</span><input id="cPhone" inputmode="tel"></label></div>
   <div class="g2"><label class="fld"><span>Credit days</span><input id="cCredit" type="number" inputmode="numeric" value="30" min="0"></label>
   <label class="fld"><span>State</span><select id="cState"><option>Gujarat</option><option>Maharashtra</option><option>Rajasthan</option><option>Daman and Diu</option></select></label></div>
   <label class="fld"><span>GSTIN (optional)</span><input id="cGst" maxlength="15" autocapitalize="characters"></label>${formBtns('Add customer')}</form>`);
   $('#cForm').onsubmit = e => { e.preventDefault(); const name = $('#cName').value.trim(); if (!name) return;
-    CUSTOMERS.push({id:nid('c'), name, city:$('#cCity').value.trim()||'Junagadh', phone:$('#cPhone').value.trim()||'Not added', gstin:$('#cGst').value.trim().toUpperCase(), credit:+$('#cCredit').value||0, state:$('#cState').value});
+    CUSTOMERS.push({id:nid('c'), name, city:$('#cCity').value.trim()||'Sample City', phone:$('#cPhone').value.trim()||'Not added', gstin:$('#cGst').value.trim().toUpperCase(), credit:+$('#cCredit').value||0, state:$('#cState').value});
     used.customers++; updateLimits(); closeModal(); toast(name+' added'); render(); };
 }
 function addPurModal(id){
@@ -954,8 +948,8 @@ function addPurModal(id){
 function remindModal(id){
   const st = partyState('cust',id), c = st.party, old = st.unpaid[0];
   const msg = st.bal>0.5
-    ? `Namaste ${c.name},\n\nThis is a gentle reminder from Gir Eco Enterprise. ${inr(st.bal)} is pending on your account${old?`, the oldest from bill ${old.e.no} dated ${dfmt(old.e.date)}`:''}.\n\nPlease arrange the payment at your earliest. UPI and bank transfer are accepted.\n\nThank you,\nGir Eco Enterprise, Junagadh`
-    : `Namaste ${c.name},\n\nThank you for clearing all dues with Gir Eco Enterprise. We look forward to your next order.`;
+    ? `Namaste ${c.name},\n\nThis is a gentle reminder from LedgerFlow. ${inr(st.bal)} is pending on your account${old?`, the oldest from bill ${old.e.no} dated ${dfmt(old.e.date)}`:''}.\n\nPlease arrange the payment at your earliest. UPI and bank transfer are accepted.\n\nThank you,\nLedgerFlow`
+    : `Namaste ${c.name},\n\nThank you for clearing all dues with LedgerFlow. We look forward to your next order.`;
   modal(`<div class="mhead"><h2>Payment reminder</h2><button class="x" data-act="closeModal" aria-label="Close">${I.x}</button></div><p>The message ${esc(c.name)} would get on WhatsApp:</p><div class="wa">${esc(msg)}</div>
   <div class="acts"><button class="btn pri" data-act="lock" data-f="whatsapp">Send on WhatsApp ${I.lock}</button></div>`);
 }
@@ -1066,8 +1060,8 @@ function printTexture(dark){
   const ink = dark ? '#1E293B' : '#FFFFFF'; g.strokeStyle = ink; g.fillStyle = ink; g.lineWidth = 10;
   g.beginPath(); g.arc(256,92,62,0,6.29); g.stroke();
   g.beginPath(); g.moveTo(256,140); g.bezierCurveTo(200,110,210,60,256,46); g.bezierCurveTo(302,60,312,110,256,140); g.fill();
-  g.font = '800 54px "Plus Jakarta Sans", Arial, sans-serif'; g.textAlign = 'center'; g.fillText('GIR ECO',256,214);
-  g.font = '600 24px Arial, sans-serif'; g.fillText('JUNAGADH',256,246);
+  g.font = '800 54px "Plus Jakarta Sans", Arial, sans-serif'; g.textAlign = 'center'; g.fillText('LEDGERFLOW',256,214);
+  g.font = '600 24px Arial, sans-serif'; g.fillText('SAMPLE',256,246);
   return new THREE.CanvasTexture(c);
 }
 const EXT = {depth:0.08, bevelEnabled:true, bevelThickness:0.025, bevelSize:0.025, bevelSegments:2, curveSegments:28};
@@ -1131,6 +1125,6 @@ document.addEventListener('visibilitychange', () => {
 });
 })();
 </script>
-<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(51,102,224,.24);border-radius:999px;background:rgba(255,255,255,.96);color:#1E293B;font:600 12px/1.2 'Plus Jakarta Sans',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(30,41,59,.18);">← Back to portfolios</a>
+<style>.portfolio-back{position:fixed;left:max(20px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));z-index:1000;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:184px;min-height:48px;padding:0 18px;box-sizing:border-box;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:#172334;color:#fff;font:700 14px/1 'Plus Jakarta Sans',Arial,sans-serif;letter-spacing:.01em;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.28);transition:background .18s ease,transform .18s ease,box-shadow .18s ease}.portfolio-back:hover{background:#263b55;transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.32)}.portfolio-back:focus-visible{outline:3px solid #8ab4ff;outline-offset:3px}.portfolio-back:active{transform:translateY(0)}@media(max-width:480px){.portfolio-back{left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));min-width:176px;min-height:48px}}</style><a class="portfolio-back" href="../index.html" aria-label="Back to prototypes">←&nbsp; Back to prototypes</a>
 </body>
 </html>

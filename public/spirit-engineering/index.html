@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#12161b">
-<title>Spirit Engineering — Business Suite</title>
+<title>OpsPilot — Business Suite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,11 +25,7 @@
   header{height:var(--head);flex:none;display:flex;align-items:center;gap:14px;
     padding:0 16px;background:linear-gradient(180deg,#171d24,#12161b);
     border-bottom:1px solid var(--line);position:relative;z-index:5}
-  .brand{display:flex;align-items:center;gap:11px;min-width:0}
-  .mark{width:38px;height:38px;flex:none;border-radius:10px;
-    background:linear-gradient(135deg,var(--amber),var(--amber-2));
-    color:#12161b;font-family:"Archivo";font-weight:800;font-size:17px;letter-spacing:-.5px;
-    display:grid;place-items:center;box-shadow:0 2px 0 rgba(0,0,0,.35)}
+  .brand{display:flex;align-items:center;min-width:0}
   .wm{min-width:0}
   .wm .name{font-family:"Archivo";font-weight:700;font-size:16.5px;letter-spacing:-.3px;line-height:1;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -78,10 +74,9 @@
 <body>
   <header>
     <div class="brand">
-      <div class="mark">SE</div>
       <div class="wm">
-        <div class="name">Spirit Engineering</div>
-        <div class="tag">Business Suite</div>
+        <div class="name">OpsPilot</div>
+        <div class="tag">Workshop Operations</div>
       </div>
     </div>
     <div class="switch" role="tablist" aria-label="Choose a workspace">
@@ -146,6 +141,6 @@
   // boot: Operations first
   mount("ops", OPS_B64, "if-ops");
 </script>
-<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(18,22,27,.94);color:#fff;font:600 12px/1.2 'Public Sans',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.3);">← Back to portfolios</a>
+<style>.portfolio-back{position:fixed;left:max(20px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));z-index:1000;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:184px;min-height:48px;padding:0 18px;box-sizing:border-box;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:#172334;color:#fff;font:700 14px/1 'Public Sans',Arial,sans-serif;letter-spacing:.01em;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.28);transition:background .18s ease,transform .18s ease,box-shadow .18s ease}.portfolio-back:hover{background:#263b55;transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.32)}.portfolio-back:focus-visible{outline:3px solid #8ab4ff;outline-offset:3px}.portfolio-back:active{transform:translateY(0)}@media(max-width:480px){.portfolio-back{left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));min-width:176px;min-height:48px}}</style><a class="portfolio-back" href="../index.html" aria-label="Back to prototypes">←&nbsp; Back to prototypes</a>
 </body>
 </html>

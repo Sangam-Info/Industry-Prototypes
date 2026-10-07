@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light only">
-<title>Shivam Salt – Attendance and Accounts</title>
+<title>WorkLedger – Attendance and Accounts</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -61,8 +61,7 @@ svg{flex:none}
 .dots button.on{width:22px;background:var(--sea)}
 .dots button::after{content:"";display:block;width:24px;height:24px;margin:-8px}
 .welcome{display:flex;flex-direction:column;justify-content:center;padding:48px clamp(28px,5vw,76px);overflow-y:auto;background:#fff}
-.brand{display:flex;align-items:center;gap:12px}
-.mark{width:44px;height:44px;border-radius:13px;background:var(--grad);display:grid;place-items:center;flex:none;box-shadow:0 8px 18px -8px rgba(10,108,143,.6)}
+.brand{display:flex;align-items:center}
 .brand-t{font-weight:800;font-size:17px;line-height:1.15}
 .brand-s{font-size:12.5px;color:var(--ink-2)}
 .welcome h1{font-size:clamp(30px,3.3vw,46px);line-height:1.08;margin:34px 0 14px;font-weight:800;max-width:15ch;letter-spacing:-.035em}
@@ -108,7 +107,6 @@ a.btn.pri{color:#fff}
 #app{display:none}
 .side{position:fixed;inset:0 auto 0 0;width:var(--side);background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);z-index:20}
 .side-brand{display:flex;align-items:center;gap:11px;padding:20px 20px 14px}
-.side-brand .mark{width:38px;height:38px;border-radius:11px}
 .side nav{padding:4px 14px 10px;display:flex;flex-direction:column;gap:1px;overflow-y:auto;flex:1 1 auto;min-height:0}
 .nav-g{font-size:11.5px;font-weight:700;color:var(--ink-3);padding:12px 10px 4px}
 .nav-b{display:flex;align-items:center;gap:12px;width:100%;min-height:40px;padding:8px 12px;border:0;border-radius:11px;background:none;text-align:left;font-size:14px;font-weight:600;color:var(--ink-2);position:relative}
@@ -409,7 +407,6 @@ a.btn.pri{color:#fff}
   .main{margin-left:0;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   .top{padding:0 16px;height:60px;top:env(safe-area-inset-top,0px)}
   .top .m-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px}
-  .top .m-brand .mark{width:34px;height:34px;border-radius:10px}
   .tsearch,.limchip,.me>div{display:none}
   .me{padding:3px;border-radius:12px}
   .iconbtn{width:40px;height:40px}
@@ -497,8 +494,7 @@ a.btn.pri{color:#fff}
   </div>
   <div class="welcome">
     <div class="brand">
-      <div class="mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4l8-4.6Z" fill="#fff" fill-opacity=".35"/><path d="M12 2.8 20 7.4 12 12 4 7.4l8-4.6Z" fill="#fff"/><path d="M12 12v9.2L4 16.6V7.4L12 12Z" fill="#fff" fill-opacity=".7"/></svg></div>
-      <div><div class="brand-t">Shivam Salt</div><div class="brand-s">Salt manufacturer</div></div>
+      <div><div class="brand-t">WorkLedger</div><div class="brand-s">Salt-workforce attendance and accounts</div></div>
     </div>
     <div id="openBlock">
       <h1>Your team and your dues, in one place</h1>
@@ -515,28 +511,27 @@ a.btn.pri{color:#fff}
       <h1>This prototype has ended</h1>
       <p class="lead">The demo period is over. Contact Sangam InfoAnalytics to get the full version of your attendance and accounts system.</p>
     </div>
-    <div class="gate-foot">Prepared by <b>Sangam InfoAnalytics</b>, Junagadh. Not licensed for business use. Access ends <b id="expTxt"></b>.</div>
+    <div class="gate-foot">Prepared by <b>Sangam InfoAnalytics</b>. Not licensed for business use. Access ends <b id="expTxt"></b>.</div>
   </div>
 </div>
 
 <div id="app">
   <aside class="side">
     <div class="side-brand">
-      <div class="mark"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4l8-4.6Z" fill="#fff" fill-opacity=".35"/><path d="M12 2.8 20 7.4 12 12 4 7.4l8-4.6Z" fill="#fff"/><path d="M12 12v9.2L4 16.6V7.4L12 12Z" fill="#fff" fill-opacity=".7"/></svg></div>
-      <div><div class="brand-t" style="font-size:15.5px">Shivam Salt</div><div class="brand-s" style="font-size:12px">Team and accounts</div></div>
+      <div><div class="brand-t" style="font-size:15.5px">WorkLedger</div><div class="brand-s" style="font-size:12px">Team and accounts</div></div>
     </div>
     <nav id="sideNav" aria-label="Main"></nav>
     <div class="plan" id="plan"></div>
-    <div class="side-user"><span class="av" style="--t:var(--sea-s);--c:var(--sea)">SS</span><div><b>Shivam Salt</b><span>Owner</span></div></div>
+    <div class="side-user"><span class="av" style="--t:var(--sea-s);--c:var(--sea)">OW</span><div><b>WorkLedger</b><span>Owner</span></div></div>
   </aside>
   <main class="main" id="main">
     <header class="top">
-      <div class="m-brand"><div class="mark"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4l8-4.6Z" fill="#fff" fill-opacity=".35"/><path d="M12 2.8 20 7.4 12 12 4 7.4l8-4.6Z" fill="#fff"/><path d="M12 12v9.2L4 16.6V7.4L12 12Z" fill="#fff" fill-opacity=".7"/></svg></div>Shivam Salt</div>
+      <div class="m-brand">WorkLedger</div>
       <label class="tsearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="topSearch" placeholder="Search workers, parties or phone numbers" aria-label="Search" autocomplete="off"><div class="sres" id="sres"></div></label>
       <div class="top-r">
         <span class="limchip" id="limChip"></span>
         <button class="iconbtn" data-act="bell" aria-label="Alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="dotn" id="bellN"></span></button>
-        <div class="me"><span class="av" style="--t:var(--sea-s);--c:var(--sea)">SS</span><div style="text-align:left"><b>Shivam Salt</b><span>Owner</span></div></div>
+        <div class="me"><span class="av" style="--t:var(--sea-s);--c:var(--sea)">OW</span><div style="text-align:left"><b>WorkLedger</b><span>Owner</span></div></div>
       </div>
     </header>
     <div class="page" id="view"></div>
@@ -844,7 +839,7 @@ function vDash(){
   <section class="hero">
     <div class="hero-l">
       <span class="hero-date">${sz(I.clock,14)} ${T0.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</span>
-      <h1>${greet}, Shivam Salt</h1>
+      <h1>${greet}, WorkLedger</h1>
       <p class="hero-p"><b>${atWork} of ${N}</b> workers are at work today${ts.N?`, and <b>${ts.N}</b> are not marked yet`:''}. You have <b>${inr(toGet)}</b> to receive, of which <b class="r">${inr(overAmt)}</b> is past the credit days.</p>
       <div class="acts"><button class="btn pri" data-act="nav" data-v="mark">${I.cal} Mark attendance</button><button class="btn" data-act="nav" data-v="deb">See who owes you</button></div>
     </div>
@@ -1152,7 +1147,7 @@ function saveWorker(){
 }
 function remindModal(id){
   const x = partyState('deb',id), p = x.party;
-  const msg = `Namaste ${p.name},\n\nThis is a reminder from Shivam Salt. ${inr(x.bal)} is pending on your account${x.status==='overdue'?`, and the oldest sale is ${x.over} days past the due date`:''}.\n\nPlease arrange the payment at the earliest. Thank you.`;
+  const msg = `Namaste ${p.name},\n\nThis is a reminder from WorkLedger. ${inr(x.bal)} is pending on your account${x.status==='overdue'?`, and the oldest sale is ${x.over} days past the due date`:''}.\n\nPlease arrange the payment at the earliest. Thank you.`;
   modal(`<div class="mhead"><h2>Remind ${esc(p.name)}</h2><button class="x" data-act="closeModal" aria-label="Close">${I.x}</button></div>
   <p>This message opens in WhatsApp, ready to send to ${esc(p.phone)}.</p><div class="wa">${esc(msg)}</div>
   <div class="acts" style="justify-content:flex-end"><button class="btn" data-act="closeModal">Cancel</button><a class="btn pri" target="_blank" rel="noopener" href="https://wa.me/91${p.phone.replace(/\s/g,'')}?text=${encodeURIComponent(msg)}">${sz(I.wa,16)} Open WhatsApp</a></div>`);
@@ -1520,4 +1515,4 @@ function initHero(){
 
 initGate();
 })();
-</script><a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(10,108,143,.24);border-radius:999px;background:rgba(255,255,255,.96);color:#0F2430;font:600 12px/1.2 'Manrope',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(15,36,48,.18);">← Back to portfolios</a></body></html>
+</script><style>.portfolio-back{position:fixed;left:max(20px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));z-index:1000;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:184px;min-height:48px;padding:0 18px;box-sizing:border-box;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:#172334;color:#fff;font:700 14px/1 'Manrope',Arial,sans-serif;letter-spacing:.01em;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.28);transition:background .18s ease,transform .18s ease,box-shadow .18s ease}.portfolio-back:hover{background:#263b55;transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.32)}.portfolio-back:focus-visible{outline:3px solid #8ab4ff;outline-offset:3px}.portfolio-back:active{transform:translateY(0)}@media(max-width:480px){.portfolio-back{left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));min-width:176px;min-height:48px}}</style><a class="portfolio-back" href="../index.html" aria-label="Back to prototypes">←&nbsp; Back to prototypes</a></body></html>

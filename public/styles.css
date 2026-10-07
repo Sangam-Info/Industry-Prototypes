@@ -1183,16 +1183,6 @@ h2 {
   color: var(--accent-dark);
 }
 
-.card-foot span:last-child {
-  color: var(--accent-dark);
-  font-size: 17px;
-  transition: transform .2s ease;
-}
-
-.card:hover .card-foot span:last-child {
-  transform: translateX(5px);
-}
-
 .featured {
   border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
 }
@@ -1414,7 +1404,8 @@ footer p {
 }
 
 .card-foot {
-  padding-top: 22px;
+  margin-top: auto;
+  padding-top: 18px;
   color: var(--muted);
   font-family: 'DM Mono', monospace;
   font-size: 10px;
@@ -1422,13 +1413,21 @@ footer p {
   text-transform: uppercase;
 }
 
-.card-foot span:last-child {
-  color: var(--ink);
-  font-size: 13px;
+.card-foot span:first-child {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, white);
+  background: color-mix(in srgb, var(--accent) 10%, white);
+  color: var(--accent-dark);
+  font-weight: 800;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
 }
 
-.card:hover .card-foot span:last-child {
-  color: var(--accent-dark);
+.card:hover .card-foot span:first-child,
+.card:focus-visible .card-foot span:first-child {
+  border-color: var(--accent-dark);
+  background: var(--accent-dark);
+  color: #fff;
 }
 
 .card.reveal,

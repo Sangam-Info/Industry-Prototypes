@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1E2622">
 <meta name="robots" content="noindex, nofollow">
-<meta name="description" content="Material tracking prototype for AUM Industries: purchase, inward, production, stock, orders and dispatch. Built by Sangam InfoAnalytics.">
-<meta property="og:title" content="AUM Industries — Material Tracking (Prototype)">
+<meta name="description" content="Material tracking prototype for StockPilot: purchase, inward, production, stock, orders and dispatch. Built by Sangam InfoAnalytics.">
+<meta property="og:title" content="StockPilot — Material Tracking (Prototype)">
 <meta property="og:description" content="Live prototype by Sangam InfoAnalytics. Works on phone and PC, in English and ગુજરાતી.">
 <meta property="og:type" content="website">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<title>AUM Industries — Material Tracking (Prototype)</title>
+<title>StockPilot — Material Tracking (Prototype)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Hind+Vadodara:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -40,15 +39,12 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stro
 
 /* Watermark: prototype restriction */
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.045;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='240'%3E%3Ctext x='20' y='130' transform='rotate(-24 210 120)' font-family='Arial' font-size='30' font-weight='700' fill='%231E2622'%3EPrototype  AUM Industries%3C/text%3E%3C/svg%3E")}
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='240'%3E%3Ctext x='20' y='130' transform='rotate(-24 210 120)' font-family='Arial' font-size='30' font-weight='700' fill='%231E2622'%3EPrototype  StockPilot%3C/text%3E%3C/svg%3E")}
 
 /* ---------- Layout ---------- */
 .app{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
 .side{background:var(--ink);color:#CBD3CD;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;padding:20px 14px 16px}
 .brand{display:flex;align-items:center;gap:12px;padding:4px 8px 22px}
-.mark{width:40px;height:40px;border-radius:9px;flex:none;position:relative;overflow:hidden;
-  background:repeating-linear-gradient(180deg,#E6C697 0 5px,#C8955C 5px 10px);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
-.mark span{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;color:#2B1808;font-size:17px;letter-spacing:-.02em;background:rgba(255,255,255,.18)}
 .brand b{display:block;color:#fff;font-size:15.5px;font-weight:750;letter-spacing:-.01em}
 .brand small{color:#8FA097;font-size:12.5px}
 .nav-group{margin:6px 0 4px;padding:14px 10px 6px;font-size:12px;color:#7D8C84;font-weight:600}
@@ -311,7 +307,6 @@ html[lang="gu"] .kpi b,html[lang="gu"] .layer .num b{letter-spacing:0}
   .side,.topbar,.ribbon{display:none}
   .mtop{display:flex;position:sticky;top:0;z-index:20;align-items:center;gap:12px;background:var(--ink);color:#fff;
     padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px}
-  .mtop .mark{width:34px;height:34px}
   .mtop .t{flex:1;min-width:0}
   .mtop .t b{display:block;font-size:15px;font-weight:750;line-height:1.2}
   .mtop .t small{color:#A9B6AE;font-size:12px}
@@ -380,7 +375,7 @@ html[lang="gu"] .kpi b,html[lang="gu"] .layer .num b{letter-spacing:0}
 
 <div class="app">
   <aside class="side" aria-label="Main navigation">
-    <div class="brand"><div class="mark"><span>A</span></div><div><b>AUM Industries</b><small>Plywood &amp; doors</small></div></div>
+    <div class="brand"><div><b>StockPilot</b><small>Plywood &amp; doors · Stock to dispatch</small></div></div>
     <nav class="nav" id="nav"></nav>
     <div class="side-foot">
       Prototype built by Sangam InfoAnalytics<br>
@@ -401,12 +396,11 @@ html[lang="gu"] .kpi b,html[lang="gu"] .layer .num b{letter-spacing:0}
       </label>
       <span data-langslot></span>
       <span class="proto-chip">Prototype</span>
-      <div class="who"><div><b style="display:block;font-weight:700;line-height:1.2">Factory owner</b><small style="color:var(--muted)">AUM Industries</small></div><div class="avatar">AI</div></div>
+      <div class="who"><div><b style="display:block;font-weight:700;line-height:1.2">Factory owner</b><small style="color:var(--muted)">StockPilot</small></div><div class="avatar">FO</div></div>
     </header>
 
     <header class="mtop">
-      <div class="mark"><span>A</span></div>
-      <div class="t"><b id="mtitle">Dashboard</b><small>AUM Industries</small></div>
+      <div class="t"><b id="mtitle">Dashboard</b><small>StockPilot</small></div>
       <span class="proto-chip">Prototype</span>
       <button class="ib mlang" id="mlang" data-act="langToggle" data-notr aria-label="Switch language">ગુજ</button>
       <button class="ib" data-act="go" data-id="track" aria-label="Track"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
@@ -584,7 +578,7 @@ function renderNav(){
  $('#bnav').innerHTML=BNAV.map(([id,t,i])=>`<button class="${(S.page===id||(id==='more'&&moreOn))?'on':''}" data-act="${id==='more'?'more':'go'}" data-id="${id}">${ic(i)}<span>${t}</span></button>`).join('');
  $('#mtitle').textContent=TITLES[S.page]||'';
 }
-function render(){renderNav();$('#content').innerHTML=(PAGES[S.page]||PAGES.home)();document.title=`${TITLES[S.page]} | AUM Industries (Prototype)`;
+function render(){renderNav();$('#content').innerHTML=(PAGES[S.page]||PAGES.home)();document.title=`${TITLES[S.page]} | StockPilot (Prototype)`;
  F3D.mount();F3D.update();if(S.page==='home'&&!S.seenHome){S.seenHome=1;countUp()}}
 function stay(p){if(S.page==='factory'||S.page==='home'){closeAll();render()}else go(p)}
 function countUp(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
@@ -962,7 +956,7 @@ function showLocked(k){const [t,s]=LOCKED[k]||LOCKED.export;
 function showInfo(t,s,items,foot){
  $('#modal').innerHTML=`<div class="lk-ic">${ic('alert')}</div><h3>${t}</h3><p>${s}</p>${items?`<ul>${items}</ul>`:''}<p>${foot||''}</p><button class="btn primary" style="width:100%" data-act="closeAll">OK</button>`;
  $('#modal').classList.add('show');$('#scrim').classList.add('show')}
-function about(){showInfo('About this prototype','This preview shows how the AUM Industries material tracking app will work, on phone and computer. A few things are intentionally limited:',
+function about(){showInfo('About this prototype','This preview shows how the StockPilot material tracking app will work, on phone and computer. A few things are intentionally limited:',
  `<li>All data is sample data and resets when the page reloads</li><li>Up to 3 new entries of each type</li><li>Reports, exports, printing, logins, barcode scanning and WhatsApp alerts are locked</li><li>Screens and fields will be adjusted to your exact process before the final build</li>`,
  'Prototype by Sangam InfoAnalytics, +91 84900 02023');
  $('#modal .lk-ic').innerHTML=ic('lock')}
@@ -1035,7 +1029,7 @@ const F3D=(()=>{
   box(46,.035,.12,O.m.yellow,0.5,0,3.55);
   box(46,4,.4,O.m.wall,0.5,0,-6.8);
   for(let x=-22;x<=23;x+=5)box(.5,4.2,.5,O.m.steel,x,0,-6.6);
-  const sign=new THREE.Mesh(new THREE.PlaneGeometry(9,1.5),new THREE.MeshStandardMaterial({map:tex((c,w,h)=>{c.fillStyle='#1E2622';c.fillRect(0,0,w,h);c.fillStyle='#E7C694';for(let i=0;i<5;i++)c.fillRect(24,26+i*14,70,7);c.fillStyle='#fff';c.font='700 74px Manrope, Arial';c.textBaseline='middle';c.fillText('AUM Industries',120,h/2+2);c.font='500 30px Manrope, Arial';c.fillStyle='#C9B18F';c.fillText('Plywood & doors',650,h/2+6)},900,150),roughness:.6}));
+  const sign=new THREE.Mesh(new THREE.PlaneGeometry(9,1.5),new THREE.MeshStandardMaterial({map:tex((c,w,h)=>{c.fillStyle='#1E2622';c.fillRect(0,0,w,h);c.fillStyle='#E7C694';for(let i=0;i<5;i++)c.fillRect(24,26+i*14,70,7);c.fillStyle='#fff';c.font='700 74px Manrope, Arial';c.textBaseline='middle';c.fillText('MATERIAL TRACKING',120,h/2+2);c.font='500 30px Manrope, Arial';c.fillStyle='#C9B18F';c.fillText('Plywood & doors',650,h/2+6)},900,150),roughness:.6}));
   sign.position.set(5.2,2.9,-6.58);scene.add(sign);
   // station floor pads
   [['inward',4.6,3],['dispatch',4.6,3]].forEach(([k,w,d])=>box(w,.6,d,O.m.slab,STN[k].p[0],0,STN[k].p[2]-0.2));
@@ -1180,7 +1174,7 @@ const GU={
 "Material out":"માલ જાવક","Customer orders":"ગ્રાહક ઓર્ડર","Dispatch":"ડિસ્પેચ","Full version":"સંપૂર્ણ વર્ઝન","Reports":"રિપોર્ટ્સ","Users & roles":"યુઝર અને ભૂમિકા","Settings":"સેટિંગ્સ",
 "Prototype built by Sangam InfoAnalytics":"પ્રોટોટાઇપ: સંગમ ઇન્ફોએનાલિટિક્સ","What's limited in this preview":"આ પ્રિવ્યૂમાં શું મર્યાદિત છે",
 "You're viewing a prototype with sample data. Anything you add is cleared when the page reloads.":"તમે નમૂના ડેટા સાથેનો પ્રોટોટાઇપ જોઈ રહ્યા છો. પેજ રીલોડ થતાં તમે ઉમેરેલું બધું ભૂંસાઈ જશે.",
-"See limits":"મર્યાદાઓ જુઓ","Prototype":"પ્રોટોટાઇપ","Factory owner":"ફેક્ટરી માલિક","Plywood & doors":"પ્લાયવુડ અને દરવાજા","AUM Industries":"AUM ઇન્ડસ્ટ્રીઝ",
+"See limits":"મર્યાદાઓ જુઓ","Prototype":"પ્રોટોટાઇપ","Factory owner":"ફેક્ટરી માલિક","Plywood & doors":"પ્લાયવુડ અને દરવાજા","StockPilot":"StockPilot",
 "Home":"હોમ","Inward":"આવક","Orders":"ઓર્ડર","More":"વધુ",
 "Good morning":"સુપ્રભાત","Good afternoon":"શુભ બપોર","Good evening":"શુભ સાંજ","Live factory":"લાઇવ ફેક્ટરી",
 "Drag to turn it. Tap a label to open that section.":"ફેરવવા માટે ખેંચો. વિભાગ ખોલવા લેબલ પર ટેપ કરો.","Full view":"પૂરો વ્યૂ",
@@ -1227,7 +1221,7 @@ const GU={
 "Create a delivery challan and load the vehicle.":"ડિલિવરી ચલણ બનાવો અને વાહન લોડ કરો.","Driver name":"ડ્રાઇવરનું નામ","Driver phone":"ડ્રાઇવરનો ફોન",
 "Send challan to customer on WhatsApp":"ગ્રાહકને WhatsApp પર ચલણ મોકલો","Load vehicle":"વાહન લોડ કરો","Close":"બંધ કરો",
 "About this prototype":"આ પ્રોટોટાઇપ વિશે",
-"This preview shows how the AUM Industries material tracking app will work, on phone and computer. A few things are intentionally limited:":"આ પ્રિવ્યૂ બતાવે છે કે AUM ઇન્ડસ્ટ્રીઝની મટિરિયલ ટ્રેકિંગ એપ ફોન અને કમ્પ્યુટર પર કેવી રીતે કામ કરશે. કેટલીક વસ્તુઓ જાણીજોઈને મર્યાદિત રાખી છે:",
+"This preview shows how the StockPilot material tracking app will work, on phone and computer. A few things are intentionally limited:":"આ પ્રિવ્યૂ બતાવે છે કે સ્ટોકપાયલટની મટિરિયલ ટ્રેકિંગ એપ ફોન અને કમ્પ્યુટર પર કેવી રીતે કામ કરશે. કેટલીક વસ્તુઓ જાણીજોઈને મર્યાદિત રાખી છે:",
 "All data is sample data and resets when the page reloads":"બધો ડેટા નમૂનાનો છે અને પેજ રીલોડ થતાં રીસેટ થાય છે","Up to 3 new entries of each type":"દરેક પ્રકારની વધુમાં વધુ 3 નવી એન્ટ્રી",
 "Reports, exports, printing, logins, barcode scanning and WhatsApp alerts are locked":"રિપોર્ટ, એક્સપોર્ટ, પ્રિન્ટ, લૉગિન, બારકોડ સ્કેન અને WhatsApp એલર્ટ લૉક છે",
 "Screens and fields will be adjusted to your exact process before the final build":"અંતિમ એપ પહેલાં સ્ક્રીન અને ફીલ્ડ તમારી ચોક્કસ પ્રક્રિયા મુજબ ગોઠવાશે",
@@ -1359,6 +1353,6 @@ $('#gsearch').addEventListener('keydown',e=>{if(e.key==='Enter'){doTrack(e.targe
 
 render();document.querySelectorAll('[data-langslot]').forEach(e=>e.innerHTML=langSeg());
 </script>
-<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(210,160,106,.45);border-radius:999px;background:rgba(30,38,34,.94);color:#fff;font:600 12px/1.2 'Manrope',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.28);">← Back to portfolios</a>
+<style>.portfolio-back{position:fixed;left:max(20px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));z-index:1000;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:184px;min-height:48px;padding:0 18px;box-sizing:border-box;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:#172334;color:#fff;font:700 14px/1 'Manrope',Arial,sans-serif;letter-spacing:.01em;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.28);transition:background .18s ease,transform .18s ease,box-shadow .18s ease}.portfolio-back:hover{background:#263b55;transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.32)}.portfolio-back:focus-visible{outline:3px solid #8ab4ff;outline-offset:3px}.portfolio-back:active{transform:translateY(0)}@media(max-width:480px){.portfolio-back{left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));min-width:176px;min-height:48px}}</style><a class="portfolio-back" href="../index.html" aria-label="Back to prototypes">←&nbsp; Back to prototypes</a>
 </body>
 </html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#101418">
-<title>Chawla Industries — App Prototype</title>
+<title>PackFlow — Packaging Machinery Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Noto+Sans+Gujarati:wght@400;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -324,10 +324,6 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 .login{position:absolute;inset:0;background:var(--ink);z-index:80;display:flex;flex-direction:column;
   justify-content:center;padding:36px 30px;color:#fff;transition:opacity .4s,transform .4s var(--ease)}
 .login.gone{opacity:0;transform:translateY(-14px);pointer-events:none}
-.logo{width:56px;height:56px;border-radius:16px;background:var(--amber);display:flex;align-items:center;
-  justify-content:center;margin-bottom:20px;font-family:var(--disp);font-weight:800;font-size:26px;color:var(--ink);
-  animation:pop .6s var(--ease) both}
-@keyframes pop{from{transform:scale(.6) rotate(-8deg);opacity:0}}
 .login h1{font-family:var(--disp);font-weight:800;font-size:29px;letter-spacing:-.03em;margin:0 0 7px;line-height:1.1}
 .login h1 em{font-style:normal;color:var(--amber)}
 .login p{color:#8A929B;font-size:14px;margin:0 0 24px}
@@ -372,9 +368,8 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 
       <!-- LOGIN -->
       <div class="login" id="login">
-        <div class="logo">C</div>
-        <h1>Chawla<br><em>Machines</em></h1>
-        <p>Machines, customers, bills and reports in one place.</p>
+        <h1>Pack<em>Flow</em></h1>
+        <p>Show packaging machines, manage enquiries and prepare customer quotations.</p>
         <input class="pin" id="phone" value="98250 00000" inputmode="tel" aria-label="Mobile number">
         <input class="pin" id="otp" value="4 8 2 1" inputmode="numeric" aria-label="OTP">
         <button class="bigbtn" onclick="doLogin()">Open my business
@@ -387,8 +382,8 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
         <div class="top">
           <div class="row">
             <div class="grow">
-              <div class="firm">Chawla <em>Machines</em></div>
-              <div class="sub">Ahmedabad · Since 1989</div>
+              <div class="firm">Pack<em>Flow</em></div>
+              <div class="sub">Packaging machinery · Product catalog</div>
             </div>
             <button class="iconbtn" onclick="go('s-activity')" aria-label="Who watched">
               <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="2.6"/></svg>
@@ -682,7 +677,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
         <div class="custtop">
           <div class="urlbar">
             <svg class="lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
-            chawla.link/<b id="cslug">shrink-tunnel</b>
+            packflow.demo/<b id="cslug">shrink-tunnel</b>
           </div>
           <button class="langbtn" onclick="toggleLang()" id="langbtn">ગુજરાતી</button>
         </div>
@@ -714,7 +709,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
             <button class="bigbtn dark" onclick="custEnquiry()" id="t-enqb">Send enquiry</button>
           </div>
           <div style="text-align:center;padding:16px;font-family:var(--mono);font-size:10px;color:var(--mute)">
-            CHAWLA INDUSTRIES · AHMEDABAD · SINCE 1989
+            PACKAGING MACHINERY · PRODUCT CATALOG
           </div>
         </div>
         <div class="footbar">
@@ -1455,6 +1450,6 @@ setTimeout(()=>{
   renderActs(); toast('Nilesh Trading just opened your link');
 },16000);
 </script>
-<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(16,20,24,.9);color:#fff;font:600 12px/1.2 'Public Sans',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.28);">← Back to portfolios</a>
+<style>.portfolio-back{position:fixed;left:max(20px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));z-index:1000;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:184px;min-height:48px;padding:0 18px;box-sizing:border-box;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:#172334;color:#fff;font:700 14px/1 'Public Sans',Arial,sans-serif;letter-spacing:.01em;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.28);transition:background .18s ease,transform .18s ease,box-shadow .18s ease}.portfolio-back:hover{background:#263b55;transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.32)}.portfolio-back:focus-visible{outline:3px solid #8ab4ff;outline-offset:3px}.portfolio-back:active{transform:translateY(0)}@media(max-width:480px){.portfolio-back{left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));min-width:176px;min-height:48px}}</style><a class="portfolio-back" href="../index.html" aria-label="Back to prototypes">←&nbsp; Back to prototypes</a>
 </body>
 </html>

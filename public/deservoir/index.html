@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B1020">
-<title>Deservoir · Mobile</title>
+<title>QuoteFlow · Mobile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&family=Inter+Tight:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -280,7 +280,7 @@ textarea.inp{min-height:88px;resize:none;line-height:1.55;font-size:14px}
     <div class="ab-row">
       <button class="back" id="backBtn" onclick="go(BACK_TO)" style="display:none">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <div style="flex:1;min-width:0"><div class="ab-t" id="abTitle">Hello, Ravi</div><div class="ab-s" id="abSub">Deservoir · FY 2026–27</div></div>
+      <div style="flex:1;min-width:0"><div class="ab-t" id="abTitle">Hello, Ravi</div><div class="ab-s" id="abSub">QuoteFlow · FY 2026–27</div></div>
       <button class="iconbtn" id="abAction" onclick="abAct()">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
     </div>
@@ -399,13 +399,13 @@ textarea.inp{min-height:88px;resize:none;line-height:1.55;font-size:14px}
     <!-- SETTINGS -->
     <section class="view" id="v-settings">
       <div class="card"><div class="ch"><h3>Identity</h3></div><div class="cb">
-        <div class="fld"><label class="f">COMPANY NAME</label><input class="inp" value="Deservoir Industries Pvt. Ltd."></div>
+        <div class="fld"><label class="f">COMPANY NAME</label><input class="inp" value="Your Business Name"></div>
         <div class="fld"><label class="f">GSTIN</label><input class="inp n" value="24AABCD1234E1Z5"><div class="hint">24 = Gujarat. Decides CGST+SGST vs IGST.</div></div>
         <div class="fld" style="margin:0"><label class="f">ADDRESS</label><textarea class="inp">Plot 42, GIDC Phase II, Vatva
 Ahmedabad, Gujarat 382445</textarea></div>
       </div></div>
       <div class="card"><div class="ch"><h3>Contact</h3></div><div class="cb">
-        <div class="fld"><label class="f">EMAIL</label><input class="inp" value="sales@deservoir.in"></div>
+        <div class="fld"><label class="f">EMAIL</label><input class="inp" value="hello@quoteflow.example"></div>
         <div class="fld"><label class="f">WHATSAPP NUMBER</label><input class="inp n" value="+91 98250 41200"></div>
         <div class="fld" style="margin:0"><label class="f">LANDLINE</label><input class="inp n" value="+91 79 4004 1200"></div>
       </div></div>
@@ -460,10 +460,10 @@ Ahmedabad, Gujarat 382445</textarea></div>
 <script>
 /* ============ DATA (prototype only) ============ */
 const CO = {
-  name:"Deservoir Industries Pvt. Ltd.", brand:"Deservoir",
+  name:"Your Business Name", brand:"QuoteFlow",
   gstin:"24AABCD1234E1Z5", state:"Gujarat",
   addr:"Plot 42, GIDC Phase II, Vatva\nAhmedabad, Gujarat 382445",
-  em1:"sales@deservoir.in", ph1:"+91 98250 41200", rep:"Ravi Patel"
+  em1:"hello@quoteflow.example", ph1:"+91 98250 41200", rep:"Ravi Patel"
 };
 const DEFAULT_TERMS =
 `1. Prices are ex-works Ahmedabad.
@@ -938,7 +938,7 @@ function openQuote(cid,no){ CUR_CLIENT=cid; QNO=no; paint(); go("build"); }
 
 /* ============ NAV ============ */
 const NAVMAP = {
-  home:    {t:"Hello, Ravi",       s:"Deservoir · FY 2026–27", tab:"home",   act:"search"},
+  home:    {t:"Hello, Ravi",       s:"QuoteFlow · FY 2026–27", tab:"home",   act:"search"},
   quotes:  {t:"Quotations",        s:"FY 2026–27",             tab:"quotes", act:"search"},
   build:   {t:"New quotation",     s:"Draft · not yet sent",   tab:null,     act:"share", tot:true},
   items:   {t:"Items & GST rates", s:"Item master",            tab:"items",  act:"add"},
@@ -996,6 +996,6 @@ document.addEventListener("click", e=>{
 })();
 
 </script>
-<a class="portfolio-back" href="../index.html" aria-label="Back to Industry Prototypes" style="position:fixed;left:16px;bottom:16px;z-index:1000;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(255,138,30,.45);border-radius:999px;background:rgba(11,16,32,.94);color:#fff;font:600 12px/1.2 'Inter Tight',sans-serif;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.3);">← Back to portfolios</a>
+<style>.portfolio-back{position:fixed;left:max(20px,env(safe-area-inset-left));bottom:max(20px,env(safe-area-inset-bottom));z-index:1000;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:184px;min-height:48px;padding:0 18px;box-sizing:border-box;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:#172334;color:#fff;font:700 14px/1 'Inter Tight',Arial,sans-serif;letter-spacing:.01em;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.28);transition:background .18s ease,transform .18s ease,box-shadow .18s ease}.portfolio-back:hover{background:#263b55;transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.32)}.portfolio-back:focus-visible{outline:3px solid #8ab4ff;outline-offset:3px}.portfolio-back:active{transform:translateY(0)}@media(max-width:480px){.portfolio-back{left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));min-width:176px;min-height:48px}}</style><a class="portfolio-back" href="../index.html" aria-label="Back to prototypes">←&nbsp; Back to prototypes</a>
 </body>
 </html>
